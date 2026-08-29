@@ -1,0 +1,856 @@
+#pragma once
+
+#include <string>
+
+#include "Asset.hpp"
+#include "Fonts.hpp"
+#include "FontCache.hpp"
+#include "RichText.hpp"
+#include "Scene.hpp"
+
+//====================================================================
+// GRAPHICS SUBSYSTEM, RENDERING PIPELINE
+//====================================================================
+namespace BloodSwordRogue::Graphics
+{
+    // list scenes (references) that can be rendered
+    typedef std::vector<std::reference_wrapper<Scene::Base>> Scenery;
+
+    // horizontal scan lines toggle
+    bool ScanLinesEnabled = true;
+
+    // base class of the graphics systemB
+    class Base
+    {
+    public:
+        // window
+        SDL_Window *Window = nullptr;
+
+        // renderer
+        SDL_Renderer *Renderer = nullptr;
+
+        // screen dimension (width)
+        int Width = 1280;
+
+        // screen dimension (height)
+        int Height = 800;
+
+        Base() {}
+    };
+
+    // initialize graphics system
+    void CreateWindow(Uint32 flags, const char *title, Base &graphics)
+    {
+        // the window and renderer we'll be rendering to
+        graphics.Window = nullptr;
+
+        graphics.Renderer = nullptr;
+
+        if (SDL_Init(flags) < 0)
+        {
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "SDL could not initialize! SDL_Error: %s", SDL_GetError());
+        }
+        else
+        {
+            SDL_DisplayMode mode;
+
+            SDL_GetCurrentDisplayMode(0, &mode);
+
+            graphics.Width = mode.w;
+
+            graphics.Height = mode.h;
+
+            SDL_CreateWindowAndRenderer(graphics.Width, graphics.Height, (SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), &graphics.Window, &graphics.Renderer);
+
+            if (graphics.Renderer)
+            {
+                SDL_SetRenderDrawBlendMode(graphics.Renderer, SDL_BLENDMODE_BLEND);
+            }
+
+            if (!graphics.Window || !graphics.Renderer)
+            {
+                SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Window could not be created! SDL_Error: %s", SDL_GetError());
+            }
+            else if (graphics.Window)
+            {
+                SDL_SetWindowTitle(graphics.Window, title);
+            }
+        }
+    }
+
+    // set window/screen icon
+    void SetWindowIcon(Base &graphics, const char *icon)
+    {
+        auto surface = Surface(icon);
+
+        if (graphics.Window && surface)
+        {
+            SDL_SetWindowIcon(graphics.Window, surface);
+
+            Free(&surface);
+        }
+    }
+
+    // initialize graphics subsystem
+    void Initialize(Base &graphics, const char *title, const char *icon)
+    {
+        Graphics::CreateWindow(SDL_INIT_VIDEO | SDL_INIT_AUDIO, title, graphics);
+
+        Graphics::SetWindowIcon(graphics, icon);
+
+        // raise window
+        SDL_RaiseWindow(graphics.Window);
+
+        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+    }
+
+    // initialize graphics system and set window/screen title
+    Graphics::Base Initialize(const char *title, const char *icon)
+    {
+        auto graphics = Graphics::Base();
+
+        Graphics::Initialize(graphics, title, icon);
+
+        return graphics;
+    }
+
+    // define an rectangle and prepare color
+    SDL_Rect CreateRect(Graphics::Base &graphics, int w, int h, int x, int y, int color)
+    {
+        SDL_Rect rect;
+
+        rect.w = w;
+
+        rect.h = h;
+
+        rect.x = x;
+
+        rect.y = y;
+
+        if (graphics.Renderer)
+        {
+            SDL_SetRenderDrawColor(graphics.Renderer, Color::R(color), Color::G(color), Color::B(color), Color::A(color));
+        }
+
+        return rect;
+    }
+
+    // draw rectangle outline on screen
+    void DrawRect(Graphics::Base &graphics, int w, int h, int x, int y, int color)
+    {
+        if (graphics.Renderer)
+        {
+            auto rect = Graphics::CreateRect(graphics, w, h, x, y, color);
+
+            SDL_RenderDrawRect(graphics.Renderer, &rect);
+        }
+    }
+
+    // create blank RGB (32-bit) surface
+    SDL_Surface *CreateSurface(int w, int h)
+    {
+        SDL_Surface *surface = nullptr;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        surface = SDL_CreateRGBSurface(0, w, h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+#else
+        surface = SDL_CreateRGBSurface(0, w, h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+#endif
+        if (surface)
+        {
+            SDL_FillRect(surface, nullptr, SDL_MapRGBA(surface->format, 0, 0, 0, 0));
+        }
+
+        return surface;
+    }
+
+    // create a scaled texture from loaded image
+    SDL_Texture *ScaledImage(Graphics::Base &graphics, std::string filename, std::string zip_file, int target_w, int target_h)
+    {
+        SDL_Texture *image = nullptr;
+
+        // load image from a file as a surface
+        auto original = !zip_file.empty() ? Surface(filename.c_str(), zip_file.c_str()) : Surface(filename.c_str());
+
+        // render in current palette
+        if (original)
+        {
+            SDL_SetSurfaceColorMod(original, Color::R(Color::Active), Color::G(Color::Active), Color::B(Color::Active));
+
+            // aspect ratio
+            auto ratio_w = (double)original->w / target_w;
+
+            auto ratio_h = (double)original->h / target_h;
+
+            auto new_w = 0;
+
+            auto new_h = 0;
+
+            if (ratio_w > ratio_h)
+            {
+                new_h = SafeCast(std::round((double)original->h / ratio_w));
+
+                new_w = target_w;
+            }
+            else
+            {
+                new_w = SafeCast(std::round((double)original->w / ratio_h));
+
+                new_h = target_h;
+            }
+
+            auto resized = Graphics::CreateSurface(new_w, new_h);
+
+            auto converted = SDL_ConvertSurface(original, resized->format, 0);
+
+            SDL_SetSurfaceAlphaMod(converted, SDL_ALPHA_OPAQUE);
+
+            SDL_Rect dst;
+
+            dst.w = new_w;
+
+            dst.h = new_h;
+
+            dst.x = 0;
+
+            dst.y = 0;
+
+            SDL_BlitScaled(converted, nullptr, resized, &dst);
+
+            image = SDL_CreateTextureFromSurface(graphics.Renderer, resized);
+
+            Free(&converted);
+
+            Free(&resized);
+
+            Free(&original);
+        }
+
+        return image;
+    }
+
+    // create a scaled texture from loaded image
+    SDL_Texture *ScaledImage(Graphics::Base &graphics, std::string filename, int target_w, int target_h)
+    {
+        return Graphics::ScaledImage(graphics, filename, std::string(), target_w, target_h);
+    }
+
+    // draw a filled rectangle on screen
+    void FillRect(Graphics::Base &graphics, int w, int h, int x, int y, int color)
+    {
+        if (graphics.Renderer)
+        {
+            auto rect = Graphics::CreateRect(graphics, w, h, x, y, color);
+
+            SDL_RenderFillRect(graphics.Renderer, &rect);
+        }
+    }
+
+    // draw a rectangle with thick borders on screen
+    void ThickRect(Graphics::Base &graphics, int w, int h, int x, int y, int color, int pts)
+    {
+        for (auto size = 0; size < pts; size++)
+        {
+            auto p = (pts - size);
+
+            // grow outward
+            Graphics::DrawRect(graphics, w + p * 2, h + p * 2, x - p, y - p, color);
+        }
+    }
+
+    // fill entire screen with specified color
+    void FillWindow(Graphics::Base &graphics, Uint32 color)
+    {
+        if (graphics.Renderer)
+        {
+            SDL_SetRenderDrawColor(graphics.Renderer, Color::R(color), Color::G(color), Color::B(color), Color::A(color));
+
+            SDL_RenderClear(graphics.Renderer);
+        }
+    }
+
+    // add scan lines to display
+    void Scanlines(Base &graphics)
+    {
+        if (ScanLinesEnabled)
+        {
+            SDL_Rect scanline;
+
+            scanline.w = graphics.Width;
+
+            scanline.h = 1;
+
+            scanline.x = 0;
+
+            SDL_SetRenderDrawColor(graphics.Renderer, 0, 0, 0, 0x40);
+
+            for (auto i = 0; i < graphics.Height; i += Pixel)
+            {
+                scanline.y = i + 1;
+
+                SDL_RenderFillRect(graphics.Renderer, &scanline);
+            }
+        }
+    }
+
+    // toggle horizontal scan lines
+    void ToggleScanLines()
+    {
+        Graphics::ScanLinesEnabled = !Graphics::ScanLinesEnabled;
+    }
+
+    // handle window events
+    void HandleWindowEvent(SDL_Event &result, Graphics::Base &graphics)
+    {
+        if (result.window.event == SDL_WINDOWEVENT_RESTORED || result.window.event == SDL_WINDOWEVENT_MAXIMIZED || result.window.event == SDL_WINDOWEVENT_SHOWN)
+        {
+            Graphics::Scanlines(graphics);
+
+            SDL_RenderPresent(graphics.Renderer);
+        }
+    }
+
+    // respond to window resizing/in focus/out of focus events
+    void WaitForWindowEvent(Graphics::Base &graphics)
+    {
+        SDL_Event result;
+
+        SDL_WaitEventTimeout(&result, 1);
+
+        if (result.type == SDL_WINDOWEVENT)
+        {
+            if (result.window.event == SDL_WINDOWEVENT_RESTORED || result.window.event == SDL_WINDOWEVENT_MAXIMIZED || result.window.event == SDL_WINDOWEVENT_SHOWN)
+            {
+                Graphics::HandleWindowEvent(result, graphics);
+            }
+        }
+    }
+
+    // clip rendering outside of specified area
+    void Clip(Graphics::Base &graphics, Point clip, int w, int h)
+    {
+        if (graphics.Renderer)
+        {
+            SDL_Rect view;
+
+            view.w = w;
+
+            view.h = h;
+
+            view.x = clip.X;
+
+            view.y = clip.Y;
+
+            SDL_RenderSetClipRect(graphics.Renderer, &view);
+        }
+    }
+
+    // reset clipping area
+    void Clip(Graphics::Base &graphics)
+    {
+        if (graphics.Renderer)
+        {
+            SDL_RenderSetClipRect(graphics.Renderer, nullptr);
+        }
+    }
+
+    // base render texture function
+    void Render(Base &graphics, SDL_Texture *texture, int texture_w, int texture_h, int x, int y, int bounds_x, int offset_x, int bounds_y, int offset_y, int w, int h, Uint32 background)
+    {
+        if (graphics.Renderer)
+        {
+            SDL_Rect src;
+
+            src.w = std::min(texture_w, bounds_x);
+
+            src.h = std::min(texture_h, bounds_y);
+
+            src.y = offset_y;
+
+            src.x = offset_x;
+
+            SDL_Rect dst;
+
+            dst.w = w;
+
+            dst.h = h;
+
+            dst.x = x;
+
+            dst.y = y;
+
+            if (background != 0)
+            {
+                SDL_SetRenderDrawColor(graphics.Renderer, Color::R(background), Color::G(background), Color::B(background), Color::A(background));
+
+                SDL_RenderFillRect(graphics.Renderer, &dst);
+            }
+
+            if (texture)
+            {
+                SDL_RenderCopy(graphics.Renderer, texture, &src, &dst);
+            }
+        }
+    }
+
+    // render texture function (bounded height)
+    void Render(Base &graphics, SDL_Texture *texture, int texture_w, int texture_h, int x, int y, int bounds_y, int offset_y, int w, int h, Uint32 background)
+    {
+        Graphics::Render(graphics, texture, texture_w, texture_h, x, y, texture_w, 0, bounds_y, offset_y, w, h, background);
+    }
+
+    // render texture, background and borders
+    void Render(Base &graphics, SDL_Texture *texture, int texture_w, int texture_h, int x, int y, int bounds_y, int offset_y, int w, int h, Uint32 background, Uint32 border, int border_size)
+    {
+        if (graphics.Renderer)
+        {
+            Graphics::Render(graphics, texture, texture_w, texture_h, x, y, bounds_y, offset_y, w, h, background);
+
+            if (border != 0)
+            {
+                Graphics::ThickRect(graphics, w, h, x, y, border, border_size);
+            }
+        }
+    }
+
+    // stretch a portion of the texture
+    void Render(Base &graphics, SDL_Texture *texture, int x, int y, int bounds, int offset, int w, int h, Uint32 background)
+    {
+        if (graphics.Renderer && texture)
+        {
+            Graphics::Render(graphics, texture, Width(texture), Height(texture), x, y, bounds, offset, w, h, background);
+        }
+    }
+
+    // render a portion of the texture
+    void Render(Base &graphics, SDL_Texture *texture, int x, int y, int bounds, int offset, Uint32 background)
+    {
+        if (graphics.Renderer && texture)
+        {
+            auto texture_w = 0;
+
+            auto texture_h = 0;
+
+            Size(texture, &texture_w, &texture_h);
+
+            Graphics::Render(graphics, texture, texture_w, texture_h, x, y, std::min(texture_h, bounds), offset, texture_w, std::min(texture_h, bounds), background);
+        }
+    }
+
+    // render texture at location
+    void Render(Base &graphics, SDL_Texture *texture, int x, int y, Uint32 background)
+    {
+        if (graphics.Renderer && texture)
+        {
+            Graphics::Render(graphics, texture, x, y, Height(texture), 0, background);
+        }
+    }
+
+    // render texture at location
+    void Render(Base &graphics, SDL_Texture *texture, int x, int y)
+    {
+        Graphics::Render(graphics, texture, x, y, 0);
+    }
+
+    // render texture at location
+    void Render(Base &graphics, SDL_Texture *texture, Point location)
+    {
+        Graphics::Render(graphics, texture, location.X, location.Y);
+    }
+
+    // render overlay on screen
+    void Overlay(Base &graphics, Scene::Base &scene)
+    {
+        if (graphics.Renderer)
+        {
+            if (!scene.Clip.IsNone())
+            {
+                // render only in visible areas
+                Graphics::Clip(graphics, scene.Clip, scene.ClipW, scene.ClipH);
+            }
+            else
+            {
+                // reset clipping
+                Graphics::Clip(graphics);
+            }
+
+            for (auto &element : scene.Elements)
+            {
+                Graphics::Render(graphics, element.Texture, element.W, element.H, element.X, element.Y, element.BoundsY, element.OffsetY, element.W, std::min(element.BoundsY, element.H), element.Background, element.Border, element.BorderSize);
+            }
+        }
+    }
+
+    // render scene (set backgroud color)
+    void Render(Base &graphics, Scene::Base &scene)
+    {
+        if (graphics.Renderer)
+        {
+            Graphics::FillWindow(graphics, scene.Background);
+
+            Graphics::Overlay(graphics, scene);
+        }
+    }
+
+    // render scenes
+    void Render(Base &graphics, Graphics::Scenery scenes)
+    {
+        if (graphics.Renderer && SafeCast(scenes.size()) > 0)
+        {
+            Graphics::FillWindow(graphics, scenes.front().get().Background);
+
+            for (auto &scene : scenes)
+            {
+                Graphics::Overlay(graphics, scene.get());
+            }
+        }
+    }
+
+    // render controls
+    void Render(Graphics::Base &graphics, Controls::Collection &controls, Controls::User input)
+    {
+        for (auto &control : controls)
+        {
+            if (control.Id == input.Current)
+            {
+                if (!input.Blink || !control.OnMap)
+                {
+                    Graphics::ThickRect(graphics, control.W - 4 * control.Pixels, control.H - 4 * control.Pixels, control.X + 2 * control.Pixels, control.Y + 2 * control.Pixels, control.Highlight, control.Pixels);
+                }
+            }
+        }
+    }
+
+    // render scene and highlight the control currently in focus (if any)
+    void Overlay(Base &graphics, Scene::Base &scene, Controls::User input)
+    {
+        Graphics::Overlay(graphics, scene);
+
+        Graphics::Render(graphics, scene.Controls, input);
+    }
+
+    // render scenes and highlight the control currently in focus (if any)
+    void Render(Base &graphics, Graphics::Scenery scenes, Controls::Collection &controls, Controls::User input)
+    {
+        if (graphics.Renderer && SafeCast(scenes.size()) > 0)
+        {
+            Graphics::Render(graphics, scenes);
+
+            Graphics::Render(graphics, controls, input);
+        }
+    }
+
+    // render scenes and highlight the control currently in focus (if any)
+    void Render(Base &graphics, Graphics::Scenery scenes, Controls::User input)
+    {
+        Graphics::Render(graphics, scenes, scenes.back().get().Controls, input);
+    }
+
+    // render scene and highlight the control currently in focus (if any)
+    void Render(Base &graphics, Scene::Base &scene, Controls::User input)
+    {
+        if (graphics.Renderer)
+        {
+            Graphics::Render(graphics, scene);
+
+            Graphics::Render(graphics, scene.Controls, input);
+        }
+    }
+
+    // render scenes and highlight the control currently in focus (if any)
+    void Dialog(Base &graphics, Graphics::Scenery scenes, bool blur = true)
+    {
+        if (graphics.Renderer && SafeCast(scenes.size()) > 0)
+        {
+            Graphics::FillWindow(graphics, scenes.front().get().Background);
+
+            for (auto it = scenes.begin(); it != scenes.end(); it++)
+            {
+                if ((it == (scenes.end() - 1)) && blur)
+                {
+                    auto rect = Graphics::CreateRect(graphics, graphics.Width, graphics.Height, 0, 0, Color::Blur);
+
+                    SDL_RenderFillRect(graphics.Renderer, &rect);
+                }
+
+                Graphics::Overlay(graphics, (*it).get());
+            }
+        }
+    }
+
+    // render scene and highlight the control currently in focus (if any)
+    void Dialog(Base &graphics, Graphics::Scenery scenes, Controls::User input, bool blur = true)
+    {
+        if (graphics.Renderer && SafeCast(scenes.size()) > 0)
+        {
+            Graphics::Dialog(graphics, scenes, blur);
+
+            Graphics::Render(graphics, scenes.back().get().Controls, input);
+        }
+    }
+
+    // handle controls on pop-up dialog instead of the background
+    void Dialog(Base &graphics, Scene::Base &background, Scene::Base &dialog, Controls::User input, bool blur = true)
+    {
+        Graphics::Dialog(graphics, {background, dialog}, input, blur);
+    }
+
+    // render scene now without waiting for user input
+    void RenderNow(Base &graphics)
+    {
+        if (graphics.Renderer)
+        {
+            Graphics::Scanlines(graphics);
+
+            SDL_RenderPresent(graphics.Renderer);
+        }
+    }
+
+    // render scene now without waiting for user input
+    // used in animation
+    void RenderNow(Base &graphics, Scene::Base &scene)
+    {
+        if (graphics.Renderer)
+        {
+            Graphics::Render(graphics, scene);
+
+            Graphics::RenderNow(graphics);
+        }
+    }
+
+    // render scene (background scene + foreground scene on top) now without waiting for user input
+    void RenderNow(Base &graphics, Scene::Base &background, Scene::Base &foreground)
+    {
+        if (graphics.Renderer)
+        {
+            Graphics::Render(graphics, {background, foreground});
+
+            Graphics::RenderNow(graphics);
+        }
+    }
+
+    // estimate texture dimensions of a string
+    void Estimate(TTF_Font *font, const char *text, int *width, int *height)
+    {
+        TTF_SizeUTF8(font, text, width, height);
+
+        auto pad = Pad;
+
+        if (width)
+        {
+            *width += pad;
+        }
+
+        if (height)
+        {
+            *height += pad;
+        }
+    }
+
+    // create a SDL_Surface representation of a string
+    SDL_Surface *CreateSurfaceText(const char *text, TTF_Font *font, SDL_Color text_color, int style, int wrap)
+    {
+        SDL_Surface *surface = nullptr;
+
+        if (font)
+        {
+            TTF_SetFontStyle(font, style);
+
+            if (wrap == 0 && strchr(text, '\n') == nullptr)
+            {
+                surface = TTF_RenderUTF8_Blended(font, text, text_color);
+            }
+            else
+            {
+                // TODO: Find better code to working with TTF_RenderUTF8_Blended_Wrapped on wraplength = 0
+                auto estimate = wrap;
+
+                if (wrap == 0 && strchr(text, '\n') != nullptr)
+                {
+                    auto max_length = 0;
+
+                    auto current = 0;
+
+                    for (auto i = 0; i < strlen(text); i++)
+                    {
+                        if (text[i] != '\n')
+                        {
+                            current++;
+                        }
+                        else
+                        {
+                            if (current > max_length)
+                            {
+                                max_length = current;
+                            }
+
+                            current = 0;
+                        }
+                    }
+
+                    if (current > max_length)
+                    {
+                        max_length = current;
+                    }
+
+                    if (max_length > 0)
+                    {
+                        auto temp = std::string(max_length, 'M') + ' ';
+
+                        Graphics::Estimate(font, temp.c_str(), &estimate, nullptr);
+                    }
+                }
+
+                surface = TTF_RenderUTF8_Blended_Wrapped(font, text, text_color, estimate);
+            }
+        }
+
+        return surface;
+    }
+
+    // create a SDL_Surface representation of a string (without line wrapping)
+    SDL_Surface *CreateSurfaceText(const char *text, TTF_Font *font, SDL_Color text_color, int style)
+    {
+        return Graphics::CreateSurfaceText(text, font, text_color, style, 0);
+    }
+
+    // create a texture representation of a string
+    SDL_Texture *CreateText(Graphics::Base &graphics, const char *text, TTF_Font *font, SDL_Color text_color, int style, int wrap)
+    {
+        SDL_Texture *texture = nullptr;
+
+        auto surface = Graphics::CreateSurfaceText(text, font, text_color, style, wrap);
+
+        if (surface)
+        {
+            texture = SDL_CreateTextureFromSurface(graphics.Renderer, surface);
+
+            Free(&surface);
+        }
+
+        return texture;
+    }
+
+    // create a texture representation of a string (without line wrapping)
+    SDL_Texture *CreateText(Graphics::Base &graphics, const char *text, TTF_Font *font, SDL_Color text_color, int style)
+    {
+        return Graphics::CreateText(graphics, text, font, text_color, style, 0);
+    }
+
+    // create a texture representation of a rich text
+    SDL_Texture *CreateText(Graphics::Base &graphics, Graphics::RichText &text)
+    {
+        auto texture = Graphics::CreateText(graphics, text.Text.c_str(), text.Font, text.Color, text.Style, text.Wrap);
+
+        return texture;
+    }
+
+    // create a list of texture representation of a collection of strings
+    Asset::TextureList CreateText(Graphics::Base &graphics, Graphics::TextList collection)
+    {
+        Asset::TextureList textures = {};
+
+        for (auto &text : collection)
+        {
+            auto texture = Graphics::CreateText(graphics, text);
+
+            if (texture)
+            {
+                textures.push_back(texture);
+            }
+        }
+
+        return textures;
+    }
+
+    // renders asset (surface) to a target surface at specified position (rect)
+    void RenderAsset(SDL_Surface *surface, SDL_Surface *surface_asset, SDL_Rect &rect)
+    {
+        if (surface_asset)
+        {
+            // convert surface_asset into target surface's format
+            auto converted_asset = SDL_ConvertSurface(surface_asset, surface->format, 0);
+
+            if (converted_asset)
+            {
+                // place surface in the correct position
+                SDL_SetSurfaceAlphaMod(converted_asset, SDL_ALPHA_OPAQUE);
+
+                SDL_BlitSurface(converted_asset, nullptr, surface, &rect);
+
+                // cleanup
+                Free(&converted_asset);
+            }
+        }
+    }
+
+    // renders asset (surface) to a target surface at specified position (rect) with scaling
+    void RenderAssetScaled(SDL_Surface *surface, SDL_Surface *surface_asset, SDL_Rect &rect)
+    {
+        if (surface_asset)
+        {
+            // convert surface_asset into target surface's format
+            auto converted_asset = SDL_ConvertSurface(surface_asset, surface->format, 0);
+
+            if (converted_asset)
+            {
+                // place surface in the correct position
+                SDL_SetSurfaceAlphaMod(converted_asset, SDL_ALPHA_OPAQUE);
+
+                SDL_BlitScaled(converted_asset, nullptr, surface, &rect);
+
+                // cleanup
+                Free(&converted_asset);
+            }
+        }
+    }
+
+    // renders asset (surface) to a target surface at specified position (rect) then free it
+    void RenderAssetThenFree(SDL_Surface *surface, SDL_Surface *surface_asset, SDL_Rect &rect)
+    {
+        if (surface_asset)
+        {
+            Graphics::RenderAsset(surface, surface_asset, rect);
+
+            // cleanup
+            Free(&surface_asset);
+        }
+    }
+
+    // close graphics system
+    void Quit(Base &graphics)
+    {
+        if (graphics.Renderer != nullptr)
+        {
+            SDL_DestroyRenderer(graphics.Renderer);
+
+            graphics.Renderer = nullptr;
+        }
+
+        if (graphics.Window != nullptr)
+        {
+            SDL_DestroyWindow(graphics.Window);
+
+            graphics.Window = nullptr;
+        }
+
+        IMG_Quit();
+
+        if (SDL_WasInit(SDL_INIT_GAMECONTROLLER))
+        {
+            SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+        }
+
+        if (SDL_WasInit(SDL_INIT_AUDIO))
+        {
+            SDL_QuitSubSystem(SDL_INIT_AUDIO);
+        }
+
+        if (SDL_WasInit(SDL_INIT_VIDEO))
+        {
+            SDL_QuitSubSystem(SDL_INIT_VIDEO);
+        }
+
+        SDL_Quit();
+    }
+}

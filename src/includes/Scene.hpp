@@ -1,0 +1,218 @@
+#pragma once
+
+#include "Primitives.hpp"
+#include "Controls.hpp"
+
+//====================================================================
+// SCENERY DEFINITIONS FOR RENDERING PIPELINE
+//====================================================================
+namespace BloodSwordRogue::Scene
+{
+    // scene element base class
+    class Element
+    {
+    public:
+        // texture associated with the element
+        SDL_Texture *Texture = nullptr;
+
+        // background color, 0 if none
+        Uint32 Background = 0;
+
+        // border color, 0 if none
+        Uint32 Border = 0;
+
+        // x location on screen
+        int X = 0;
+
+        // y location on screen
+        int Y = 0;
+
+        // size of texture portion (X) to be rendered. Used with Offset.
+        int BoundsX = 0;
+
+        // starting point (X) in texture to be rendered. Used with Bounds.
+        int OffsetX = 0;
+
+        // size of texture portion (Y) to be rendered. Used with Offset.
+        int BoundsY = 0;
+
+        // starting point (Y) in texture to be rendered. Used with Bounds.
+        int OffsetY = 0;
+
+        // width of the element
+        int W = 0;
+
+        // height of the element
+        int H = 0;
+
+        // thickness of the border in pixels
+        int BorderSize = 0;
+
+        Element() {}
+
+        Element(SDL_Texture *texture,
+                int x, int y,
+                int bounds_x, int offset_x,
+                int bounds_y, int offset_y,
+                int w, int h,
+                Uint32 background,
+                Uint32 border,
+                int border_size) : Texture(texture),
+                                   Background(background), Border(border),
+                                   X(x), Y(y),
+                                   BoundsX(bounds_x), OffsetX(offset_x),
+                                   BoundsY(bounds_y), OffsetY(offset_y),
+                                   W(w), H(h),
+                                   BorderSize(border_size) {}
+
+        Element(SDL_Texture *texture,
+                int x, int y,
+                int bounds_y, int offset_y,
+                int w, int h,
+                Uint32 background,
+                Uint32 border,
+                int border_size) : Texture(texture),
+                                   Background(background), Border(border),
+                                   X(x), Y(y),
+                                   BoundsX(0), OffsetX(w),
+                                   BoundsY(bounds_y), OffsetY(offset_y),
+                                   W(w), H(h),
+                                   BorderSize(border_size) {}
+
+        Element(SDL_Texture *texture,
+                int x, int y,
+                int bounds_y, int offset_y,
+                Uint32 background,
+                Uint32 border,
+                int border_size) : Texture(texture),
+                                   Background(background), Border(border),
+                                   X(x), Y(y),
+                                   OffsetX(0), BoundsY(bounds_y), OffsetY(offset_y),
+                                   BorderSize(border_size)
+        {
+            if (this->Texture)
+            {
+                BloodSwordRogue::Size(this->Texture, &this->W, &this->H);
+
+                this->BoundsX = this->W;
+            }
+        }
+
+        Element(SDL_Texture *texture,
+                int x, int y,
+                int bounds_y, int offset_y,
+                Uint32 border,
+                int border_size) : Element(texture, x, y, bounds_y, offset_y, 0, border, border_size) {}
+
+        Element(SDL_Texture *texture, int x, int y) : Texture(texture), X(x), Y(y), OffsetX(0), OffsetY(0)
+        {
+            if (this->Texture)
+            {
+                BloodSwordRogue::Size(this->Texture, &this->W, &this->H);
+            }
+
+            this->BoundsX = this->W;
+
+            this->BoundsY = this->H;
+        }
+
+        Element(SDL_Texture *texture, int x, int y, int bounds_y, int offset_y) : Texture(texture), X(x), Y(y), OffsetX(0), OffsetY(offset_y)
+        {
+            if (this->Texture)
+            {
+                BloodSwordRogue::Size(this->Texture, &this->W, &this->H);
+            }
+
+            this->BoundsX = this->W;
+
+            this->BoundsY = bounds_y;
+        }
+
+        Element(SDL_Texture *texture, Point point) : Element(texture, point.X, point.Y) {}
+
+        Element(int x, int y, int w, int h,
+                Uint32 background,
+                Uint32 border,
+                int border_size) : Element(nullptr, x, y, h, 0, w, h, background, border, border_size) {}
+
+        Element(Point point, int w, int h,
+                Uint32 background,
+                Uint32 border,
+                int border_size) : Element(point.X, point.Y, w, h, background, border, border_size) {}
+
+        Element(int x, int y, int w, int h,
+                Uint32 background) : Element(x, y, w, h, background, 0, 0) {}
+    };
+
+    // list of scene elements
+    typedef std::vector<Scene::Element> Elements;
+
+    // scene base class
+    class Base
+    {
+    public:
+        // objects to be rendered on screen
+        Scene::Elements Elements = {};
+
+        // locations and dimensions of controls hitboxes associated with the scene lement
+        Controls::Collection Controls = {};
+
+        // background color of the entire screen. set before rendering each element
+        Uint32 Background = 0;
+
+        // clipping area
+        Point Clip = Point(-1, -1);
+
+        // width and height of clipping area
+        int ClipW = 0;
+
+        int ClipH = 0;
+
+        // clear the scene
+        void Clear()
+        {
+            this->Background = 0;
+
+            this->Elements.clear();
+
+            this->Controls.clear();
+        }
+
+        // add element to the scene
+        void Add(Scene::Element element)
+        {
+            this->Elements.push_back(element);
+        }
+
+        // add element to the scene if it has a valid texture
+        void VerifyAndAdd(Scene::Element element)
+        {
+            if (element.Texture != nullptr)
+            {
+                this->Add(element);
+            }
+        }
+
+        // add a control hitbox
+        void Add(Controls::Base control)
+        {
+            this->Controls.push_back(control);
+        }
+
+        Base() {}
+
+        Base(Scene::Elements elements, Controls::Collection controls, Uint32 background) : Elements(elements), Controls(controls), Background(background) {}
+
+        Base(Scene::Elements elements, Controls::Collection controls) : Elements(elements), Controls(controls) {}
+
+        Base(Scene::Elements elements, Uint32 background) : Elements(elements), Background(background) {}
+
+        Base(Scene::Elements elements) : Elements(elements) {}
+
+        Base(Uint32 background) : Background(background) {}
+
+        Base(SDL_Texture *texture, int x, int y) : Base(Scene::Elements({Scene::Element(texture, x, y)})) {}
+
+        Base(SDL_Texture *texture, Point point) : Base(texture, point.X, point.Y) {}
+    };
+}

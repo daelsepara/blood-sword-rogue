@@ -1,0 +1,14 @@
+{
+    "settings": {
+        "assets": "modules/default/assets.json",
+        "controls": "modules/default/controls.json",
+        "fonts": "modules/default/fonts.json",
+        "fov": "shadow cast",
+        "item-properties": "modules/default/item-properties.json",
+        "items": "modules/default/items.json",
+        "logo": "modules/default/images/logo/bloodsword.png",
+        "ranks": "modules/default/ranks.json",
+        "skills": "modules/default/skills.json",
+        "targets": "modules/default/targets.json"
+    }
+}

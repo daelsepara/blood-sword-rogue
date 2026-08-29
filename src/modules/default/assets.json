@@ -1,0 +1,1788 @@
+{
+    "assets": [
+        {
+            "id": "WARRIOR",
+            "path": "modules/default/images/players/master-of-arms.png"
+        },
+        {
+            "id": "ENCHANTER",
+            "path": "modules/default/images/players/robe.png"
+        },
+        {
+            "id": "SAGE",
+            "path": "modules/default/images/players/pikeman.png"
+        },
+        {
+            "id": "TRICKSTER",
+            "path": "modules/default/images/players/hooded-assassin.png"
+        },
+        {
+            "id": "ENEMY",
+            "path": "modules/default/images/system/character.png"
+        },
+        {
+            "id": "UP",
+            "path": "modules/default/images/map/up.png"
+        },
+        {
+            "id": "DOWN",
+            "path": "modules/default/images/map/down.png"
+        },
+        {
+            "id": "LEFT",
+            "path": "modules/default/images/map/left.png"
+        },
+        {
+            "id": "RIGHT",
+            "path": "modules/default/images/map/right.png"
+        },
+        {
+            "id": "WALL",
+            "path": "modules/default/images/map/brick-wall.png"
+        },
+        {
+            "id": "ARCH BRIDGE",
+            "path": "modules/default/images/map/arch-bridge.png"
+        },
+        {
+            "id": "EMPTY SPACE",
+            "path": "modules/default/images/map/blank-space.png"
+        },
+        {
+            "id": "WHITE SPACE",
+            "path": "modules/default/images/map/white-space.png"
+        },
+        {
+            "id": "ASSASSIN",
+            "path": "modules/default/images/enemies/ninja-head.png"
+        },
+        {
+            "id": "ADVENTURER",
+            "path": "modules/default/images/enemies/swordman.png"
+        },
+        {
+            "id": "BARBARIAN",
+            "path": "modules/default/images/enemies/barbarian.png"
+        },
+        {
+            "id": "BOWMAN",
+            "path": "modules/default/images/enemies/bowman.png"
+        },
+        {
+            "id": "GARGOYLE",
+            "path": "modules/default/images/enemies/gargoyle.png"
+        },
+        {
+            "id": "CORPSE",
+            "path": "modules/default/images/enemies/shambling-zombie.png"
+        },
+        {
+            "id": "SKIAPYR",
+            "path": "modules/default/images/enemies/pyromaniac.png"
+        },
+        {
+            "id": "DIRGE",
+            "path": "modules/default/images/enemies/harpy.png"
+        },
+        {
+            "id": "DIRGE MAN",
+            "path": "modules/default/images/enemies/kenku-head.png"
+        },
+        {
+            "id": "GUARD",
+            "path": "modules/default/images/enemies/barbute.png"
+        },
+        {
+            "id": "RANGER",
+            "path": "modules/default/images/enemies/hooded-figure.png"
+        },
+        {
+            "id": "SKRYMIR THE GIANT",
+            "path": "modules/default/images/enemies/muscle-fat.png"
+        },
+        {
+            "id": "ICON THE UNGODLY",
+            "path": "modules/default/images/enemies/cowled.png"
+        },
+        {
+            "id": "GIANT SPIDER",
+            "path": "modules/default/images/enemies/spider-alt.png"
+        },
+        {
+            "id": "NIGHT ELF",
+            "path": "modules/default/images/enemies/elf-helmet.png"
+        },
+        {
+            "id": "QUEL",
+            "path": "modules/default/images/enemies/hood.png"
+        },
+        {
+            "id": "MAGUS VYL",
+            "path": "modules/default/images/enemies/vampire-dracula.png"
+        },
+        {
+            "id": "MAN IN BLUE",
+            "path": "modules/default/images/enemies/cloak-dagger.png"
+        },
+        {
+            "id": "NEBULARON",
+            "path": "modules/default/images/enemies/daemon-skull.png"
+        },
+        {
+            "id": "MOVE",
+            "path": "modules/default/images/actions/boot-prints.png"
+        },
+        {
+            "id": "FIGHT",
+            "path": "modules/default/images/actions/crossed-swords.png"
+        },
+        {
+            "id": "SHOOT",
+            "path": "modules/default/images/actions/arrow-scope.png"
+        },
+        {
+            "id": "SHURIKEN",
+            "path": "modules/default/images/actions/shuriken.png"
+        },
+        {
+            "id": "DEFEND",
+            "path": "modules/default/images/actions/swords-emblem.png"
+        },
+        {
+            "id": "FLEE",
+            "path": "modules/default/images/actions/run.png"
+        },
+        {
+            "id": "CALL TO MIND",
+            "path": "modules/default/images/actions/wisdom.png"
+        },
+        {
+            "id": "CAST SPELL",
+            "path": "modules/default/images/actions/bolt-spell-cast.png"
+        },
+        {
+            "id": "DODGING",
+            "path": "modules/default/images/skills/dodging.png"
+        },
+        {
+            "id": "ARCHERY",
+            "path": "modules/default/images/skills/bow-arrow.png"
+        },
+        {
+            "id": "QUARTERSTAFF",
+            "path": "modules/default/images/skills/bo.png"
+        },
+        {
+            "id": "HEALING",
+            "path": "modules/default/images/skills/healing.png"
+        },
+        {
+            "id": "ESP",
+            "path": "modules/default/images/skills/psychic-waves.png"
+        },
+        {
+            "id": "PARANORMAL SIGHT",
+            "path": "modules/default/images/skills/semi-closed-eye.png"
+        },
+        {
+            "id": "EXORCISM",
+            "path": "modules/default/images/skills/ankh.png"
+        },
+        {
+            "id": "LEVITATION",
+            "path": "modules/default/images/skills/up-card.png"
+        },
+        {
+            "id": "SPELLS",
+            "path": "modules/default/images/skills/spell-book.png"
+        },
+        {
+            "id": "ITEMS",
+            "path": "modules/default/images/system/paper-bag-crumpled.png"
+        },
+        {
+            "id": "EXIT",
+            "path": "modules/default/images/system/exit-door.png"
+        },
+        {
+            "id": "CONFIRM",
+            "path": "modules/default/images/system/confirmed.png"
+        },
+        {
+            "id": "CANCEL",
+            "path": "modules/default/images/system/cancel.png"
+        },
+        {
+            "id": "BACK",
+            "path": "modules/default/images/system/anticlockwise-rotation.png"
+        },
+        {
+            "id": "THE VAMPIRE SPELL",
+            "path": "modules/default/images/spells/vampire-cape.png"
+        },
+        {
+            "id": "EYE OF THE TIGER",
+            "path": "modules/default/images/spells/beast-eye.png"
+        },
+        {
+            "id": "GHASTLY TOUCH",
+            "path": "modules/default/images/spells/evil-hand.png"
+        },
+        {
+            "id": "IMMEDIATE DELIVERANCE",
+            "path": "modules/default/images/spells/teleport.png"
+        },
+        {
+            "id": "NIGHTHOWL",
+            "path": "modules/default/images/spells/wolf-howl.png"
+        },
+        {
+            "id": "MISTS OF DEATH",
+            "path": "modules/default/images/spells/poison-gas.png"
+        },
+        {
+            "id": "NEMESIS BOLT",
+            "path": "modules/default/images/spells/arcing-bolt.png"
+        },
+        {
+            "id": "SERVILE ENTHRALMENT",
+            "path": "modules/default/images/spells/slavery-whip.png"
+        },
+        {
+            "id": "SHEET LIGHTNING",
+            "path": "modules/default/images/spells/chain-lightning.png"
+        },
+        {
+            "id": "SWORDTHRUST",
+            "path": "modules/default/images/spells/sword-wound.png"
+        },
+        {
+            "id": "VOLCANO SPRAY",
+            "path": "modules/default/images/spells/lava.png"
+        },
+        {
+            "id": "WHITE FIRE",
+            "path": "modules/default/images/spells/fire.png"
+        },
+        {
+            "id": "PILLAR OF SALT",
+            "path": "modules/default/images/spells/crystal-growth.png"
+        },
+        {
+            "id": "SUMMON FALTYN",
+            "path": "modules/default/images/spells/fairy.png"
+        },
+        {
+            "id": "PREDICTION",
+            "path": "modules/default/images/spells/crystal-ball.png"
+        },
+        {
+            "id": "DETECT ENCHANTMENT",
+            "path": "modules/default/images/spells/gaze.png"
+        },
+        {
+            "id": "IGNORE ARMOUR",
+            "path": "modules/default/images/skills/armor-downgrade.png"
+        },
+        {
+            "id": "DICE1",
+            "path": "modules/default/images/system/dice-six-faces-one.png"
+        },
+        {
+            "id": "DICE2",
+            "path": "modules/default/images/system/dice-six-faces-two.png"
+        },
+        {
+            "id": "DICE3",
+            "path": "modules/default/images/system/dice-six-faces-three.png"
+        },
+        {
+            "id": "DICE4",
+            "path": "modules/default/images/system/dice-six-faces-four.png"
+        },
+        {
+            "id": "DICE5",
+            "path": "modules/default/images/system/dice-six-faces-five.png"
+        },
+        {
+            "id": "DICE6",
+            "path": "modules/default/images/system/dice-six-faces-six.png"
+        },
+        {
+            "id": "AWARENESS",
+            "path": "modules/default/images/attributes/sound-waves.png"
+        },
+        {
+            "id": "PSYCHIC ABILITY",
+            "path": "modules/default/images/attributes/sparkles.png"
+        },
+        {
+            "id": "ENDURANCE",
+            "path": "modules/default/images/attributes/heart-beats.png"
+        },
+        {
+            "id": "DAMAGE",
+            "path": "modules/default/images/attributes/heart-minus.png"
+        },
+        {
+            "id": "LAYERED ARMOUR",
+            "path": "modules/default/images/attributes/layered-armor.png"
+        },
+        {
+            "id": "UNARMED COMBAT",
+            "path": "modules/default/images/system/fist.png"
+        },
+        {
+            "id": "HEAL",
+            "path": "modules/default/images/system/heart-plus.png"
+        },
+        {
+            "id": "DOOR",
+            "path": "modules/default/images/map/door.png"
+        },
+        {
+            "id": "DOORWAY",
+            "path": "modules/default/images/map/doorway.png"
+        },
+        {
+            "id": "WOODEN DOOR",
+            "path": "modules/default/images/map/wooden-door.png"
+        },
+        {
+            "id": "CENTER",
+            "path": "modules/default/images/map/convergence-target.png"
+        },
+        {
+            "id": "CHESSBOARD",
+            "path": "modules/default/images/map/empty-chessboard.png"
+        },
+        {
+            "id": "STAIRS",
+            "path": "modules/default/images/map/3d-stairs.png"
+        },
+        {
+            "id": "DUNGEON EXIT",
+            "path": "modules/default/images/map/dungeon-gate.png"
+        },
+        {
+            "id": "WOODEN FENCE",
+            "path": "modules/default/images/map/wooden-fence.png"
+        },
+        {
+            "id": "SELECT",
+            "path": "modules/default/images/map/select.png"
+        },
+        {
+            "id": "WINDOW BARS",
+            "path": "modules/default/images/map/window-bars.png"
+        },
+        {
+            "id": "POISONED DAGGER",
+            "path": "modules/default/images/actions/assassin-pocket.png"
+        },
+        {
+            "id": "CARD BLANK",
+            "path": "modules/default/images/cards/card-blank.png"
+        },
+        {
+            "id": "CARD JOKER",
+            "path": "modules/default/images/cards/card-joker.png"
+        },
+        {
+            "id": "ACE CLUBS",
+            "path": "modules/default/images/cards/card-ace-clubs.png"
+        },
+        {
+            "id": "ACE DIAMONDS",
+            "path": "modules/default/images/cards/card-ace-diamonds.png"
+        },
+        {
+            "id": "ACE HEARTS",
+            "path": "modules/default/images/cards/card-ace-hearts.png"
+        },
+        {
+            "id": "ACE SPADES",
+            "path": "modules/default/images/cards/card-ace-spades.png"
+        },
+        {
+            "id": "KING CLUBS",
+            "path": "modules/default/images/cards/card-king-clubs.png"
+        },
+        {
+            "id": "KING DIAMONDS",
+            "path": "modules/default/images/cards/card-king-diamonds.png"
+        },
+        {
+            "id": "KING HEARTS",
+            "path": "modules/default/images/cards/card-king-hearts.png"
+        },
+        {
+            "id": "KING SPADES",
+            "path": "modules/default/images/cards/card-king-spades.png"
+        },
+        {
+            "id": "GAME",
+            "path": "modules/default/images/system/bookmark.png"
+        },
+        {
+            "id": "USE",
+            "path": "modules/default/images/items/hand.png"
+        },
+        {
+            "id": "MONEY",
+            "path": "modules/default/images/items/coins.png"
+        },
+        {
+            "id": "TRADE",
+            "path": "modules/default/images/items/trade.png"
+        },
+        {
+            "id": "DROP",
+            "path": "modules/default/images/items/trash-can.png"
+        },
+        {
+            "id": "INVENTORY",
+            "path": "modules/default/images/system/locked-chest.png"
+        },
+        {
+            "id": "ABOUT",
+            "path": "modules/default/images/system/scroll-unfurled.png"
+        },
+        {
+            "id": "IDENTIFY",
+            "path": "modules/default/images/system/scroll-quill.png"
+        },
+        {
+            "id": "DRINK",
+            "path": "modules/default/images/system/spiral-bottle.png"
+        },
+        {
+            "id": "READ",
+            "path": "modules/default/images/system/tied-scroll.png"
+        },
+        {
+            "id": "DICE GAME",
+            "path": "modules/default/images/system/rolling-dices.png"
+        },
+        {
+            "id": "KALUGEN",
+            "path": "modules/default/images/enemies/wizard-face.png"
+        },
+        {
+            "id": "FOOD",
+            "path": "modules/default/images/items/fruit-bowl.png"
+        },
+        {
+            "id": "BATTLE ORDER",
+            "path": "modules/default/images/system/podium.png"
+        },
+        {
+            "id": "LOAD",
+            "path": "modules/default/images/system/load.png"
+        },
+        {
+            "id": "SAVE",
+            "path": "modules/default/images/system/save.png"
+        },
+        {
+            "id": "MUMMY HEAD",
+            "path": "modules/default/images/enemies/mummy-head.png"
+        },
+        {
+            "id": "ROCK",
+            "path": "modules/default/images/map/rock.png"
+        },
+        {
+            "id": "QUIVER",
+            "path": "modules/default/images/items/quiver.png"
+        },
+        {
+            "id": "CENSER",
+            "path": "modules/default/images/map/fire-bowl.png"
+        },
+        {
+            "id": "STEEL SCEPTRE",
+            "path": "modules/default/images/items/crystal-wand.png"
+        },
+        {
+            "id": "BEORN",
+            "path": "modules/default/images/enemies/brutal-helm.png"
+        },
+        {
+            "id": "KNIGHT",
+            "path": "modules/default/images/enemies/visored-helm.png"
+        },
+        {
+            "id": "NEMESIS",
+            "path": "modules/default/images/enemies/woman-elf-face.png"
+        },
+        {
+            "id": "PERSON",
+            "path": "modules/default/images/enemies/person.png"
+        },
+        {
+            "id": "WATERFALL",
+            "path": "modules/default/images/map/waterfall.png"
+        },
+        {
+            "id": "ROPE BRIDGE",
+            "path": "modules/default/images/map/rope-bridge.png"
+        },
+        {
+            "id": "ROPE BRIDGE INVERTED",
+            "path": "modules/default/images/map/rope-bridge-inverted.png"
+        },
+        {
+            "id": "WAVES",
+            "path": "modules/default/images/map/waves.png"
+        },
+        {
+            "id": "WAVE CREST",
+            "path": "modules/default/images/map/wave-crest.png"
+        },
+        {
+            "id": "GEAR",
+            "path": "modules/default/images/system/battle-gear.png"
+        },
+        {
+            "id": "DAGGER OF VISLET",
+            "path": "modules/default/images/items/broad-dagger.png"
+        },
+        {
+            "id": "SMEABORG",
+            "path": "modules/default/images/enemies/diablo-skull.png"
+        },
+        {
+            "id": "EIDOLON",
+            "path": "modules/default/images/enemies/spectre.png"
+        },
+        {
+            "id": "GONDOLIER",
+            "path": "modules/default/images/enemies/haunting.png"
+        },
+        {
+            "id": "WOODEN PLANK",
+            "path": "modules/default/images/map/packed-planks.png"
+        },
+        {
+            "id": "WATER",
+            "path": "modules/default/images/map/water.png"
+        },
+        {
+            "id": "RUSTY WEAPON",
+            "path": "modules/default/images/skills/fragmented-sword.png"
+        },
+        {
+            "id": "BROKEN WEAPON",
+            "path": "modules/default/images/skills/shattered-sword.png"
+        },
+        {
+            "id": "GOLDEN SNUFF-BOX",
+            "path": "modules/default/images/items/chest.png"
+        },
+        {
+            "id": "DRAGONLORD GEM",
+            "path": "modules/default/images/items/fire-gem.png"
+        },
+        {
+            "id": "FANGS",
+            "path": "modules/default/images/skills/fangs.png"
+        },
+        {
+            "id": "ECHIDNA",
+            "path": "modules/default/images/enemies/medusa-head.png"
+        },
+        {
+            "id": "HAG",
+            "path": "modules/default/images/enemies/witch-face.png"
+        },
+        {
+            "id": "PILLAR",
+            "path": "modules/default/images/map/ionic-column.png"
+        },
+        {
+            "id": "BROKEN PILLARS",
+            "path": "modules/default/images/map/ancient-columns.png"
+        },
+        {
+            "id": "DEATH FETISHIST",
+            "path": "modules/default/images/enemies/totem-head.png"
+        },
+        {
+            "id": "FIRE SHIELD",
+            "path": "modules/default/images/skills/fire-shield.png"
+        },
+        {
+            "id": "TROPHY",
+            "path": "modules/default/images/system/trophy.png"
+        },
+        {
+            "id": "SKILLS",
+            "path": "modules/default/images/system/skills.png"
+        },
+        {
+            "id": "STATUS",
+            "path": "modules/default/images/system/aura.png"
+        },
+        {
+            "id": "INFO",
+            "path": "modules/default/images/system/info.png"
+        },
+        {
+            "id": "CHARACTER",
+            "path": "modules/default/images/system/character.png"
+        },
+        {
+            "id": "CIRCLE",
+            "path": "modules/default/images/system/circle.png"
+        },
+        {
+            "id": "PLAIN CIRCLE",
+            "path": "modules/default/images/system/plain-circle.png"
+        },
+        {
+            "id": "ZERO",
+            "path": "modules/default/images/numbers/0.png"
+        },
+        {
+            "id": "ONE",
+            "path": "modules/default/images/numbers/1.png"
+        },
+        {
+            "id": "TWO",
+            "path": "modules/default/images/numbers/2.png"
+        },
+        {
+            "id": "THREE",
+            "path": "modules/default/images/numbers/3.png"
+        },
+        {
+            "id": "FOUR",
+            "path": "modules/default/images/numbers/4.png"
+        },
+        {
+            "id": "FIVE",
+            "path": "modules/default/images/numbers/5.png"
+        },
+        {
+            "id": "SIX",
+            "path": "modules/default/images/numbers/6.png"
+        },
+        {
+            "id": "SEVEN",
+            "path": "modules/default/images/numbers/7.png"
+        },
+        {
+            "id": "EIGHT",
+            "path": "modules/default/images/numbers/8.png"
+        },
+        {
+            "id": "NINE",
+            "path": "modules/default/images/numbers/9.png"
+        },
+        {
+            "id": "PRECOGNITION",
+            "path": "modules/default/images/items/crystal-ball.png"
+        },
+        {
+            "id": "MAP",
+            "path": "modules/default/images/system/treasure-map.png"
+        },
+        {
+            "id": "DEAD",
+            "path": "modules/default/images/system/death-skull.png"
+        },
+        {
+            "id": "SWORD",
+            "path": "modules/default/images/items/broadsword.png"
+        },
+        {
+            "id": "CHAINMAIL",
+            "path": "modules/default/images/items/chain-mail.png"
+        },
+        {
+            "id": "RINGMAIL",
+            "path": "modules/default/images/items/scale-mail.png"
+        },
+        {
+            "id": "LEATHER ARMOUR",
+            "path": "modules/default/images/items/leather-vest.png"
+        },
+        {
+            "id": "SILVER ARMOUR",
+            "path": "modules/default/images/items/chest-armor.png"
+        },
+        {
+            "id": "CURSOR",
+            "path": "modules/default/images/system/relic-blade.png"
+        },
+        {
+            "id": "EDIT",
+            "path": "modules/default/images/system/pencil.png"
+        },
+        {
+            "id": "TIME",
+            "path": "modules/default/images/system/sands-of-time.png"
+        },
+        {
+            "id": "GEARS",
+            "path": "modules/default/images/system/gears.png"
+        },
+        {
+            "id": "CHECK MARK",
+            "path": "modules/default/images/system/check-mark.png"
+        },
+        {
+            "id": "CROSS MARK",
+            "path": "modules/default/images/system/cross-mark.png"
+        },
+        {
+            "id": "FOREST",
+            "path": "modules/default/images/map/forest.png"
+        },
+        {
+            "id": "ANCIENT RUINS",
+            "path": "modules/default/images/map/ancient-ruins.png"
+        },
+        {
+            "id": "AQUARIUS",
+            "path": "modules/default/images/map/aquarius.png"
+        },
+        {
+            "id": "AQUEDUCT",
+            "path": "modules/default/images/map/aqueduct.png"
+        },
+        {
+            "id": "ARABIC DOOR",
+            "path": "modules/default/images/map/arabic-door.png"
+        },
+        {
+            "id": "ARC",
+            "path": "modules/default/images/map/arc-triomphe.png"
+        },
+        {
+            "id": "BARN",
+            "path": "modules/default/images/map/barn.png"
+        },
+        {
+            "id": "BARRACKS TENT",
+            "path": "modules/default/images/map/barracks-tent.png"
+        },
+        {
+            "id": "BARRACKS",
+            "path": "modules/default/images/map/barracks.png"
+        },
+        {
+            "id": "BARREL",
+            "path": "modules/default/images/map/barrel.png"
+        },
+        {
+            "id": "BASE DOME",
+            "path": "modules/default/images/map/base-dome.png"
+        },
+        {
+            "id": "BEECH",
+            "path": "modules/default/images/map/beech.png"
+        },
+        {
+            "id": "BIRCH TREES",
+            "path": "modules/default/images/map/birch-trees.png"
+        },
+        {
+            "id": "BLOCK HOUSE",
+            "path": "modules/default/images/map/block-house.png"
+        },
+        {
+            "id": "BRIDGE",
+            "path": "modules/default/images/map/bridge.png"
+        },
+        {
+            "id": "BROKEN WALL",
+            "path": "modules/default/images/map/broken-wall.png"
+        },
+        {
+            "id": "BYZANTINE TEMPLE",
+            "path": "modules/default/images/map/byzantin-temple.png"
+        },
+        {
+            "id": "CACTUS",
+            "path": "modules/default/images/map/cactus.png"
+        },
+        {
+            "id": "CAGE",
+            "path": "modules/default/images/map/cage.png"
+        },
+        {
+            "id": "CAPITOL",
+            "path": "modules/default/images/map/capitol.png"
+        },
+        {
+            "id": "CASTLE RUINS",
+            "path": "modules/default/images/map/castle-ruins.png"
+        },
+        {
+            "id": "CASTLE",
+            "path": "modules/default/images/map/castle.png"
+        },
+        {
+            "id": "CAVE",
+            "path": "modules/default/images/map/cave-entrance.png"
+        },
+        {
+            "id": "FIRE",
+            "path": "modules/default/images/map/celebration-fire.png"
+        },
+        {
+            "id": "CELLAR",
+            "path": "modules/default/images/map/cellar-barrels.png"
+        },
+        {
+            "id": "CHURCH",
+            "path": "modules/default/images/map/church.png"
+        },
+        {
+            "id": "CLOCK TOWER",
+            "path": "modules/default/images/map/clock-tower.png"
+        },
+        {
+            "id": "CLOSED DOORS",
+            "path": "modules/default/images/map/closed-doors.png"
+        },
+        {
+            "id": "COLISEUM",
+            "path": "modules/default/images/map/coliseum.png"
+        },
+        {
+            "id": "CONGRESS",
+            "path": "modules/default/images/map/congress.png"
+        },
+        {
+            "id": "CORAL",
+            "path": "modules/default/images/map/coral.png"
+        },
+        {
+            "id": "CRACKED GLASS",
+            "path": "modules/default/images/map/cracked-glass.png"
+        },
+        {
+            "id": "CRYPT",
+            "path": "modules/default/images/map/crypt-entrance.png"
+        },
+        {
+            "id": "DAM",
+            "path": "modules/default/images/map/dam.png"
+        },
+        {
+            "id": "DAMAGED HOUSE",
+            "path": "modules/default/images/map/damaged-house.png"
+        },
+        {
+            "id": "DEFENSIVE WALL",
+            "path": "modules/default/images/map/defensive-wall.png"
+        },
+        {
+            "id": "DIRECTION",
+            "path": "modules/default/images/map/direction-sign.png"
+        },
+        {
+            "id": "DIRECTIONS",
+            "path": "modules/default/images/map/direction-signs.png"
+        },
+        {
+            "id": "EARTH SPIT",
+            "path": "modules/default/images/map/earth-spit.png"
+        },
+        {
+            "id": "EGYPTIAN TEMPLE",
+            "path": "modules/default/images/map/egyptian-temple.png"
+        },
+        {
+            "id": "ELVEN CASTLE",
+            "path": "modules/default/images/map/elven-castle.png"
+        },
+        {
+            "id": "FAMILY HOUSE",
+            "path": "modules/default/images/map/family-house.png"
+        },
+        {
+            "id": "FIRE RING",
+            "path": "modules/default/images/map/fire-ring.png"
+        },
+        {
+            "id": "FIRE SHRINE",
+            "path": "modules/default/images/map/fire-shrine.png"
+        },
+        {
+            "id": "FIRE WAVE",
+            "path": "modules/default/images/map/fire-wave.png"
+        },
+        {
+            "id": "FIRE ZONE",
+            "path": "modules/default/images/map/fire-zone.png"
+        },
+        {
+            "id": "FIRE WALL",
+            "path": "modules/default/images/map/firewall.png"
+        },
+        {
+            "id": "WOOD CABIN",
+            "path": "modules/default/images/map/wood-cabin.png"
+        },
+        {
+            "id": "WOOD PILE",
+            "path": "modules/default/images/map/wood-pile.png"
+        },
+        {
+            "id": "WOODEN SIGN",
+            "path": "modules/default/images/map/wooden-sign.png"
+        },
+        {
+            "id": "WOODEN CRATE",
+            "path": "modules/default/images/map/wooden-crate.png"
+        },
+        {
+            "id": "WINDOW",
+            "path": "modules/default/images/map/window.png"
+        },
+        {
+            "id": "WINDMILL",
+            "path": "modules/default/images/map/windmill.png"
+        },
+        {
+            "id": "WILDFIRES",
+            "path": "modules/default/images/map/wildfires.png"
+        },
+        {
+            "id": "WHITE TOWER",
+            "path": "modules/default/images/map/white-tower.png"
+        },
+        {
+            "id": "WHIRLWIND",
+            "path": "modules/default/images/map/whirlwind.png"
+        },
+        {
+            "id": "WELL",
+            "path": "modules/default/images/map/well.png"
+        },
+        {
+            "id": "TREE DOOR",
+            "path": "modules/default/images/map/tree-door.png"
+        },
+        {
+            "id": "TREE ROOTS",
+            "path": "modules/default/images/map/tree-roots.png"
+        },
+        {
+            "id": "TRIFORCE",
+            "path": "modules/default/images/map/triforce.png"
+        },
+        {
+            "id": "TRIPLE GATE",
+            "path": "modules/default/images/map/triple-gate.png"
+        },
+        {
+            "id": "UNDERGROUND CAVE",
+            "path": "modules/default/images/map/underground-cave.png"
+        },
+        {
+            "id": "VALLEY",
+            "path": "modules/default/images/map/valley.png"
+        },
+        {
+            "id": "VIKING CHURCH",
+            "path": "modules/default/images/map/viking-church.png"
+        },
+        {
+            "id": "VOLCANO",
+            "path": "modules/default/images/map/volcano.png"
+        },
+        {
+            "id": "VORTEX",
+            "path": "modules/default/images/map/vortex.png"
+        },
+        {
+            "id": "WARP PIPE",
+            "path": "modules/default/images/map/warp-pipe.png"
+        },
+        {
+            "id": "WATCHTOWER",
+            "path": "modules/default/images/map/watchtower.png"
+        },
+        {
+            "id": "WATER FOUNTAIN",
+            "path": "modules/default/images/map/water-fountain.png"
+        },
+        {
+            "id": "WATER TOWER",
+            "path": "modules/default/images/map/water-tower.png"
+        },
+        {
+            "id": "SPIDER WEB",
+            "path": "modules/default/images/map/spider-web.png"
+        },
+        {
+            "id": "SPIKED FENCE",
+            "path": "modules/default/images/map/spiked-fence.png"
+        },
+        {
+            "id": "SPIKY PIT",
+            "path": "modules/default/images/map/spiky-pit.png"
+        },
+        {
+            "id": "STALACTITES",
+            "path": "modules/default/images/map/stalactites.png"
+        },
+        {
+            "id": "STEEL DOOR",
+            "path": "modules/default/images/map/steel-door.png"
+        },
+        {
+            "id": "STONE BLOCK",
+            "path": "modules/default/images/map/stone-block.png"
+        },
+        {
+            "id": "STONE BRIDGE",
+            "path": "modules/default/images/map/stone-bridge.png"
+        },
+        {
+            "id": "STONE BUST",
+            "path": "modules/default/images/map/stone-bust.png"
+        },
+        {
+            "id": "STONE TOWER",
+            "path": "modules/default/images/map/stone-tower.png"
+        },
+        {
+            "id": "STONE WALL",
+            "path": "modules/default/images/map/stone-wall.png"
+        },
+        {
+            "id": "SUSPENSION BRIDGE",
+            "path": "modules/default/images/map/suspension-bridge.png"
+        },
+        {
+            "id": "SWORD ALTAR",
+            "path": "modules/default/images/map/sword-altar.png"
+        },
+        {
+            "id": "SWORD IN STONE",
+            "path": "modules/default/images/map/sword-in-stone.png"
+        },
+        {
+            "id": "TALL BRIDGE",
+            "path": "modules/default/images/map/tall-bridge.png"
+        },
+        {
+            "id": "TEMPLE DOOR",
+            "path": "modules/default/images/map/temple-door.png"
+        },
+        {
+            "id": "TEMPLE GATE",
+            "path": "modules/default/images/map/temple-gate.png"
+        },
+        {
+            "id": "THORNY VINE",
+            "path": "modules/default/images/map/thorny-vine.png"
+        },
+        {
+            "id": "TOMBSTONE",
+            "path": "modules/default/images/map/tombstone.png"
+        },
+        {
+            "id": "TOTEM",
+            "path": "modules/default/images/map/totem.png"
+        },
+        {
+            "id": "TOWER BRIDGE",
+            "path": "modules/default/images/map/tower-bridge.png"
+        },
+        {
+            "id": "TOWER FLAG",
+            "path": "modules/default/images/map/tower-flag.png"
+        },
+        {
+            "id": "SMOKING VOLCANO",
+            "path": "modules/default/images/map/smoking-volcano.png"
+        },
+        {
+            "id": "SHINTO SHRINE",
+            "path": "modules/default/images/map/shinto-shrine.png"
+        },
+        {
+            "id": "SHINTO SHRINE MIRROR",
+            "path": "modules/default/images/map/shinto-shrine-mirror.png"
+        },
+        {
+            "id": "SECRET DOOR",
+            "path": "modules/default/images/map/secret-door.png"
+        },
+        {
+            "id": "SAMARA MOSQUE",
+            "path": "modules/default/images/map/samara-mosque.png"
+        },
+        {
+            "id": "SALOON",
+            "path": "modules/default/images/map/saloon.png"
+        },
+        {
+            "id": "SALOON DOORS",
+            "path": "modules/default/images/map/saloon-doors.png"
+        },
+        {
+            "id": "CATHEDRAL",
+            "path": "modules/default/images/map/saint-basil-cathedral.png"
+        },
+        {
+            "id": "ROUND SILO",
+            "path": "modules/default/images/map/round-silo.png"
+        },
+        {
+            "id": "RIALTO BRIDGE",
+            "path": "modules/default/images/map/rialto-bridge.png"
+        },
+        {
+            "id": "RAMPART",
+            "path": "modules/default/images/map/rempart.png"
+        },
+        {
+            "id": "REFINERY",
+            "path": "modules/default/images/map/refinery.png"
+        },
+        {
+            "id": "CITADEL",
+            "path": "modules/default/images/map/qaitbay-citadel.png"
+        },
+        {
+            "id": "PYRE",
+            "path": "modules/default/images/map/pyre.png"
+        },
+        {
+            "id": "POST OFFICE",
+            "path": "modules/default/images/map/post-office.png"
+        },
+        {
+            "id": "PORTCULIS",
+            "path": "modules/default/images/map/portculis.png"
+        },
+        {
+            "id": "PIRATE GRAVE",
+            "path": "modules/default/images/map/pirate-grave.png"
+        },
+        {
+            "id": "PIPES",
+            "path": "modules/default/images/map/pipes.png"
+        },
+        {
+            "id": "PEAKS",
+            "path": "modules/default/images/map/peaks.png"
+        },
+        {
+            "id": "PAPYRUS",
+            "path": "modules/default/images/map/papyrus.png"
+        },
+        {
+            "id": "LEAF",
+            "path": "modules/default/images/map/linden-leaf.png"
+        },
+        {
+            "id": "MAGIC GATE",
+            "path": "modules/default/images/map/magic-gate.png"
+        },
+        {
+            "id": "MARTYR MEMORIAL",
+            "path": "modules/default/images/map/martyr-memorial.png"
+        },
+        {
+            "id": "MAYAN PYRAMID",
+            "path": "modules/default/images/map/mayan-pyramid.png"
+        },
+        {
+            "id": "MEDIEVAL GATE",
+            "path": "modules/default/images/map/medieval-gate.png"
+        },
+        {
+            "id": "PAVILION",
+            "path": "modules/default/images/map/medieval-pavilion.png"
+        },
+        {
+            "id": "MENHIR",
+            "path": "modules/default/images/map/menhir.png"
+        },
+        {
+            "id": "MOUNTAIN CAVE",
+            "path": "modules/default/images/map/mountain-cave.png"
+        },
+        {
+            "id": "MOUNTAIN ROAD",
+            "path": "modules/default/images/map/mountain-road.png"
+        },
+        {
+            "id": "MUSHROOM GILLS",
+            "path": "modules/default/images/map/mushroom-gills.png"
+        },
+        {
+            "id": "MUSHROOM HOUSE",
+            "path": "modules/default/images/map/mushroom-house.png"
+        },
+        {
+            "id": "MUSHROOM",
+            "path": "modules/default/images/map/mushroom.png"
+        },
+        {
+            "id": "MUSHROM CLUSTER",
+            "path": "modules/default/images/map/mushrooms-cluster.png"
+        },
+        {
+            "id": "OAK LEAF",
+            "path": "modules/default/images/map/oak-leaf.png"
+        },
+        {
+            "id": "OAK",
+            "path": "modules/default/images/map/oak.png"
+        },
+        {
+            "id": "OASIS",
+            "path": "modules/default/images/map/oasis.png"
+        },
+        {
+            "id": "OBSERVATORY",
+            "path": "modules/default/images/map/observatory.png"
+        },
+        {
+            "id": "OPEN GATE",
+            "path": "modules/default/images/map/open-gate.png"
+        },
+        {
+            "id": "PAGODA",
+            "path": "modules/default/images/map/pagoda.png"
+        },
+        {
+            "id": "PALISADE",
+            "path": "modules/default/images/map/palisade.png"
+        },
+        {
+            "id": "HANGING SIGN",
+            "path": "modules/default/images/map/hanging-sign.png"
+        },
+        {
+            "id": "HASTY GRAVE",
+            "path": "modules/default/images/map/hasty-grave.png"
+        },
+        {
+            "id": "HEAVEN GATE",
+            "path": "modules/default/images/map/heaven-gate.png"
+        },
+        {
+            "id": "HEMP",
+            "path": "modules/default/images/map/hemp.png"
+        },
+        {
+            "id": "HIGH GRASS",
+            "path": "modules/default/images/map/high-grass.png"
+        },
+        {
+            "id": "HILL CONQUEST",
+            "path": "modules/default/images/map/hill-conquest.png"
+        },
+        {
+            "id": "HILL FORT",
+            "path": "modules/default/images/map/hill-fort.png"
+        },
+        {
+            "id": "HOBBIT DOOR",
+            "path": "modules/default/images/map/hobbit-door.png"
+        },
+        {
+            "id": "HOLE LADDER",
+            "path": "modules/default/images/map/hole-ladder.png"
+        },
+        {
+            "id": "HOSPITAL",
+            "path": "modules/default/images/map/hospital.png"
+        },
+        {
+            "id": "LADDER",
+            "path": "modules/default/images/map/ladder.png"
+        },
+        {
+            "id": "JUNGLE",
+            "path": "modules/default/images/map/jungle.png"
+        },
+        {
+            "id": "ISLAND",
+            "path": "modules/default/images/map/island.png"
+        },
+        {
+            "id": "INDIAN PALACE",
+            "path": "modules/default/images/map/indian-palace.png"
+        },
+        {
+            "id": "INDIA GATE",
+            "path": "modules/default/images/map/india-gate.png"
+        },
+        {
+            "id": "IGLOO",
+            "path": "modules/default/images/map/igloo.png"
+        },
+        {
+            "id": "HOUSE",
+            "path": "modules/default/images/map/house.png"
+        },
+        {
+            "id": "HOT SURFACE",
+            "path": "modules/default/images/map/hot-surface.png"
+        },
+        {
+            "id": "LIGHTHOUSE",
+            "path": "modules/default/images/map/lighthouse.png"
+        },
+        {
+            "id": "CLOVER",
+            "path": "modules/default/images/map/clover.png"
+        },
+        {
+            "id": "CRYSTAL GROWTH",
+            "path": "modules/default/images/map/crystal-growth.png"
+        },
+        {
+            "id": "CRYSTAL SHRINE",
+            "path": "modules/default/images/map/crystal-shrine.png"
+        },
+        {
+            "id": "DJED PILLAR",
+            "path": "modules/default/images/map/djed-pillar.png"
+        },
+        {
+            "id": "FLAME TUNNEL",
+            "path": "modules/default/images/map/flame-tunnel.png"
+        },
+        {
+            "id": "FLAME",
+            "path": "modules/default/images/map/flame.png"
+        },
+        {
+            "id": "FLAMED LEAF",
+            "path": "modules/default/images/map/flamed-leaf.png"
+        },
+        {
+            "id": "FLAMER",
+            "path": "modules/default/images/map/flamer.png"
+        },
+        {
+            "id": "FLAX",
+            "path": "modules/default/images/map/flax.png"
+        },
+        {
+            "id": "FLOWER EMBLEM",
+            "path": "modules/default/images/map/flower-emblem.png"
+        },
+        {
+            "id": "FLOWERS",
+            "path": "modules/default/images/map/flowers.png"
+        },
+        {
+            "id": "FLYING FLAG",
+            "path": "modules/default/images/map/flying-flag.png"
+        },
+        {
+            "id": "FOG",
+            "path": "modules/default/images/map/fog.png"
+        },
+        {
+            "id": "GATE",
+            "path": "modules/default/images/map/gate.png"
+        },
+        {
+            "id": "GRANARY",
+            "path": "modules/default/images/map/granary.png"
+        },
+        {
+            "id": "GRASS MUSHROOM",
+            "path": "modules/default/images/map/grass-mushroom.png"
+        },
+        {
+            "id": "GRASS",
+            "path": "modules/default/images/map/grass.png"
+        },
+        {
+            "id": "GRAVEYARD",
+            "path": "modules/default/images/map/graveyard.png"
+        },
+        {
+            "id": "GREAT PYRAMID",
+            "path": "modules/default/images/map/great-pyramid.png"
+        },
+        {
+            "id": "GREEK SPHINX",
+            "path": "modules/default/images/map/greek-sphinx.png"
+        },
+        {
+            "id": "GREEK TEMPLE",
+            "path": "modules/default/images/map/greek-temple.png"
+        },
+        {
+            "id": "GREENHOUSE",
+            "path": "modules/default/images/map/greenhouse.png"
+        },
+        {
+            "id": "CRESCENTIUM STEEL SWORD",
+            "path": "modules/default/images/items/croc-sword.png"
+        },
+        {
+            "id": "VIAL",
+            "path": "modules/default/images/items/round-bottom-flask.png"
+        },
+        {
+            "id": "RING",
+            "path": "modules/default/images/items/power-ring.png"
+        },
+        {
+            "id": "BOW",
+            "path": "modules/default/images/items/bow-string.png"
+        },
+        {
+            "id": "ARROWS",
+            "path": "modules/default/images/items/arrow-cluster.png"
+        },
+        {
+            "id": "BLUTGETRANKER",
+            "path": "modules/default/images/items/dripping-sword.png"
+        },
+        {
+            "id": "OPAL MEDALLION",
+            "path": "modules/default/images/items/gem-chain.png"
+        },
+        {
+            "id": "OCTAGONAL GLASS PRISM",
+            "path": "modules/default/images/items/amethyst.png"
+        },
+        {
+            "id": "SHARD SWORD",
+            "path": "modules/default/images/items/shard-sword.png"
+        },
+        {
+            "id": "KEY",
+            "path": "modules/default/images/items/key.png"
+        },
+        {
+            "id": "GLASS BALL",
+            "path": "modules/default/images/items/glass-ball.png"
+        },
+        {
+            "id": "GREY GLASS BALL",
+            "path": "modules/default/images/items/glass-ball-grey.png"
+        },
+        {
+            "id": "CROWN COIN",
+            "path": "modules/default/images/items/crown-coin.png"
+        },
+        {
+            "id": "LEATHER JERKIN",
+            "path": "modules/default/images/items/leather-armor.png"
+        },
+        {
+            "id": "SNOWFLAKE",
+            "path": "modules/default/images/items/snowflake-1.png"
+        },
+        {
+            "id": "CURVY KNIFE",
+            "path": "modules/default/images/items/curvy-knife.png"
+        },
+        {
+            "id": "SAPHIRE",
+            "path": "modules/default/images/items/saphir.png"
+        },
+        {
+            "id": "CHEWED SKULL",
+            "path": "modules/default/images/items/chewed-skull.png"
+        },
+        {
+            "id": "PLAIN DAGGER",
+            "path": "modules/default/images/items/plain-dagger.png"
+        },
+        {
+            "id": "BOWIE KNIFE",
+            "path": "modules/default/images/items/bowie-knife.png"
+        },
+        {
+            "id": "RING OF WARDING",
+            "path": "modules/default/images/items/globe-ring.png"
+        },
+        {
+            "id": "COFFIN",
+            "path": "modules/default/images/items/coffin.png"
+        },
+        {
+            "id": "CORSET",
+            "path": "modules/default/images/items/corset.png"
+        },
+        {
+            "id": "HORSE HEAD",
+            "path": "modules/default/images/items/horse-head.png"
+        },
+        {
+            "id": "STONE PILE",
+            "path": "modules/default/images/map/stone-pile.png"
+        },
+        {
+            "id": "STONE TABLET",
+            "path": "modules/default/images/items/stone-tablet.png"
+        },
+        {
+            "id": "RING",
+            "path": "modules/default/images/items/ring.png"
+        },
+        {
+            "id": "PERFUME BOTTLE",
+            "path": "modules/default/images/items/perfume-bottle.png"
+        },
+        {
+            "id": "TOY MALLET",
+            "path": "modules/default/images/items/toy-mallet.png"
+        },
+        {
+            "id": "3D HAMMER",
+            "path": "modules/default/images/items/3d-hammer.png"
+        },
+        {
+            "id": "SHARPED TEETH SKULL",
+            "path": "modules/default/images/items/sharped-teeth-skull.png"
+        },
+        {
+            "id": "HEART ORGAN",
+            "path": "modules/default/images/items/heart-organ.png"
+        },
+        {
+            "id": "HEART ORGAN GREY",
+            "path": "modules/default/images/items/heart-organ-grey.png"
+        },
+        {
+            "id": "RIBCAGE",
+            "path": "modules/default/images/items/ribcage.png"
+        },
+        {
+            "id": "ARM",
+            "path": "modules/default/images/items/arm.png"
+        },
+        {
+            "id": "LEG",
+            "path": "modules/default/images/items/leg.png"
+        },
+        {
+            "id": "GAUNTLET",
+            "path": "modules/default/images/items/gauntlet.png"
+        },
+        {
+            "id": "WINGED SWORD",
+            "path": "modules/default/images/items/winged-sword.png"
+        },
+        {
+            "id": "BELT ARMOR",
+            "path": "modules/default/images/items/belt-armor.png"
+        },
+        {
+            "id": "WINGED SHIELD",
+            "path": "modules/default/images/items/winged-shield.png"
+        },
+        {
+            "id": "LIGHTNING BOW",
+            "path": "modules/default/images/items/lightning-bow.png"
+        },
+        {
+            "id": "GOLD SCARAB",
+            "path": "modules/default/images/items/gold-scarab.png"
+        },
+        {
+            "id": "RUNE SWORD",
+            "path": "modules/default/images/items/rune-sword.png"
+        },
+        {
+            "id": "BREASTPLATE",
+            "path": "modules/default/images/items/breastplate.png"
+        },
+        {
+            "id": "ABDOMINAL ARMOR",
+            "path": "modules/default/images/items/abdominal-armor.png"
+        },
+        {
+            "id": "BATTLE AXE",
+            "path": "modules/default/images/items/battle-axe.png"
+        },
+        {
+            "id": "MAZE",
+            "path": "modules/default/images/system/maze.png"
+        },
+        {
+            "id": "BRAIN",
+            "path": "modules/default/images/attributes/brain.png"
+        },
+        {
+            "id": "WALL ORANGE",
+            "path": "modules/default/images/color/wall-orange.png"
+        },
+        {
+            "id": "HEXES",
+            "path": "modules/default/images/map/hexes.png"
+        },
+        {
+            "id": "HEXES GRAY",
+            "path": "modules/default/images/map/hexes-gray.png"
+        },
+        {
+            "id": "HEXES GREEN",
+            "path": "modules/default/images/color/hexes-green.png"
+        },
+        {
+            "id": "HEXES BROWN",
+            "path": "modules/default/images/color/hexes-brown.png"
+        },
+        {
+            "id": "HEXES BLUE",
+            "path": "modules/default/images/color/hexes-blue.png"
+        },
+        {
+            "id": "HEXES RED",
+            "path": "modules/default/images/color/hexes-red.png"
+        },
+        {
+            "id": "HEXES YELLOW",
+            "path": "modules/default/images/color/hexes-yellow.png"
+        },
+        {
+            "id": "HEXES ORANGE",
+            "path": "modules/default/images/color/hexes-orange.png"
+        },
+        {
+            "id": "HEXES VIOLET",
+            "path": "modules/default/images/color/hexes-violet.png"
+        },
+        {
+            "id": "HEXES LIGHT BLUE",
+            "path": "modules/default/images/color/hexes-light-blue.png"
+        },
+        {
+            "id": "HEXES MAGENTA",
+            "path": "modules/default/images/color/hexes-magenta.png"
+        },
+        {
+            "id": "HEXES LIGHT GREEN",
+            "path": "modules/default/images/color/hexes-light-green.png"
+        },
+        {
+            "id": "BLOOD",
+            "path": "modules/default/images/attributes/blood.png"
+        },
+        {
+            "id": "BLOODY SWORD",
+            "path": "modules/default/images/system/bloody-sword.png"
+        },
+        {
+            "id": "TRANSPORTATION RINGS",
+            "path": "modules/default/images/skills/transportation-rings.png"
+        },
+        {
+            "id": "MAGNIFYING GLASS",
+            "path": "modules/default/images/system/magnifying-glass.png"
+        },
+        {
+            "id": "UPGRADE",
+            "path": "modules/default/images/system/upgrade.png"
+        },
+        {
+            "id": "PLUS",
+            "path": "modules/default/images/system/plus.png"
+        },
+        {
+            "id": "WEIGHT",
+            "path": "modules/default/images/system/weight.png"
+        },
+        {
+            "id": "POWER LIGHTNING",
+            "path": "modules/default/images/system/power-lightning.png"
+        },
+        {
+            "id": "PAINT ROLLER",
+            "path": "modules/default/images/system/paint-roller.png"
+        },
+        {
+            "id": "CHECKBOX TREE",
+            "path": "modules/default/images/system/checkbox-tree.png"
+        },
+        {
+            "id": "RUSTY",
+            "path": "modules/default/images/items/properties/rusty-sword.png"
+        },
+        {
+            "id": "BROKEN",
+            "path": "modules/default/images/items/properties/shattered-sword.png"
+        },
+        {
+            "id": "POISONED",
+            "path": "modules/default/images/items/properties/poison-gas.png"
+        },
+        {
+            "id": "RANGED",
+            "path": "modules/default/images/items/properties/arrow-scope.png"
+        },
+        {
+            "id": "MELEE",
+            "path": "modules/default/images/items/properties/fist.png"
+        },
+        {
+            "id": "WEAPON",
+            "path": "modules/default/images/items/properties/axe-sword.png"
+        },
+        {
+            "id": "CURSED",
+            "path": "modules/default/images/items/properties/cursed-star.png"
+        },
+        {
+            "id": "ACCESSORY",
+            "path": "modules/default/images/items/properties/engagement-ring.png"
+        },
+        {
+            "id": "RESURRECTION",
+            "path": "modules/default/images/items/properties/ankh.png"
+        },
+        {
+            "id": "EDIBLE",
+            "path": "modules/default/images/items/properties/fruit-bowl.png"
+        },
+        {
+            "id": "PRIMARY",
+            "path": "modules/default/images/items/properties/1.png"
+        },
+        {
+            "id": "SECONDARY",
+            "path": "modules/default/images/items/properties/2.png"
+        },
+        {
+            "id": "ARMOUR",
+            "path": "modules/default/images/items/properties/metal-scales.png"
+        },
+        {
+            "id": "INVISIBLE",
+            "path": "modules/default/images/items/properties/invisible.png"
+        },
+        {
+            "id": "EQUIPPED",
+            "path": "modules/default/images/items/properties/battle-gear.png"
+        },
+        {
+            "id": "HORIZONTAL FLIP",
+            "path": "modules/default/images/system/horizontal-flip.png"
+        },
+        {
+            "id": "VERTICAL FLIP",
+            "path": "modules/default/images/system/vertical-flip.png"
+        },
+        {
+            "id": "SELECT TRANSPARENT",
+            "path": "modules/default/images/system/select-transparent.png"
+        },
+        {
+            "id": "SELECT TRANSPARENT BLUE",
+            "path": "modules/default/images/system/select-transparent-blue.png"
+        }
+    ]
+}

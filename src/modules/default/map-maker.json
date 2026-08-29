@@ -1,0 +1,2316 @@
+{
+    "map-assets": [
+        "WALL",
+        "ARCH BRIDGE",
+        "EMPTY SPACE",
+        "WHITE SPACE",
+        "DOOR",
+        "DOORWAY",
+        "WOODEN DOOR",
+        "STAIRS",
+        "DUNGEON EXIT",
+        "WOODEN FENCE",
+        "WINDOW BARS",
+        "ROCK",
+        "CENSER",
+        "WATERFALL",
+        "ROPE BRIDGE",
+        "ROPE BRIDGE INVERTED",
+        "WAVES",
+        "WAVE CREST",
+        "WOODEN PLANK",
+        "WATER",
+        "PILLAR",
+        "BROKEN PILLARS",
+        "FOREST",
+        "ANCIENT RUINS",
+        "AQUARIUS",
+        "AQUEDUCT",
+        "ARABIC DOOR",
+        "ARC",
+        "BARN",
+        "BARRACKS TENT",
+        "BARRACKS",
+        "BARREL",
+        "BASE DOME",
+        "BEECH",
+        "BIRCH TREES",
+        "BLOCK HOUSE",
+        "BRIDGE",
+        "BROKEN WALL",
+        "BYZANTINE TEMPLE",
+        "CACTUS",
+        "CAGE",
+        "CAPITOL",
+        "CASTLE RUINS",
+        "CASTLE",
+        "CAVE",
+        "FIRE",
+        "CELLAR",
+        "CHURCH",
+        "CLOCK TOWER",
+        "CLOSED DOORS",
+        "COLISEUM",
+        "CONGRESS",
+        "CORAL",
+        "CRACKED GLASS",
+        "CRYPT",
+        "DAM",
+        "DAMAGED HOUSE",
+        "DEFENSIVE WALL",
+        "DIRECTION",
+        "DIRECTIONS",
+        "EARTH SPIT",
+        "EGYPTIAN TEMPLE",
+        "ELVEN CASTLE",
+        "FAMILY HOUSE",
+        "FIRE RING",
+        "FIRE SHRINE",
+        "FIRE WAVE",
+        "FIRE ZONE",
+        "FIRE WALL",
+        "WOOD CABIN",
+        "WOOD PILE",
+        "WOODEN SIGN",
+        "WOODEN CRATE",
+        "WINDOW",
+        "WINDMILL",
+        "WILDFIRES",
+        "WHITE TOWER",
+        "WHIRLWIND",
+        "WELL",
+        "TREE DOOR",
+        "TREE ROOTS",
+        "TRIFORCE",
+        "TRIPLE GATE",
+        "UNDERGROUND CAVE",
+        "VALLEY",
+        "VIKING CHURCH",
+        "VOLCANO",
+        "VORTEX",
+        "WARP PIPE",
+        "WATCHTOWER",
+        "WATER FOUNTAIN",
+        "WATER TOWER",
+        "SPIDER WEB",
+        "SPIKED FENCE",
+        "SPIKY PIT",
+        "STALACTITES",
+        "STEEL DOOR",
+        "STONE BLOCK",
+        "STONE BRIDGE",
+        "STONE BUST",
+        "STONE TOWER",
+        "STONE WALL",
+        "SUSPENSION BRIDGE",
+        "SWORD ALTAR",
+        "SWORD IN STONE",
+        "TALL BRIDGE",
+        "TEMPLE DOOR",
+        "TEMPLE GATE",
+        "THORNY VINE",
+        "TOMBSTONE",
+        "TOTEM",
+        "TOWER BRIDGE",
+        "TOWER FLAG",
+        "SMOKING VOLCANO",
+        "SHINTO SHRINE",
+        "SHINTO SHRINE MIRROR",
+        "SECRET DOOR",
+        "SAMARA MOSQUE",
+        "SALOON",
+        "SALOON DOORS",
+        "CATHEDRAL",
+        "ROUND SILO",
+        "RIALTO BRIDGE",
+        "RAMPART",
+        "REFINERY",
+        "CITADEL",
+        "PYRE",
+        "POST OFFICE",
+        "PIRATE GRAVE",
+        "PIPES",
+        "PEAKS",
+        "PAPYRUS",
+        "LEAF",
+        "MAGIC GATE",
+        "MARTYR MEMORIAL",
+        "MAYAN PYRAMID",
+        "MEDIEVAL GATE",
+        "PAVILION",
+        "MENHIR",
+        "MOUNTAIN CAVE",
+        "MOUNTAIN ROAD",
+        "MUSHROOM GILLS",
+        "MUSHROOM HOUSE",
+        "MUSHROOM",
+        "MUSHROM CLUSTER",
+        "OAK LEAF",
+        "OAK",
+        "OASIS",
+        "OBSERVATORY",
+        "OPEN GATE",
+        "PAGODA",
+        "PALISADE",
+        "HANGING SIGN",
+        "HASTY GRAVE",
+        "HEAVEN GATE",
+        "HEMP",
+        "HIGH GRASS",
+        "HILL CONQUEST",
+        "HILL FORT",
+        "HOBBIT DOOR",
+        "HOLE LADDER",
+        "HOSPITAL",
+        "LADDER",
+        "JUNGLE",
+        "ISLAND",
+        "INDIAN PALACE",
+        "INDIA GATE",
+        "IGLOO",
+        "HOUSE",
+        "HOT SURFACE",
+        "LIGHTHOUSE",
+        "CLOVER",
+        "CRYSTAL GROWTH",
+        "CRYSTAL SHRINE",
+        "DJED PILLAR",
+        "FLAME TUNNEL",
+        "FLAME",
+        "FLAMED LEAF",
+        "FLAMER",
+        "FLAX",
+        "FLOWER EMBLEM",
+        "FLOWERS",
+        "FLYING FLAG",
+        "FOG",
+        "GATE",
+        "GRANARY",
+        "GRASS MUSHROOM",
+        "GRASS",
+        "GRAVEYARD",
+        "GREAT PYRAMID",
+        "GREEK SPHINX",
+        "GREEK TEMPLE",
+        "GREENHOUSE",
+        "STONE PILE",
+        "WALL ORANGE",
+        "HEXES",
+        "HEXES GRAY",
+        "HEXES GREEN",
+        "HEXES BROWN",
+        "HEXES BLUE",
+        "HEXES RED",
+        "HEXES YELLOW",
+        "HEXES ORANGE",
+        "HEXES VIOLET",
+        "HEXES LIGHT BLUE",
+        "HEXES MAGENTA",
+        "HEXES LIGHT GREEN"
+    ],
+    "enemy-assets": [
+        "ASSASSIN"
+    ],
+    "enemies": {
+        "WARRIOR": {
+            "asset": "WARRIOR",
+            "attributes": [
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 9
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 7
+                },
+                {
+                    "maximum": 48,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 48
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 1,
+                    "type": "DAMAGE",
+                    "value": 3
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                }
+            ],
+            "class": "WARRIOR",
+            "control_type": "PLAYER",
+            "experience": 1750,
+            "encumbrance_limit": 10,
+            "items": [
+                {
+                    "name": "SWORD",
+                    "asset": "SWORD",
+                    "properties": [
+                        "WEAPON",
+                        "PRIMARY",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "SWORD"
+                },
+                {
+                    "attributes": {
+                        "ARMOUR": 3
+                    },
+                    "name": "CHAINMAIL",
+                    "asset": "CHAINMAIL",
+                    "properties": [
+                        "ARMOUR",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "CHAINMAIL"
+                },
+                {
+                    "contains": "GOLD",
+                    "name": "MONEY POUCH",
+                    "asset": "MONEY",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 40,
+                    "encumbrance": 1,
+                    "type": "POUCH"
+                }
+            ],
+            "moves": 1000,
+            "name": "WARRIOR",
+            "rank": 8,
+            "target": "WARRIOR"
+        },
+        "TRICKSTER": {
+            "asset": "TRICKSTER",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 7
+                },
+                {
+                    "maximum": 48,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 48
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 3
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 9
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                }
+            ],
+            "class": "TRICKSTER",
+            "control_type": "PLAYER",
+            "experience": 1750,
+            "encumbrance_limit": 10,
+            "items": [
+                {
+                    "name": "SWORD",
+                    "asset": "SWORD",
+                    "properties": [
+                        "WEAPON",
+                        "PRIMARY",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "SWORD"
+                },
+                {
+                    "name": "BOW",
+                    "asset": "BOW",
+                    "properties": [
+                        "WEAPON",
+                        "RANGED",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "BOW"
+                },
+                {
+                    "contains": "ARROW",
+                    "limit": -1,
+                    "name": "QUIVER",
+                    "asset": "QUIVER",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 6,
+                    "encumbrance": 1,
+                    "type": "QUIVER"
+                },
+                {
+                    "attributes": {
+                        "ARMOUR": 2
+                    },
+                    "name": "LEATHER ARMOUR",
+                    "asset": "LEATHER ARMOUR",
+                    "properties": [
+                        "ARMOUR",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "LEATHER ARMOUR"
+                },
+                {
+                    "contains": "GOLD",
+                    "name": "MONEY POUCH",
+                    "asset": "MONEY",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 40,
+                    "encumbrance": 1,
+                    "type": "POUCH"
+                }
+            ],
+            "moves": 1000,
+            "name": "TRICKSTER",
+            "rank": 8,
+            "shoot": "ARCHERY",
+            "skills": [
+                "DODGING",
+                "ARCHERY"
+            ],
+            "target": "TRICKSTER"
+        },
+        "SAGE": {
+            "asset": "SAGE",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 8
+                },
+                {
+                    "maximum": 40,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 40
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 3
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                }
+            ],
+            "class": "SAGE",
+            "control_type": "PLAYER",
+            "experience": 1750,
+            "encumbrance_limit": 10,
+            "items": [
+                {
+                    "name": "QUARTERSTAFF",
+                    "asset": "QUARTERSTAFF",
+                    "properties": [
+                        "WEAPON",
+                        "PRIMARY",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "QUARTERSTAFF"
+                },
+                {
+                    "name": "BOW",
+                    "asset": "BOW",
+                    "properties": [
+                        "WEAPON",
+                        "RANGED",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "BOW"
+                },
+                {
+                    "contains": "ARROW",
+                    "limit": -1,
+                    "name": "QUIVER",
+                    "asset": "QUIVER",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 6,
+                    "encumbrance": 1,
+                    "type": "QUIVER"
+                },
+                {
+                    "attributes": {
+                        "ARMOUR": 2
+                    },
+                    "name": "RINGMAIL",
+                    "asset": "RINGMAIL",
+                    "properties": [
+                        "ARMOUR",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "RINGMAIL"
+                },
+                {
+                    "contains": "GOLD",
+                    "name": "MONEY POUCH",
+                    "asset": "MONEY",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 40,
+                    "encumbrance": 1,
+                    "type": "POUCH"
+                }
+            ],
+            "moves": 1000,
+            "name": "SAGE",
+            "rank": 8,
+            "shoot": "ARCHERY",
+            "skills": [
+                "HEALING",
+                "QUARTERSTAFF",
+                "ESP",
+                "PARANORMAL SIGHT",
+                "LEVITATION",
+                "EXORCISM",
+                "ARCHERY"
+            ],
+            "target": "SAGE"
+        },
+        "ENCHANTER": {
+            "asset": "ENCHANTER",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 40,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 40
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 2,
+                    "type": "DAMAGE",
+                    "value": 2
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                }
+            ],
+            "class": "ENCHANTER",
+            "control_type": "PLAYER",
+            "experience": 1750,
+            "encumbrance_limit": 10,
+            "items": [
+                {
+                    "name": "SWORD",
+                    "asset": "SWORD",
+                    "properties": [
+                        "WEAPON",
+                        "PRIMARY",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "SWORD"
+                },
+                {
+                    "attributes": {
+                        "ARMOUR": 2
+                    },
+                    "name": "SILVER ARMOUR",
+                    "asset": "SILVER ARMOUR",
+                    "properties": [
+                        "ARMOUR",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "SILVER ARMOUR"
+                },
+                {
+                    "contains": "GOLD",
+                    "name": "MONEY POUCH",
+                    "asset": "MONEY",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 40,
+                    "encumbrance": 1,
+                    "type": "POUCH"
+                }
+            ],
+            "moves": 1000,
+            "name": "ENCHANTER",
+            "rank": 8,
+            "skills": [
+                "SPELLS"
+            ],
+            "spells": [
+                {
+                    "battle": true,
+                    "class": "BLASTING",
+                    "complexity": 1,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "VOLCANO SPRAY"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 1,
+                    "duration": 5,
+                    "ranged": true,
+                    "type": "NIGHTHOWL"
+                },
+                {
+                    "battle": true,
+                    "class": "BLASTING",
+                    "complexity": 1,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "WHITE FIRE"
+                },
+                {
+                    "battle": true,
+                    "class": "BLASTING",
+                    "complexity": 2,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "SWORDTHRUST"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 2,
+                    "duration": 5,
+                    "ranged": true,
+                    "type": "EYE OF THE TIGER"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 2,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "IMMEDIATE DELIVERANCE"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 3,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "MISTS OF DEATH"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 3,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "THE VAMPIRE SPELL"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 3,
+                    "duration": 5,
+                    "ranged": true,
+                    "type": "PILLAR OF SALT"
+                },
+                {
+                    "battle": true,
+                    "class": "BLASTING",
+                    "complexity": 4,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "SHEET LIGHTNING"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 4,
+                    "duration": -1,
+                    "ranged": false,
+                    "type": "GHASTLY TOUCH"
+                },
+                {
+                    "battle": true,
+                    "class": "BLASTING",
+                    "complexity": 5,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "NEMESIS BOLT"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 5,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "SERVILE ENTHRALMENT"
+                },
+                {
+                    "battle": false,
+                    "class": "PSYCHIC",
+                    "complexity": 1,
+                    "duration": -1,
+                    "ranged": false,
+                    "type": "SUMMON FALTYN"
+                },
+                {
+                    "battle": false,
+                    "class": "PSYCHIC",
+                    "complexity": 1,
+                    "duration": -1,
+                    "ranged": false,
+                    "type": "PREDICTION"
+                },
+                {
+                    "battle": false,
+                    "class": "PSYCHIC",
+                    "complexity": 1,
+                    "duration": -1,
+                    "ranged": false,
+                    "type": "DETECT ENCHANTMENT"
+                }
+            ],
+            "target": "ENCHANTER"
+        },
+        "ASSASSIN": {
+            "asset": "ASSASSIN",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 6
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 5
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "items": [
+                {
+                    "contains": "SHURIKEN",
+                    "limit": -1,
+                    "name": "SHURIKEN POUCH",
+                    "asset": "SHURIKEN",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 6,
+                    "encumbrance": 1,
+                    "type": "LIMITED SHURIKEN"
+                }
+            ],
+            "moves": 0,
+            "name": "ASSASSIN",
+            "rank": 0,
+            "shoot": "SHURIKEN",
+            "skills": [
+                "SHURIKEN"
+            ],
+            "target": "ASSASSIN",
+            "targets": [
+                "BARBARIAN",
+                "ENCHANTER",
+                "SAGE",
+                "TRICKSTER",
+                "WARRIOR"
+            ],
+            "target_probability": 50
+        },
+        "BARBARIAN": {
+            "asset": "BARBARIAN",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 5
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 12,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 12
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 1,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 2,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "BARBARIAN",
+            "rank": 0,
+            "target": "BARBARIAN",
+            "targets": [
+                "ASSASSIN",
+                "PLAYER"
+            ],
+            "target_probability": 50
+        },
+        "DIRGE": {
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 6
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 13,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 13
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 1
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 2
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "DIRGE",
+            "asset": "DIRGE",
+            "rank": 0,
+            "target": "DIRGE"
+        },
+        "SKIAPYR": {
+            "asset": "SKIAPYR",
+            "attributes": [
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 5
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 7
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 10,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 10
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "SKIAPYR",
+            "skills": [
+                "IGNORE ARMOUR"
+            ],
+            "target": "SKIAPYR"
+        },
+        "MAGUS VYL": {
+            "asset": "MAGUS VYL",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 9
+                },
+                {
+                    "maximum": 35,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 35
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 2,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 3
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "fight": "PARALYZING TOUCH",
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "MAGUS VYL",
+            "rank": 0,
+            "skills": [
+                "PARALYZING TOUCH"
+            ],
+            "target": "MAGUS VYL"
+        },
+        "ICON THE UNGODLY": {
+            "asset": "ICON THE UNGODLY",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 8
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 28,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 28
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 2,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 2,
+                    "type": "DAMAGE",
+                    "value": 2
+                }
+            ],
+            "control_type": "NPC",
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "ICON THE UNGODLY",
+            "skills": [
+                "RETRIBUTIVE FIRE"
+            ],
+            "spell_immunity": [
+                "SERVILE ENTHRALMENT"
+            ],
+            "target": "ICON THE UNGODLY"
+        },
+        "MAN IN BLUE": {
+            "asset": "MAN IN BLUE",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 7
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 15,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 15
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "MAN IN BLUE",
+            "rank": 0,
+            "target": "MAN IN BLUE"
+        },
+        "CORPSE": {
+            "asset": "CORPSE",
+            "attributes": [
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 5
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 4
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 2
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 4
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 1,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 2,
+            "name": "CORPSE",
+            "rank": 0,
+            "target": "CORPSE"
+        },
+        "BOWMAN": {
+            "asset": "BOWMAN",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 6
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 6
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "items": [
+                {
+                    "name": "BOW",
+                    "asset": "BOW",
+                    "properties": [
+                        "WEAPON",
+                        "RANGED",
+                        "EQUIPPED"
+                    ],
+                    "quantity": 1,
+                    "encumbrance": 1,
+                    "type": "BOW"
+                },
+                {
+                    "contains": "ARROW",
+                    "limit": -1,
+                    "name": "QUIVER",
+                    "asset": "QUIVER",
+                    "properties": [
+                        "CONTAINER",
+                        "CANNOT DROP",
+                        "CANNOT TRADE"
+                    ],
+                    "quantity": 40,
+                    "encumbrance": 1,
+                    "type": "QUIVER"
+                }
+            ],
+            "moves": 0,
+            "name": "BOWMAN",
+            "rank": 0,
+            "shoot": "ARCHERY",
+            "skills": [
+                "ARCHERY"
+            ],
+            "target": "BOWMAN"
+        },
+        "KNIGHT": {
+            "asset": "KNIGHT",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 1
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 40,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 40
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 3,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 2
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "GUILLARME",
+            "rank": 0,
+            "target": "KNIGHT"
+        },
+        "ECHIDNA": {
+            "asset": "ECHIDNA",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 40,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 40
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 2,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 2,
+                    "type": "DAMAGE",
+                    "value": 2
+                }
+            ],
+            "control_type": "NPC",
+            "fight": "POISONED BITE",
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "ECHIDNA",
+            "skills": [
+                "POISONED BITE"
+            ],
+            "type": "ECHIDNA"
+        },
+        "GIANT": {
+            "asset": "SKRYMIR THE GIANT",
+            "attributes": [
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 9
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 70,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 70
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 3,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 4
+                }
+            ],
+            "control_type": "NPC",
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "SKRYMIR THE GIANT",
+            "target": "GIANT"
+        },
+        "NEMESIS": {
+            "asset": "NEMESIS",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 8
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 40,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 40
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 1,
+                    "type": "DAMAGE",
+                    "value": 3
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "NEMESIS",
+            "rank": 0,
+            "target": "NEMESIS"
+        },
+        "BEORN": {
+            "asset": "BEORN",
+            "attributes": [
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 9
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 7
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 48,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 42
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 1,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "BEORN",
+            "rank": 0,
+            "target": "BEORN"
+        },
+        "HURONDOS": {
+            "asset": "KALUGEN",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 1
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 48,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 48
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 3
+                }
+            ],
+            "called_to_mind": [
+                "SWORDTHRUST"
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "HURONDUS",
+            "rank": 0,
+            "skills": [
+                "SPELLS"
+            ],
+            "spell_strategy": [
+                {
+                    "spell": "SWORDTHRUST",
+                    "uses": 1,
+                    "min": 1,
+                    "max": 4,
+                    "count": 1
+                }
+            ],
+            "spells": [
+                {
+                    "battle": true,
+                    "class": "BLASTING",
+                    "complexity": 2,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "SWORDTHRUST"
+                }
+            ],
+            "target": "HURONDOS"
+        },
+        "GARGOYLE": {
+            "asset": "GARGOYLE",
+            "attributes": [
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 5
+                },
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 5
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 4
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 7
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 2,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 2,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "encumbrance_limit": 10,
+            "moves": 2,
+            "name": "GARGOYLE",
+            "target": "GARGOYLE"
+        },
+        "EIDOLON": {
+            "asset": "EIDOLON",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 9
+                },
+                {
+                    "maximum": 40,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 40
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 2,
+                    "type": "DAMAGE",
+                    "value": 2
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "EIDOLON",
+            "rank": 0,
+            "target": "EIDOLON"
+        },
+        "GIANT SPIDER": {
+            "asset": "GIANT SPIDER",
+            "attributes": [
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 5
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 4
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 6
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 1,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 2,
+            "name": "GIANT SPIDER",
+            "rank": 0,
+            "target": "GIANT SPIDER"
+        },
+        "NEBULARON": {
+            "asset": "NEBULARON",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 50,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 50
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 2,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 4,
+                    "type": "DAMAGE",
+                    "value": 4
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "NEBULARON",
+            "rank": 0,
+            "skills": [
+                "MAGIC IMMUNITY"
+            ],
+            "target": "NEBULARON"
+        },
+        "DEATH FETISHIST": {
+            "asset": "DEATH FETISHIST",
+            "attributes": [
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 5
+                },
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 5
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 4
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 4,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 4
+                }
+            ],
+            "control_type": "NPC",
+            "moves": 1000,
+            "name": "DEATH FETISHIST",
+            "target": "DEATH FETISHIST"
+        },
+        "QUEL": {
+            "asset": "QUEL",
+            "attributes": [
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 8
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 35,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 35
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 1,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "called_to_mind": [
+                "MISTS OF DEATH"
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "QUEL",
+            "rank": 0,
+            "skills": [
+                "SPELLS"
+            ],
+            "spell_strategy": [
+                {
+                    "spell": "MISTS OF DEATH",
+                    "uses": 2,
+                    "min": 3,
+                    "max": 4,
+                    "count": 1
+                },
+                {
+                    "spell": "THE VAMPIRE SPELL",
+                    "uses": 1,
+                    "min": 1,
+                    "max": 2,
+                    "count": 1
+                }
+            ],
+            "spells": [
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 3,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "MISTS OF DEATH"
+                },
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 3,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "THE VAMPIRE SPELL"
+                }
+            ],
+            "target": "QUEL"
+        },
+        "RANGER": {
+            "asset": "RANGER",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 7
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 36,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 36
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 1,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 3,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 3
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "items": [
+                {
+                    "asset": "STEEL SCEPTRE",
+                    "contains": "CHARGE",
+                    "limit": 4,
+                    "name": "STEEL SCEPTRE",
+                    "properties": [
+                        "CONTAINER",
+                        "COMBAT",
+                        "REQUIRES TARGET"
+                    ],
+                    "quantity": 4,
+                    "encumbrance": 1,
+                    "type": "STEEL SCEPTRE",
+                    "damage_types": {
+                        "PLAYER": {
+                            "damage": 5,
+                            "modifier": 0
+                        },
+                        "ENEMY": {
+                            "damage": 5,
+                            "modifier": 0
+                        }
+                    },
+                    "target_effects": {
+                        "PLAYER": "DAMAGE TARGET",
+                        "ENEMY": "DAMAGE TARGET",
+                        "EIDOLON": "IMMUNE"
+                    },
+                    "drops": true
+                }
+            ],
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "RANGER",
+            "rank": 0,
+            "target": "RANGER"
+        },
+        "NIGHT ELF": {
+            "asset": "NIGHT ELF",
+            "attributes": [
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 6
+                },
+                {
+                    "maximum": 7,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 7
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 6
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 1,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "called_to_mind": [
+                "NIGHTHOWL"
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "NIGHT ELF",
+            "rank": 0,
+            "skills": [
+                "SPELLS"
+            ],
+            "spell_strategy": [
+                {
+                    "spell": "NIGHTHOWL",
+                    "uses": 1,
+                    "min": 1,
+                    "max": 4,
+                    "already_cast": "NIGHTHOWL",
+                    "count": 1
+                }
+            ],
+            "spells": [
+                {
+                    "battle": true,
+                    "class": "PSYCHIC",
+                    "complexity": 3,
+                    "duration": -1,
+                    "ranged": true,
+                    "type": "NIGHTHOWL"
+                }
+            ],
+            "target": "NIGHT ELF"
+        },
+        "ADVENTURER": {
+            "asset": "ADVENTURER",
+            "attributes": [
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 6
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 23,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 23
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 3,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 2,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 2
+                }
+            ],
+            "control_type": "NPC",
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "ADVENTURER",
+            "target": "ADVENTURER"
+        },
+        "INITIATE": {
+            "asset": "QUEL",
+            "attributes": [
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 6
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 5
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 1,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "INITIATE",
+            "rank": 0,
+            "target": "INITIATE"
+        },
+        "YOUTH": {
+            "asset": "GEAR",
+            "attributes": [
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 6
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 6
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 1,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "YOUTH",
+            "rank": 0,
+            "target": "YOUTH"
+        },
+        "SMEABORG": {
+            "asset": "SMEABORG",
+            "attributes": [
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 9
+                },
+                {
+                    "maximum": 9,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 9
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 8
+                },
+                {
+                    "maximum": 45,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 45
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 2,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 5,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 5
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "SMEABORG",
+            "rank": 0,
+            "skills": [
+                "SLOW MURDER"
+            ],
+            "target": "SMEABORG"
+        },
+        "GUARD": {
+            "asset": "GUARD",
+            "attributes": [
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "FIGHTING PROWESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 0,
+                    "type": "PSYCHIC ABILITY",
+                    "value": 0
+                },
+                {
+                    "maximum": 6,
+                    "modifier": 0,
+                    "type": "AWARENESS",
+                    "value": 6
+                },
+                {
+                    "maximum": 8,
+                    "modifier": 0,
+                    "type": "ENDURANCE",
+                    "value": 8
+                },
+                {
+                    "maximum": 0,
+                    "modifier": 1,
+                    "type": "ARMOUR",
+                    "value": 0
+                },
+                {
+                    "maximum": 1,
+                    "modifier": 0,
+                    "type": "DAMAGE",
+                    "value": 1
+                }
+            ],
+            "control_type": "NPC",
+            "experience": 0,
+            "encumbrance_limit": 10,
+            "moves": 1000,
+            "name": "GUARD",
+            "rank": 0,
+            "target": "GUARD"
+        }
+    }
+}

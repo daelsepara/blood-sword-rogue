@@ -1,0 +1,8 @@
+{
+    "font-settings": {
+        "font": "modules/default/fonts/text.ttf",
+        "caption": 22,
+        "normal": 24,
+        "fixed": 24
+    }
+}

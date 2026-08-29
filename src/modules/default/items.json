@@ -1,0 +1,789 @@
+{
+    "items": [
+        {
+            "name": "SHURIKEN",
+            "asset": "SHURIKEN",
+            "quantity": 7,
+            "encumbrance": 1,
+            "type": "SHURIKEN"
+        },
+        {
+            "name": "ARROWS",
+            "asset": "ARROWS",
+            "quantity": 0,
+            "encumbrance": 0,
+            "type": "ARROW"
+        },
+        {
+            "name": "GOLD",
+            "asset": "MONEY",
+            "quantity": 0,
+            "encumbrance": 0,
+            "type": "GOLD"
+        },
+        {
+            "name": "CRESCENTIUM STEEL SWORD",
+            "asset": "CRESCENTIUM STEEL SWORD",
+            "properties": [
+                "WEAPON",
+                "PRIMARY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "CRESCENTIUM STEEL SWORD"
+        },
+        {
+            "name": "BOTTLE OF MAUVE LIQUID",
+            "asset": "VIAL",
+            "properties": [
+                "LIQUID"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "revealed": false,
+            "type": "MAUVE LIQUID"
+        },
+        {
+            "name": "SILVER RING",
+            "asset": "RING",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SILVER RING"
+        },
+        {
+            "name": "SWORD",
+            "asset": "SWORD",
+            "properties": [
+                "WEAPON",
+                "PRIMARY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SWORD"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 3
+            },
+            "name": "CHAINMAIL",
+            "asset": "CHAINMAIL",
+            "properties": [
+                "ARMOUR",
+                "EQUIPPED"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "CHAINMAIL"
+        },
+        {
+            "contains": "GOLD",
+            "name": "MONEY POUCH",
+            "asset": "ITEMS",
+            "properties": [
+                "CONTAINER",
+                "CANNOT DROP",
+                "CANNOT TRADE"
+            ],
+            "quantity": 0,
+            "encumbrance": 1,
+            "type": "POUCH"
+        },
+        {
+            "name": "BOW",
+            "asset": "BOW",
+            "properties": [
+                "WEAPON",
+                "RANGED"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BOW"
+        },
+        {
+            "contains": "ARROW",
+            "limit": -1,
+            "name": "QUIVER",
+            "asset": "QUIVER",
+            "properties": [
+                "CONTAINER",
+                "CANNOT DROP",
+                "CANNOT TRADE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "QUIVER"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 2
+            },
+            "name": "LEATHER ARMOUR",
+            "asset": "LEATHER ARMOUR",
+            "properties": [
+                "ARMOUR"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "LEATHER ARMOUR"
+        },
+        {
+            "name": "QUARTERSTAFF",
+            "asset": "QUARTERSTAFF",
+            "properties": [
+                "WEAPON",
+                "PRIMARY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "QUARTERSTAFF"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 2
+            },
+            "name": "RINGMAIL",
+            "asset": "RINGMAIL",
+            "properties": [
+                "ARMOUR"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "RINGMAIL"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 2
+            },
+            "name": "SILVER ARMOUR",
+            "asset": "SILVER ARMOUR",
+            "properties": [
+                "ARMOUR"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SILVER ARMOUR"
+        },
+        {
+            "name": "BLUTGETRANKER",
+            "asset": "BLUTGETRANKER",
+            "attributes": {
+                "FIGHTING PROWESS": 1
+            },
+            "properties": [
+                "WEAPON",
+                "PRIMARY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BLUTGETRANKER",
+            "damage_modifiers": {
+                "GIANT": {
+                    "damage": 1,
+                    "modifier": 0
+                }
+            }
+        },
+        {
+            "name": "OPAL MEDALLION",
+            "asset": "OPAL MEDALLION",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "OPAL MEDALLION"
+        },
+        {
+            "name": "OCTAGONAL GLASS PRISM",
+            "asset": "OCTAGONAL GLASS PRISM",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "OCTAGONAL GLASS PRISM"
+        },
+        {
+            "name": "LOGE SKYRUNNER",
+            "asset": "SHARD SWORD",
+            "attributes": {
+                "FIGHTING PROWESS": 1
+            },
+            "properties": [
+                "WEAPON",
+                "PRIMARY",
+                "INVISIBLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "LOGE SKYRUNNER"
+        },
+        {
+            "name": "VELLUM SCROLL",
+            "asset": "READ",
+            "properties": [
+                "READABLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "VELLUM SCROLL"
+        },
+        {
+            "name": "FOOD PORTION",
+            "asset": "FOOD",
+            "properties": [
+                "EDIBLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "FOOD",
+            "revealed": true
+        },
+        {
+            "contains": "CHARGE",
+            "limit": 4,
+            "name": "STEEL SCEPTRE",
+            "asset": "STEEL SCEPTRE",
+            "properties": [
+                "CONTAINER",
+                "COMBAT",
+                "REQUIRES TARGET"
+            ],
+            "quantity": 4,
+            "encumbrance": 1,
+            "type": "STEEL SCEPTRE",
+            "damage_types": {
+                "PLAYER": {
+                    "damage": 5,
+                    "modifier": 0
+                },
+                "ENEMY": {
+                    "damage": 5,
+                    "modifier": 0
+                }
+            },
+            "target_effects": {
+                "PLAYER": "DAMAGE TARGET",
+                "ENEMY": "DAMAGE TARGET",
+                "EIDOLON": "IMMUNE"
+            },
+            "drops": true
+        },
+        {
+            "name": "BRONZE KEY",
+            "asset": "KEY",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BRONZE KEY"
+        },
+        {
+            "name": "GREY PEARL",
+            "asset": "GREY GLASS BALL",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "GREY PEARL"
+        },
+        {
+            "name": "LARGE STAMPED GOLD COIN",
+            "asset": "CROWN COIN",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "LARGE STAMPED GOLD COIN"
+        },
+        {
+            "name": "EMERALD SCARAB",
+            "asset": "GOLD SCARAB",
+            "properties": [
+                "RESURRECTION"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "EMERALD SCARAB",
+            "revealed": false,
+            "drops": true
+        },
+        {
+            "name": "JEWELLED SWORD",
+            "asset": "RUNE SWORD",
+            "properties": [
+                "WEAPON",
+                "PRIMARY",
+                "CANNOT DROP"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "JEWELLED SWORD"
+        },
+        {
+            "name": "BATTLE AXE",
+            "asset": "BATTLE AXE",
+            "properties": [
+                "WEAPON",
+                "PRIMARY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BATTLE AXE"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 1
+            },
+            "name": "BRONZE ARMOUR",
+            "asset": "ABDOMINAL ARMOR",
+            "properties": [
+                "ARMOUR"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BRONZE ARMOUR"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 1
+            },
+            "name": "BRONZE BREASTPLATE",
+            "asset": "BREASTPLATE",
+            "properties": [
+                "ARMOUR"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BRONZE BREASTPLATE"
+        },
+        {
+            "name": "DAGGER OF VISLET",
+            "asset": "DAGGER OF VISLET",
+            "properties": [
+                "COMBAT",
+                "REQUIRES TARGET",
+                "RANGED"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "DAGGER OF VISLET",
+            "damage_types": {
+                "NEBULARON": {
+                    "damage": 1,
+                    "modifier": -2
+                },
+                "ENEMY": {
+                    "damage": 1,
+                    "modifier": 0
+                }
+            },
+            "target_effects": {
+                "NEBULARON": "THROW",
+                "ENEMY": "THROW"
+            },
+            "drops": true
+        },
+        {
+            "name": "GOLDEN SNUFF-BOX",
+            "asset": "GOLDEN SNUFF-BOX",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "GOLDEN SNUFF-BOX"
+        },
+        {
+            "asset": "DRAGONLORD GEM",
+            "name": "DRAGONLORD GEM",
+            "properties": [
+                "COMBAT",
+                "REQUIRES TARGET",
+                "RANGED",
+                "ALL RANGES"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "DRAGONLORD GEM",
+            "target_effects": {
+                "NEBULARON": "KILL TARGET"
+            }
+        },
+        {
+            "name": "RUBY RING",
+            "asset": "RING",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "RUBY RING",
+            "target_effects": {
+                "NEBULARON": "SELF BURN"
+            }
+        },
+        {
+            "name": "BIRCH-BARK SCROLL",
+            "asset": "READ",
+            "properties": [
+                "COMBAT"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BIRCH BARK SCROLL"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 1
+            },
+            "name": "LEATHER JERKIN",
+            "asset": "LEATHER JERKIN",
+            "properties": [
+                "ARMOUR"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "LEATHER JERKIN"
+        },
+        {
+            "name": "BLUE ICE JEWEL",
+            "asset": "SAPHIRE",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BLUE ICE JEWEL"
+        },
+        {
+            "name": "RUSTY SWORD",
+            "asset": "RUSTY WEAPON",
+            "properties": [
+                "WEAPON",
+                "PRIMARY",
+                "RUSTY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "RUSTY SWORD",
+            "drops": true
+        },
+        {
+            "name": "BRONZE KNIFE",
+            "asset": "CURVY KNIFE",
+            "attributes": {
+                "FIGHTING PROWESS": 1,
+                "DAMAGE": 1
+            },
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BRONZE KNIFE",
+            "properties": [
+                "WEAPON",
+                "PRIMARY",
+                "CURSED",
+                "CANNOT DROP"
+            ]
+        },
+        {
+            "name": "FIRE-BLACKENED SKULL",
+            "asset": "CHEWED SKULL",
+            "properties": [
+                "CANNOT DROP",
+                "CANNOT TRADE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "FIRE BLACKENED SKULL"
+        },
+        {
+            "name": "SCROLL: INVISIBILITY",
+            "asset": "READ",
+            "properties": [
+                "READABLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SCROLL INVISIBILITY",
+            "revealed": true
+        },
+        {
+            "name": "SCROLL: HEALING",
+            "asset": "READ",
+            "properties": [
+                "COMBAT",
+                "READABLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SCROLL HEALING",
+            "revealed": true
+        },
+        {
+            "name": "SCROLL: ADJUST",
+            "asset": "READ",
+            "properties": [
+                "READABLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SCROLL ADJUST",
+            "revealed": true
+        },
+        {
+            "name": "SCROLL: TIME BLINK",
+            "asset": "READ",
+            "properties": [
+                "READABLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SCROLL TIME BLINK",
+            "revealed": true
+        },
+        {
+            "name": "SCROLL: PRECOGNITION",
+            "asset": "READ",
+            "properties": [
+                "READABLE"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SCROLL PRECOGNITION",
+            "revealed": true
+        },
+        {
+            "name": "VIAL OF BLACK LIQUID",
+            "asset": "VIAL",
+            "properties": [
+                "LIQUID"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "revealed": false,
+            "type": "BLACK LIQUID"
+        },
+        {
+            "name": "DAGGER",
+            "asset": "PLAIN DAGGER",
+            "properties": [
+                "WEAPON",
+                "PRIMARY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "DAGGER"
+        },
+        {
+            "name": "SHARP KNIFE",
+            "asset": "BOWIE KNIFE",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SHARP KNIFE"
+        },
+        {
+            "contains": "CHARGE",
+            "limit": 4,
+            "name": "RING OF WARDING",
+            "asset": "RING OF WARDING",
+            "properties": [
+                "CONTAINER"
+            ],
+            "quantity": 4,
+            "encumbrance": 1,
+            "type": "RING OF WARDING",
+            "revealed": true
+        },
+        {
+            "name": "CASKET OF KALIUM",
+            "asset": "COFFIN",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "CASKET OF KALIUM"
+        },
+        {
+            "name": "TALISMAN OF FLAME",
+            "asset": "DRAGONLORD GEM",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "TALISMAN OF FLAME"
+        },
+        {
+            "name": "POTION OF HEALING",
+            "asset": "DRINK",
+            "properties": [
+                "COMBAT",
+                "LIQUID"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "POTION OF HEALING",
+            "revealed": true
+        },
+        {
+            "name": "GILDED BRIDLE",
+            "asset": "HORSE HEAD",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "GILDED BRIDLE"
+        },
+        {
+            "name": "BLUE TOUCHSTONE",
+            "asset": "STONE TABLET",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BLUE TOUCHSTONE"
+        },
+        {
+            "name": "LEAD RING",
+            "asset": "RING",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "LEAD RING"
+        },
+        {
+            "name": "YELLOW SCROLL",
+            "asset": "READ",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "YELLOW SCROLL",
+            "revealed": true
+        },
+        {
+            "name": "PHIAL OF CHIMERA-SPITTLE",
+            "asset": "PERFUME BOTTLE",
+            "properties": [
+                "LIQUID"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "revealed": false,
+            "type": "CHIMERA SPITTLE"
+        },
+        {
+            "name": "BOTTLE OF EFFERVESCENT LIQUID",
+            "asset": "PERFUME BOTTLE",
+            "properties": [
+                "LIQUID"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "revealed": false,
+            "type": "EFFERVESCENT LIQUID"
+        },
+        {
+            "name": "BRONZE MALLET",
+            "asset": "3D HAMMER",
+            "properties": [
+                "WEAPON",
+                "PRIMARY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "BRONZE MALLET"
+        },
+        {
+            "name": "SKRYMIR'S SKULL",
+            "asset": "SHARPED TEETH SKULL",
+            "properties": [
+                "CANNOT DROP"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SKRYMIRS SKULL"
+        },
+        {
+            "name": "FOSSILISED HEART",
+            "asset": "HEART ORGAN GREY",
+            "properties": [
+                "CANNOT DROP"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "FOSSILISED HEART"
+        },
+        {
+            "name": "SKRYMIR'S RIBCAGE",
+            "asset": "RIBCAGE",
+            "properties": [
+                "CANNOT DROP"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SKRYMIRS RIBCAGE"
+        },
+        {
+            "name": "SKRYMIR'S ARMS",
+            "asset": "ARM",
+            "properties": [
+                "CANNOT DROP"
+            ],
+            "quantity": 1,
+            "encumbrance": 2,
+            "type": "SKRYMIRS ARMS"
+        },
+        {
+            "name": "SKRYMIR'S LEGS",
+            "asset": "LEG",
+            "properties": [
+                "CANNOT DROP"
+            ],
+            "quantity": 1,
+            "encumbrance": 2,
+            "type": "SKRYMIRS LEGS"
+        },
+        {
+            "name": "IRON GAUNTLETS",
+            "asset": "GAUNTLET",
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "IRON GAUNTLETS"
+        },
+        {
+            "name": "EMBLEM OF VICTORY",
+            "asset": "WINGED SWORD",
+            "properties": [
+                "CANNOT DROP"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "EMBLEM OF VICTORY"
+        },
+        {
+            "attributes": {
+                "FIGHTING PROWESS": 1
+            },
+            "name": "BELT OF STRENGTH",
+            "asset": "BELT ARMOR",
+            "properties": [
+                "ACCESSORY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "ENCHANTED BELT OF STRENGTH"
+        },
+        {
+            "attributes": {
+                "ARMOUR": 1
+            },
+            "name": "SHIELDING CHARM",
+            "asset": "WINGED SHIELD",
+            "properties": [
+                "ACCESSORY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "SHIELDING CHARM"
+        },
+        {
+            "name": "MAGIC BOW",
+            "asset": "LIGHTNING BOW",
+            "properties": [
+                "WEAPON",
+                "RANGED"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "MAGIC BOW",
+            "damage_modifiers": {
+                "ENEMY": {
+                    "damage": 0,
+                    "modifier": 1
+                }
+            }
+        },
+        {
+            "attributes": {
+                "PSYCHIC ABILITY": 1
+            },
+            "name": "RING OF SORCERY",
+            "asset": "RING OF WARDING",
+            "properties": [
+                "ACCESSORY"
+            ],
+            "quantity": 1,
+            "encumbrance": 1,
+            "type": "RING OF SORCERY"
+        }
+    ]
+}
