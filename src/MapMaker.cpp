@@ -11,7 +11,7 @@ namespace BloodSwordRogue::MapMaker
         CLEAR
     };
 
-    enum class Add
+    enum class Function
     {
         TILE,
         ORIGIN,
@@ -27,15 +27,6 @@ namespace BloodSwordRogue::MapMaker
         {Mode::ERASE, "ERASE"},
         {Mode::FILL, "FILL"},
         {Mode::CLEAR, "CLEAR"}};
-
-    BloodSwordRogue::StringMap<MapMaker::Add> AddText = {
-        {Add::TILE, "TILE"},
-        {Add::ORIGIN, "ORIGIN"},
-        {Add::TRIGGER, "TRIGGER"},
-        {Add::LOOT, "LOOT"},
-        {Add::ENEMY, "ENEMY"},
-        {Add::RESIZE, "RESIZE"},
-        {Add::GENERATE, "GENERATE"}};
 
     Asset::List Assets = {};
 
@@ -1470,7 +1461,7 @@ namespace BloodSwordRogue::MapMaker
     {
         TilesW = std::min(map.ViewX, graphics.Width / map.TileSize - 4);
 
-        TilesH = std::min(map.ViewY, graphics.Height / map.TileSize - 6);
+        TilesH = std::min(map.ViewY, graphics.Height / map.TileSize - 7);
 
         MapMaker::ResetMapView(graphics, map, TilesW, TilesH);
     }
@@ -1553,7 +1544,7 @@ namespace BloodSwordRogue::MapMaker
         return value;
     }
 
-    void MapSettings(Graphics::Base &graphics, Graphics::Scenery scenes, Location::Base &location, Add &add)
+    void MapSettings(Graphics::Base &graphics, Graphics::Scenery scenes, Location::Base &location, Function &function)
     {
         std::vector<Asset::Type> assets = {};
 
@@ -1563,7 +1554,7 @@ namespace BloodSwordRogue::MapMaker
 
         int width = (graphics.Width - 4 * BloodSwordRogue::TileSize);
 
-        int height = (graphics.Height - 6 * BloodSwordRogue::TileSize);
+        int height = (graphics.Height - 7 * BloodSwordRogue::TileSize);
 
         // setup icon grid
         assets.push_back(Asset::Map("MAP"));
@@ -1625,7 +1616,7 @@ namespace BloodSwordRogue::MapMaker
                 }
                 else if (controls[selected] == Controls::MapType("SELECT"))
                 {
-                    add = Add::ORIGIN;
+                    function = Function::ORIGIN;
 
                     done = true;
                 }
@@ -1707,7 +1698,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Map.ViewX = location.Map.Width;
 
-                        add = Add::RESIZE;
+                        function = Function::RESIZE;
 
                         done = true;
                     }
@@ -1740,7 +1731,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Map.ViewX = location.Map.Width;
 
-                        add = Add::RESIZE;
+                        function = Function::RESIZE;
 
                         done = true;
                     }
@@ -1823,7 +1814,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Map.ViewY = location.Map.Height;
 
-                        add = Add::RESIZE;
+                        function = Function::RESIZE;
 
                         done = true;
                     }
@@ -1856,7 +1847,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Map.ViewY = location.Map.Height;
 
-                        add = Add::RESIZE;
+                        function = Function::RESIZE;
 
                         done = true;
                     }
@@ -1875,7 +1866,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Map = Battlepits::Generate(location.Map.Width, location.Map.Height, max_rooms, 2, 3, false, 0);
 
-                        add = Add::GENERATE;
+                        function = Function::GENERATE;
 
                         done = true;
                     }
@@ -1892,7 +1883,7 @@ namespace BloodSwordRogue::MapMaker
 
                         Maze::Generate(location.Map, location.Map.Width, location.Map.Height);
 
-                        add = Add::GENERATE;
+                        function = Function::GENERATE;
 
                         done = true;
                     }
@@ -1920,7 +1911,7 @@ namespace BloodSwordRogue::MapMaker
         // get max edit window dimensions
         int TilesW = graphics.Width / map.TileSize - 4;
 
-        int TilesH = graphics.Height / map.TileSize - 6;
+        int TilesH = graphics.Height / map.TileSize - 7;
 
         MapMaker::ResetMapView(graphics, map, TilesW, TilesH);
 
@@ -1930,7 +1921,7 @@ namespace BloodSwordRogue::MapMaker
 
         auto mode = Mode::EDIT;
 
-        auto add = Add::TILE;
+        auto function = Function::TILE;
 
         bool passable = false;
 
@@ -2051,7 +2042,7 @@ namespace BloodSwordRogue::MapMaker
 
                 auto add_point = Point(BloodSwordRogue::HalfTile * 6 + add_size.X, BloodSwordRogue::HalfTile);
 
-                if (add == Add::TILE)
+                if (function == Function::TILE)
                 {
                     if (asset != Asset::NONE)
                     {
@@ -2067,19 +2058,19 @@ namespace BloodSwordRogue::MapMaker
                         scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map(controls_assets[1].c_str())), add_point));
                     }
                 }
-                else if (add == Add::ENEMY && mode == Mode::EDIT)
+                else if (function == Function::ENEMY && mode == Mode::EDIT)
                 {
                     scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map(controls_assets[2].c_str())), add_point));
                 }
-                else if (add == Add::LOOT && mode == Mode::EDIT)
+                else if (function == Function::LOOT && mode == Mode::EDIT)
                 {
                     scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map(controls_assets[3].c_str())), add_point));
                 }
-                else if (add == Add::TRIGGER && mode == Mode::EDIT)
+                else if (function == Function::TRIGGER && mode == Mode::EDIT)
                 {
                     scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map(controls_assets[4].c_str())), add_point));
                 }
-                else if (add == Add::ORIGIN && mode == Mode::EDIT)
+                else if (function == Function::ORIGIN && mode == Mode::EDIT)
                 {
                     scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("SELECT TRANSPARENT BLUE")), add_point));
                 }
@@ -2281,7 +2272,7 @@ namespace BloodSwordRogue::MapMaker
                         {
                             if (tile.IsOccupied())
                             {
-                                if (add == Add::ENEMY && tile.Occupant == Map::Object::ENEMIES)
+                                if (function == Function::ENEMY && tile.Occupant == Map::Object::ENEMIES)
                                 {
                                     auto selected = Interface::IconList(graphics, scene, object_assets, object_captions);
 
@@ -2301,7 +2292,7 @@ namespace BloodSwordRogue::MapMaker
                                         }
                                     }
                                 }
-                                else if (add == Add::LOOT && tile.Occupant == Map::Object::ITEMS)
+                                else if (function == Function::LOOT && tile.Occupant == Map::Object::ITEMS)
                                 {
                                     auto selected = Interface::IconList(graphics, scene, object_assets, object_captions);
 
@@ -2321,7 +2312,7 @@ namespace BloodSwordRogue::MapMaker
                                     }
                                 }
                             }
-                            else if (add == Add::TILE && asset != Asset::NONE)
+                            else if (function == Function::TILE && asset != Asset::NONE)
                             {
                                 tile.Asset = asset;
 
@@ -2334,15 +2325,15 @@ namespace BloodSwordRogue::MapMaker
                                     tile.Type = Map::Object::OBSTACLE;
                                 }
                             }
-                            else if (add == Add::ENEMY)
+                            else if (function == Function::ENEMY)
                             {
                                 MapMaker::AddEnemy(graphics, scene, map, tile, point, location);
                             }
-                            else if (add == Add::LOOT)
+                            else if (function == Function::LOOT)
                             {
                                 MapMaker::AddLoot(graphics, scene, map, tile, point, location);
                             }
-                            else if (add == Add::ORIGIN && tile.Type == Map::Object::PASSABLE)
+                            else if (function == Function::ORIGIN && tile.Type == Map::Object::PASSABLE)
                             {
                                 if (SafeCast(map.Origins.size()) > 0)
                                 {
@@ -2375,7 +2366,7 @@ namespace BloodSwordRogue::MapMaker
                                 }
                             }
                         }
-                        else if (mode == Mode::FILL && add == Add::TILE && asset != Asset::NONE)
+                        else if (mode == Mode::FILL && function == Function::TILE && asset != Asset::NONE)
                         {
                             auto type = passable ? Map::Object::PASSABLE : Map::Object::OBSTACLE;
 
@@ -2398,7 +2389,7 @@ namespace BloodSwordRogue::MapMaker
                 {
                     mode = (mode == Mode::EDIT || mode == Mode::FILL) ? mode : Mode::EDIT;
 
-                    add = Add::TILE;
+                    function = Function::TILE;
 
                     auto selected = Interface::IconGrid(graphics, scene, MapMaker::Assets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::HalfTile, icon_captions);
 
@@ -2442,17 +2433,17 @@ namespace BloodSwordRogue::MapMaker
                 {
                     mode = Mode::EDIT;
 
-                    add = Add::ENEMY;
+                    function = Function::ENEMY;
                 }
                 else if (input.Type == Controls::MapType("ITEMS"))
                 {
                     mode = Mode::EDIT;
 
-                    add = Add::LOOT;
+                    function = Function::LOOT;
                 }
                 else if (input.Type == Controls::MapType("TRIGGER"))
                 {
-                    add = Add::TRIGGER;
+                    function = Function::TRIGGER;
 
                     Interface::MessageBox(graphics, scene, "NOT IMPLEMENTED YET", Color::Inactive);
                 }
@@ -2470,7 +2461,7 @@ namespace BloodSwordRogue::MapMaker
                 {
                     mode = Mode::FILL;
 
-                    add = Add::TILE;
+                    function = Function::TILE;
                 }
                 else if (input.Type == Controls::MapType("CLEAR"))
                 {
@@ -2480,13 +2471,13 @@ namespace BloodSwordRogue::MapMaker
                 {
                     Graphics::Scenery scenes = {scene};
 
-                    MapMaker::MapSettings(graphics, scenes, location, add);
+                    MapMaker::MapSettings(graphics, scenes, location, function);
 
-                    if (add == Add::ORIGIN)
+                    if (function == Function::ORIGIN)
                     {
                         mode = Mode::EDIT;
                     }
-                    else if (add == Add::RESIZE)
+                    else if (function == Function::RESIZE)
                     {
                         MapMaker::RefreshMapView(graphics, map, TilesW, TilesH);
 
@@ -2494,9 +2485,9 @@ namespace BloodSwordRogue::MapMaker
 
                         mode = Mode::EDIT;
 
-                        add = Add::TILE;
+                        function = Function::TILE;
                     }
-                    else if (add == Add::GENERATE)
+                    else if (function == Function::GENERATE)
                     {
                         MapMaker::RefreshMapView(graphics, map, TilesW, TilesH);
 
@@ -2504,7 +2495,7 @@ namespace BloodSwordRogue::MapMaker
 
                         mode = Mode::EDIT;
 
-                        add = Add::TILE;
+                        function = Function::TILE;
                     }
                 }
                 else if (input.Type == Controls::MapType("MAP"))
