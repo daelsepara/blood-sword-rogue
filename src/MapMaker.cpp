@@ -52,6 +52,10 @@ namespace BloodSwordRogue::MapMaker
 
     std::vector<std::string> ItemsAssets = {"ARROWS", "FOOD", "SHURIKEN", "MONEY", "ARROWS", "MONEY", "POWER LIGHTNING", "SHURIKEN"};
 
+    BloodSwordRogue::UnorderedMap<Attribute::Type, Asset::Type> AttributeAssets = {};
+
+    BloodSwordRogue::UnorderedMap<Item::Property, Asset::Type> PropertyAssets = {};
+
     const int MaxEnemies = 5;
 
     const int MaxItems = 10;
@@ -280,6 +284,35 @@ namespace BloodSwordRogue::MapMaker
             Asset::Map("SEVEN"),
             Asset::Map("EIGHT"),
             Asset::Map("NINE")};
+
+        MapMaker::AttributeAssets.clear();
+
+        MapMaker::AttributeAssets = {
+            {Attribute::Type::FIGHTING_PROWESS, Asset::Map("FIGHT")},
+            {Attribute::Type::AWARENESS, Asset::Map("BRAIN")},
+            {Attribute::Type::PSYCHIC_ABILITY, Asset::Map("CALL TO MIND")},
+            {Attribute::Type::ENDURANCE, Asset::Map("ENDURANCE")},
+            {Attribute::Type::DAMAGE, Asset::Map("BLOOD")},
+            {Attribute::Type::ARMOUR, Asset::Map("LAYERED ARMOUR")}};
+
+        MapMaker::PropertyAssets.clear();
+
+        MapMaker::PropertyAssets = {
+            {Item::MapProperty("EQUIPPED"), Asset::Map("EQUIPPED")},
+            {Item::MapProperty("WEAPON"), Asset::Map("WEAPON")},
+            {Item::MapProperty("ARMOUR"), Asset::Map("ARMOUR")},
+            {Item::MapProperty("ACCESSORY"), Asset::Map("ACCESSORY")},
+            {Item::MapProperty("MELEE"), Asset::Map("MELEE")},
+            {Item::MapProperty("RANGED"), Asset::Map("RANGED")},
+            {Item::MapProperty("RUSTY"), Asset::Map("RUSTY")},
+            {Item::MapProperty("BROKEN"), Asset::Map("BROKEN")},
+            {Item::MapProperty("POISONED"), Asset::Map("POISONED")},
+            {Item::MapProperty("CURSED"), Asset::Map("CURSED")},
+            {Item::MapProperty("RESURRECTION"), Asset::Map("RESURRECTION")},
+            {Item::MapProperty("EDIBLE"), Asset::Map("EDIBLE")},
+            {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
+            {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
+            {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")}};
     }
 
     bool Generate(std::string &json_file)
@@ -521,33 +554,6 @@ namespace BloodSwordRogue::MapMaker
             return;
         }
 
-        BloodSwordRogue::UnorderedMap<Attribute::Type, Asset::Type>
-            AttributeAssets = {
-                {Attribute::Type::FIGHTING_PROWESS, Asset::Map("FIGHT")},
-                {Attribute::Type::AWARENESS, Asset::Map("BRAIN")},
-                {Attribute::Type::PSYCHIC_ABILITY, Asset::Map("CALL TO MIND")},
-                {Attribute::Type::ENDURANCE, Asset::Map("ENDURANCE")},
-                {Attribute::Type::DAMAGE, Asset::Map("BLOOD")},
-                {Attribute::Type::ARMOUR, Asset::Map("LAYERED ARMOUR")}};
-
-        BloodSwordRogue::UnorderedMap<Item::Property, Asset::Type>
-            PropertyAssets = {
-                {Item::MapProperty("EQUIPPED"), Asset::Map("EQUIPPED")},
-                {Item::MapProperty("WEAPON"), Asset::Map("WEAPON")},
-                {Item::MapProperty("ARMOUR"), Asset::Map("ARMOUR")},
-                {Item::MapProperty("ACCESSORY"), Asset::Map("ACCESSORY")},
-                {Item::MapProperty("MELEE"), Asset::Map("MELEE")},
-                {Item::MapProperty("RANGED"), Asset::Map("RANGED")},
-                {Item::MapProperty("RUSTY"), Asset::Map("RUSTY")},
-                {Item::MapProperty("BROKEN"), Asset::Map("BROKEN")},
-                {Item::MapProperty("POISONED"), Asset::Map("POISONED")},
-                {Item::MapProperty("CURSED"), Asset::Map("CURSED")},
-                {Item::MapProperty("RESURRECTION"), Asset::Map("RESURRECTION")},
-                {Item::MapProperty("EDIBLE"), Asset::Map("EDIBLE")},
-                {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
-                {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
-                {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")}};
-
         Asset::List assets = {};
 
         std::vector<std::string> captions = {};
@@ -606,7 +612,7 @@ namespace BloodSwordRogue::MapMaker
     }
 
     // select item
-    int SelectItems(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    int SelectItems(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
     {
         auto selected = Item::NONE;
 
@@ -614,7 +620,7 @@ namespace BloodSwordRogue::MapMaker
 
         std::vector<std::string> captions = {};
 
-        for (auto &item : character.Items)
+        for (auto &item : items)
         {
             assets.push_back(item.Asset);
 
@@ -636,23 +642,34 @@ namespace BloodSwordRogue::MapMaker
         return selected;
     }
 
-    // view items on this character
-    void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    // select item
+    int SelectItems(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    {
+        return MapMaker::SelectItems(graphics, scenes, character.Items);
+    }
+
+    void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
     {
         while (true)
         {
-            auto selected = MapMaker::SelectItems(graphics, scenes, character);
+            auto selected = MapMaker::SelectItems(graphics, scenes, items);
 
-            if (selected >= 0 && selected < SafeCast(character.Items.size()))
+            if (selected >= 0 && selected < SafeCast(items.size()))
             {
                 // view item
-                MapMaker::ViewItem(graphics, scenes, character.Items[selected]);
+                MapMaker::ViewItem(graphics, scenes, items[selected]);
             }
             else
             {
                 break;
             }
         }
+    }
+
+    // view items on this character
+    void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    {
+        MapMaker::ViewItems(graphics, scenes, character.Items);
     }
 
     // remove item from character
@@ -770,27 +787,6 @@ namespace BloodSwordRogue::MapMaker
     {
         auto done = false;
 
-        Attribute::Types WithModifiers = {
-            Attribute::Type::FIGHTING_PROWESS,
-            Attribute::Type::AWARENESS,
-            Attribute::Type::PSYCHIC_ABILITY,
-            Attribute::Type::DAMAGE};
-
-        Attribute::Types ModifiersOnly = {
-            Attribute::Type::ARMOUR};
-
-        Attribute::Types ValuesOnly = {
-            Attribute::Type::ENDURANCE};
-
-        BloodSwordRogue::UnorderedMap<Attribute::Type, Asset::Type>
-            AttributeAssets = {
-                {Attribute::Type::FIGHTING_PROWESS, Asset::Map("FIGHT")},
-                {Attribute::Type::AWARENESS, Asset::Map("BRAIN")},
-                {Attribute::Type::PSYCHIC_ABILITY, Asset::Map("CALL TO MIND")},
-                {Attribute::Type::ENDURANCE, Asset::Map("ENDURANCE")},
-                {Attribute::Type::DAMAGE, Asset::Map("BLOOD")},
-                {Attribute::Type::ARMOUR, Asset::Map("LAYERED ARMOUR")}};
-
         Asset::List object_assets = {
             Asset::Map("MAGNIFYING GLASS"),
             Asset::Map("CONFIRM"),
@@ -851,37 +847,37 @@ namespace BloodSwordRogue::MapMaker
             scene.Add(Controls::Base(Controls::MapType("ITEMS"), 2, 1, 2, 2, 2, box.X + tile * 3, box.Y + tile, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
 
             // fighting prowess
-            MapMaker::RenderScore(scene, MapMaker::Numbers, AttributeAssets[Attribute::Type::FIGHTING_PROWESS], character.Value(Attribute::Type::FIGHTING_PROWESS), box.X + tile, box.Y + tile * 3, "FPR+", "FPR-");
+            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::FIGHTING_PROWESS], character.Value(Attribute::Type::FIGHTING_PROWESS), box.X + tile, box.Y + tile * 3, "FPR+", "FPR-");
 
             // fighting prowess modifiers
             MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::FIGHTING_PROWESS), box.X + tile * 6, box.Y + tile * 3, "FPR MOD+", "FPR MOD-");
 
             // awareness
-            MapMaker::RenderScore(scene, MapMaker::Numbers, AttributeAssets[Attribute::Type::AWARENESS], character.Value(Attribute::Type::AWARENESS), box.X + tile, box.Y + tile * 4, "AWR+", "AWR-");
+            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::AWARENESS], character.Value(Attribute::Type::AWARENESS), box.X + tile, box.Y + tile * 4, "AWR+", "AWR-");
 
             // awareness modifiers
             MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::AWARENESS), box.X + tile * 6, box.Y + tile * 4, "AWR MOD+", "AWR MOD-");
 
             // psychic ability
-            MapMaker::RenderScore(scene, MapMaker::Numbers, AttributeAssets[Attribute::Type::PSYCHIC_ABILITY], character.Value(Attribute::Type::PSYCHIC_ABILITY), box.X + tile, box.Y + tile * 5, "PSY+", "PSY-");
+            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::PSYCHIC_ABILITY], character.Value(Attribute::Type::PSYCHIC_ABILITY), box.X + tile, box.Y + tile * 5, "PSY+", "PSY-");
 
             // psychic ability modifiers
             MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::PSYCHIC_ABILITY), box.X + tile * 6, box.Y + tile * 5, "PSY MOD+", "PSY MOD-");
 
             // damage
-            MapMaker::RenderScore(scene, MapMaker::Numbers, AttributeAssets[Attribute::Type::DAMAGE], character.Value(Attribute::Type::DAMAGE), box.X + tile, box.Y + tile * 6, "DMG+", "DMG-");
+            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::DAMAGE], character.Value(Attribute::Type::DAMAGE), box.X + tile, box.Y + tile * 6, "DMG+", "DMG-");
 
             // damage modifiers
             MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::DAMAGE), box.X + tile * 6, box.Y + tile * 6, "DMG MOD+", "DMG MOD-");
 
             // endurance
-            MapMaker::RenderScore(scene, MapMaker::Numbers, AttributeAssets[Attribute::Type::ENDURANCE], character.Value(Attribute::Type::ENDURANCE), box.X + tile, box.Y + tile * 7, "END+", "END-");
+            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ENDURANCE], character.Value(Attribute::Type::ENDURANCE), box.X + tile, box.Y + tile * 7, "END+", "END-");
 
             // encumbrance limit
             MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("WEIGHT"), character.EncumbranceLimit, box.X + tile * 6, box.Y + tile * 7, "WT+", "WT-");
 
             // armour
-            MapMaker::RenderScore(scene, MapMaker::Numbers, AttributeAssets[Attribute::Type::ARMOUR], character.Modifier(Attribute::Type::ARMOUR), box.X + tile, box.Y + tile * 8, "ARM+", "ARM-");
+            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ARMOUR], character.Modifier(Attribute::Type::ARMOUR), box.X + tile, box.Y + tile * 8, "ARM+", "ARM-");
 
             auto back_id = scene.Controls.size();
 
@@ -1314,6 +1310,32 @@ namespace BloodSwordRogue::MapMaker
                 tile.Occupant = Map::Object::NONE;
 
                 MapMaker::RenumberLoot(location);
+            }
+        }
+    }
+
+    // Limited to viewing loot at map location (no adding/removing quantities/attributes/properties)
+    void EditLoot(Graphics::Base &graphics, Scene::Base &scene, Map::Base &map, Map::Tile &tile, Point &point, Location::Base &location)
+    {
+        if (tile.Id > 0 && tile.Id <= SafeCast(location.Loot.size()))
+        {
+            Asset::List assets = {};
+
+            std::vector<std::string> captions = {};
+
+            auto id = tile.Id - 1;
+
+            auto &loot = location.Loot[id];
+
+            Graphics::Scenery scenes = {scene};
+
+            if (SafeCast(loot.Items.size()) > 1)
+            {
+                MapMaker::ViewItems(graphics, scenes, loot.Items);
+            }
+            else
+            {
+                MapMaker::ViewItem(graphics, scenes, loot.Items[0]);
             }
         }
     }
@@ -2308,6 +2330,7 @@ namespace BloodSwordRogue::MapMaker
                                         }
                                         else if (object_controls[selected] == Controls::MapType("SETTINGS"))
                                         {
+                                            MapMaker::EditLoot(graphics, scene, map, tile, point, location);
                                         }
                                     }
                                 }

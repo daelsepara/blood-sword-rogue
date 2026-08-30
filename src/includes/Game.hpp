@@ -5,6 +5,24 @@
 
 namespace BloodSwordRogue::Game
 {
+    class World
+    {
+    public:
+        BloodSwordRogue::UnorderedMap<std::string, std::string> Locations = {};
+    };
+
+    class Save
+    {
+    public:
+        std::string Name = std::string();
+
+        Party::Base Party = Party::Base();
+
+        BloodSwordRogue::UnorderedMap<std::string, Location::Base> Locations = {};
+    };
+
+    std::string CurrentSaveFile = std::string();
+
     void CheckTrigger(Graphics::Base &graphics, Scene::Base &scene, Location::Base &location, Party::Base &party, Trigger::Base &trigger)
     {
         if (!trigger.Activated)
@@ -23,6 +41,9 @@ namespace BloodSwordRogue::Game
             else if (trigger.Type == Trigger::Type::ITEM)
             {
                 trigger.Completed = Evaluate::HasItem(trigger, party);
+            }
+            else if (trigger.Type == Trigger::Type::EXIT)
+            {
             }
 
             // send status message
@@ -58,7 +79,7 @@ namespace BloodSwordRogue::Game
     }
 
     // check if there is an opponent party at this location
-    int FindOpponents(Location::Base &location , Point point)
+    int FindOpponents(Location::Base &location, Point point)
     {
         auto &opponents = location.Opponents;
 

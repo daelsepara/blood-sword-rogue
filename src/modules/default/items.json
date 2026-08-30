@@ -68,8 +68,7 @@
             "name": "CHAINMAIL",
             "asset": "CHAINMAIL",
             "properties": [
-                "ARMOUR",
-                "EQUIPPED"
+                "ARMOUR"
             ],
             "quantity": 1,
             "encumbrance": 1,
