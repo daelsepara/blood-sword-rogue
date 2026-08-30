@@ -9,6 +9,11 @@ namespace BloodSwordRogue::Game
     {
     public:
         BloodSwordRogue::UnorderedMap<std::string, std::string> Locations = {};
+
+        void Add(std::string name, std::string path)
+        {
+            this->Locations.insert_or_assign(name, path);
+        }
     };
 
     class Save
@@ -19,7 +24,17 @@ namespace BloodSwordRogue::Game
         Party::Base Party = Party::Base();
 
         BloodSwordRogue::UnorderedMap<std::string, Location::Base> Locations = {};
+
+        Save(Location::Base &location)
+        {
+            this->Locations.insert_or_assign(location.Name, location);
+        }
     };
+
+    bool HasLocation(Save &save, std::string location)
+    {
+        return BloodSwordRogue::Has(save.Locations, location);
+    }
 
     std::string CurrentSaveFile = std::string();
 
