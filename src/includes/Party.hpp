@@ -32,7 +32,7 @@ namespace BloodSwordRogue::Party
         // default field of view radius
         int FieldOfView = 3;
 
-        Base() {}
+        Base() {};
 
         Base(Party::List members) : Members(members) {}
 

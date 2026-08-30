@@ -16,7 +16,7 @@ namespace BloodSwordRogue::Game
         }
     };
 
-    class Save
+    class Base
     {
     public:
         std::string Name = std::string();
@@ -25,18 +25,43 @@ namespace BloodSwordRogue::Game
 
         BloodSwordRogue::UnorderedMap<std::string, Location::Base> Locations = {};
 
-        Save(Location::Base &location)
-        {
-            this->Locations.insert_or_assign(location.Name, location);
-        }
+        Base() {}
     };
 
-    bool HasLocation(Save &save, std::string location)
+    void Save(Game::Base &game, Location::Base location)
+    {
+        game.Locations.insert_or_assign(location.Name, location);
+    }
+
+    void Save(Game::Base &game, Party::Base party)
+    {
+        game.Party = Party::Base();
+
+        game.Party.Module = std::string(party.Module);
+
+        game.Party.Map = std::string(party.Map);
+
+        game.Party.X = party.X;
+
+        game.Party.Y = party.Y;
+
+        game.Party.FieldOfView = party.FieldOfView;
+
+        for (auto i = 0; i < SafeCast(party.Count()); i++)
+        {
+            game.Party.Add(party[i]);
+        }
+
+        game.Party.Variables = party.Variables;
+    }
+
+    bool HasLocation(Base &save, std::string location)
     {
         return BloodSwordRogue::Has(save.Locations, location);
     }
 
-    std::string CurrentSaveFile = std::string();
+    // current save
+    Game::Base CurrentSave = Game::Base();
 
     void CheckTrigger(Graphics::Base &graphics, Scene::Base &scene, Location::Base &location, Party::Base &party, Trigger::Base &trigger)
     {
