@@ -1340,9 +1340,37 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
+    // check if next point is a valid target for flood fill
     bool IsValidTarget(Map::Base &map, Asset::Type valid_asset, Map::Object valid_type, Point next)
     {
         return (map.IsValid(next) && map[next].Asset == valid_asset && map[next].Type == valid_type);
+    }
+
+    // check run of valid targets in specified direction
+    void CheckRun(Map::Base &map, Asset::Type valid_asset, Map::Object valid_type, Point point, int dir, int &start, int &end)
+    {
+        if (std::abs(dir) != 1)
+        {
+            return;
+        }
+
+        start = point.X;
+
+        end = point.X;
+
+        while (point.X >= 0 && point.X < map.Width)
+        {
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, point))
+            {
+                end = point.X;
+
+                point.X += dir;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 
     // fill line in specified direction
@@ -1355,6 +1383,14 @@ namespace BloodSwordRogue::MapMaker
             return fills;
         }
 
+        auto top_start = next.X;
+
+        auto top_end = next.X;
+
+        auto bot_start = next.X;
+
+        auto bot_end = next.X;
+
         while (true)
         {
             map[next].Asset = asset;
@@ -1365,22 +1401,40 @@ namespace BloodSwordRogue::MapMaker
 
             auto top = Point(next.X, next.Y - 1);
 
-            // check if upper is valid target (and not yet in queue)
-            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, top) && !BloodSwordRogue::In(points, top))
+            // check if upper row is a valid target (and not yet in queue)
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, top))
             {
-                points.push_back(top);
+                // check top run
+                if ((dir < 0 && next.X <= top_end) || (dir > 0 && next.X >= top_end))
+                {
+                    if (!BloodSwordRogue::In(points, top))
+                    {
+                        points.push_back(top);
+
+                        MapMaker::CheckRun(map, valid_asset, valid_type, top, dir, top_start, top_end);
+                    }
+                }
             }
 
             // check if lower is a valid target (and not yet in queue)
             auto bot = Point(next.X, next.Y + 1);
 
-            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, bot) && !BloodSwordRogue::In(points, bot))
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, bot))
             {
-                points.push_back(bot);
+                // check bottom run
+                if ((dir < 0 && next.X <= bot_end) || (dir > 0 && next.X >= bot_end))
+                {
+                    if (!BloodSwordRogue::In(points, bot))
+                    {
+                        points.push_back(bot);
+
+                        MapMaker::CheckRun(map, valid_asset, valid_type, bot, dir, bot_start, bot_end);
+                    }
+                }
             }
 
             // fill in current direction as long as next point is a valid target
-            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, Point(next.X + dir, next.Y)) && !BloodSwordRogue::In(points, Point(next.X + dir, next.Y)))
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, Point(next.X + dir, next.Y)))
             {
                 next = Point(next.X + dir, next.Y);
             }
@@ -1454,6 +1508,103 @@ namespace BloodSwordRogue::MapMaker
 
             // fill line
             fills += MapMaker::FillLine(map, points, valid_asset, valid_type, asset, type, next);
+
+            passes++;
+        }
+
+        SDL_Log("[FLOOD FILL] [%d PASSES] [%d POINTS]", passes, fills);
+    }
+
+    void FloodFillV2(Map::Base &map, Asset::Type asset, Map::Object type, Point point)
+    {
+        if (!map.IsValid(point))
+        {
+            return;
+        }
+
+        std::vector<std::vector<bool>> visited(map.Height, std::vector<bool>(map.Width, false));
+
+        Points points = {};
+
+        auto valid_asset = map[point].Asset;
+
+        auto valid_type = map[point].Type;
+
+        auto passes = 0;
+
+        auto fills = 0;
+
+        points.push_back(point);
+
+        while (SafeCast(points.size()) > 0)
+        {
+            // pop one point from the stack
+            auto next = points.back();
+
+            points.pop_back();
+
+            visited[next.Y][next.X] = true;
+
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, next))
+            {
+                map[next].Asset = asset;
+
+                map[next].Type = type;
+
+                fills++;
+            }
+
+            auto left = Point(next.X - 1, next.Y);
+
+            auto right = Point(next.X + 1, next.Y);
+
+            auto up = Point(next.X, next.Y - 1);
+
+            auto down = Point(next.X, next.Y + 1);
+
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, left) && !visited[left.Y][left.X])
+            {
+                map[left].Asset = asset;
+
+                map[left].Type = type;
+
+                fills++;
+
+                points.push_back(left);
+            }
+
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, right) && !visited[right.Y][right.X])
+            {
+                map[right].Asset = asset;
+
+                map[right].Type = type;
+
+                fills++;
+
+                points.push_back(right);
+            }
+
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, up) && !visited[up.Y][up.X])
+            {
+                map[up].Asset = asset;
+
+                map[up].Type = type;
+
+                fills++;
+
+                points.push_back(up);
+            }
+
+            if (MapMaker::IsValidTarget(map, valid_asset, valid_type, down) && !visited[down.Y][down.X])
+            {
+                map[down].Asset = asset;
+
+                map[down].Type = type;
+
+                fills++;
+
+                points.push_back(down);
+            }
 
             passes++;
         }
@@ -2400,7 +2551,10 @@ namespace BloodSwordRogue::MapMaker
                         }
                         else if (mode == Mode::CLEAR)
                         {
-                            MapMaker::FloodFill(map, Asset::NONE, Map::Object::PASSABLE, point);
+                            if (tile.Asset != Asset::NONE || tile.Type != Map::Object::PASSABLE)
+                            {
+                                MapMaker::FloodFill(map, Asset::NONE, Map::Object::PASSABLE, point);
+                            }
                         }
                     }
                 }
