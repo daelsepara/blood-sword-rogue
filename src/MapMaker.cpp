@@ -1909,9 +1909,9 @@ namespace BloodSwordRogue::MapMaker
         map.Initialize(32, 32);
 
         // get max edit window dimensions
-        int TilesW = graphics.Width / map.TileSize - 4;
+        int TilesW = std::min(graphics.Width / map.TileSize - 4, 32);
 
-        int TilesH = graphics.Height / map.TileSize - 7;
+        int TilesH = std::min(graphics.Height / map.TileSize - 7, 32);
 
         MapMaker::ResetMapView(graphics, map, TilesW, TilesH);
 
