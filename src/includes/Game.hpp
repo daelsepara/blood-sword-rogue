@@ -39,7 +39,7 @@ namespace BloodSwordRogue::Game
 
         game.Party.Module = std::string(party.Module);
 
-        game.Party.Map = std::string(party.Map);
+        game.Party.Location = std::string(party.Location);
 
         game.Party.X = party.X;
 

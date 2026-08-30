@@ -22,9 +22,9 @@ namespace BloodSwordRogue::Party
         // variables
         BloodSwordRogue::UnorderedMap<std::string, std::string> Variables = {};
 
-        // location on map: x, y
-        std::string Map = std::string();
+        std::string Location = std::string();
 
+        // location on map: x, y
         int X = -1;
 
         int Y = -1;
@@ -438,7 +438,7 @@ namespace BloodSwordRogue::Party
                 }
             }
 
-            this->Map = !data["map"].is_null() ? std::string(data["map"]) : std::string();
+            this->Location = !data["location"].is_null() ? std::string(data["location"]) : std::string();
 
             this->X = !data["x"].is_null() ? int(data["x"]) : -1;
 
@@ -753,7 +753,7 @@ namespace BloodSwordRogue::Party
             data["variables"] = variables;
         }
 
-        data["map"] = party.Map;
+        data["location"] = party.Location;
 
         data["x"] = party.X;
 
