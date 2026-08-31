@@ -1231,7 +1231,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // get text from user input (popup interface)
-    std::string TextBoxInput(Graphics::Base &graphics, Graphics::Scenery scenes, Point location, std::string question, std::string start_text, Uint32 question_color, Uint32 input_color, int input_limit, int box_w, int box_h, int wrap, Uint32 border = Color::Active, Uint32 box_bg = Color::Background, int border_size = BloodSwordRogue::Border, bool blur = true)
+    std::string TextBoxInput(Graphics::Base &graphics, Graphics::Scenery scenes, Point location, std::string question, std::string start_text, Uint32 question_color, Uint32 input_color, int input_limit, int box_w, int box_h, int wrap, Uint32 border = Color::Active, Uint32 box_bg = Color::Background, int border_size = BloodSwordRogue::Border, bool allow_empty = false, bool blur = true)
     {
         auto message = Graphics::CreateText(graphics, question.c_str(), Fonts::Normal, Color::S(question_color), TTF_STYLE_NORMAL, 0);
 
@@ -1284,7 +1284,7 @@ namespace BloodSwordRogue::Interface
 
                 input = Input::WaitForText(graphics, scenery, box.Controls, input, blur, BloodSwordRogue::StandardDelay);
 
-                if (input.Selected && SafeCast(input.TextInput.size()) > 0)
+                if (input.Selected && (allow_empty || (!allow_empty && SafeCast(input.TextInput.size()) > 0)))
                 {
                     break;
                 }
