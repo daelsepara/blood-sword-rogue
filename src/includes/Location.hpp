@@ -161,6 +161,14 @@ namespace BloodSwordRogue::Location
         return data;
     }
 
+    // copy location
+    void Setup(Location::Base &location, Location::Base &source)
+    {
+        auto data = Location::Data(source);
+
+        Location::Setup(location, data);
+    }
+
     void Save(Location::Base &location, const char *filename)
     {
         nlohmann::json data;

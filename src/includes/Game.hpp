@@ -55,9 +55,66 @@ namespace BloodSwordRogue::Game
         game.Party.Variables = party.Variables;
     }
 
-    bool HasLocation(Base &save, std::string location)
+    bool HasLocation(Game::Base &save, std::string location)
     {
         return BloodSwordRogue::Has(save.Locations, location);
+    }
+
+    // move to a new location
+    void Move(Game::World &world, Game::Base &game, Location::Base &location, Party::Base &party, std::string next)
+    {
+        auto loaded = false;
+
+        // check if area has been visited before
+        if (Game::HasLocation(game, next))
+        {
+            // copy updates
+            Game::Save(game, location);
+
+            auto move = game.Locations[next];
+
+            Location::Setup(location, move);
+
+            loaded = true;
+        }
+        else if (BloodSwordRogue::Has(world.Locations, next))
+        {
+            auto move = world.Locations[next];
+
+            auto json_file = Read(move.c_str());
+
+            if (!json_file.empty())
+            {
+                auto data = nlohmann::json::parse(json_file);
+
+                Location::Setup(location, data["location"]);
+
+                loaded = true;
+            }
+        }
+        else
+        {
+            throw std::invalid_argument("LOCATION NOT FOUND!");
+        }
+
+        if (loaded)
+        {
+            party.Location = std::string(next);
+
+            // move party to origin
+            if (SafeCast(location.Map.Origins.size()) > 0)
+            {
+                party.X = location.Map.Origins[0].X;
+
+                party.Y = location.Map.Origins[0].Y;
+
+                location.Map.Put(location.Map.Origins[0], Map::Object::PARTY, 1);
+            }
+            else
+            {
+                throw std::invalid_argument("LOCATION HAS NO ENTRY POINT!");
+            }
+        }
     }
 
     // current save
