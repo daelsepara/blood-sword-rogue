@@ -1231,6 +1231,87 @@ namespace BloodSwordRogue::Interface
     }
 
     // get text from user input (popup interface)
+    std::string TextBoxInput(Graphics::Base &graphics, Graphics::Scenery scenes, Point location, std::string question, std::string start_text, Uint32 question_color, Uint32 input_color, int input_limit, int box_w, int box_h, int wrap, Uint32 border = Color::Active, Uint32 box_bg = Color::Background, int border_size = BloodSwordRogue::Border, bool blur = true)
+    {
+        auto message = Graphics::CreateText(graphics, question.c_str(), Fonts::Normal, Color::S(question_color), TTF_STYLE_NORMAL, 0);
+
+        auto input_text = std::string();
+
+        if (message)
+        {
+            SDL_Texture *texture = nullptr;
+
+            auto input = Controls::User();
+
+            auto pad = 16;
+
+            input.TextLimit = input_limit;
+
+            input.SetText(start_text);
+
+            if (SafeCast(input.TextInput.size()) > 0)
+            {
+                texture = Graphics::CreateText(graphics, input.TextInput.c_str(), Fonts::Normal, Color::S(input_color), TTF_STYLE_NORMAL, wrap);
+            }
+
+            // setup text input mode
+            input.Text = true;
+
+            // cursor blink
+            auto blink = false;
+
+            // enable text input events
+            Input::StartTextInput();
+
+            while (true)
+            {
+                auto box = Scene::Base();
+
+                box.Add(Scene::Element(location, box_w, box_h, box_bg, border, border_size));
+
+                box.VerifyAndAdd(Scene::Element(message, location + Point(pad, pad)));
+
+                if (texture)
+                {
+                    box.VerifyAndAdd(Scene::Element(texture, location + Point(pad, BloodSwordRogue::TileSize)));
+                }
+
+                blink = !blink;
+
+                auto scenery = scenes;
+
+                scenery.push_back(box);
+
+                input = Input::WaitForText(graphics, scenery, box.Controls, input, blur, BloodSwordRogue::StandardDelay);
+
+                if (input.Selected && SafeCast(input.TextInput.size()) > 0)
+                {
+                    break;
+                }
+                else
+                {
+                    BloodSwordRogue::Free(&texture);
+
+                    auto text_input = input.TextInput + (blink ? std::string("_") : std::string(" "));
+
+                    texture = Graphics::CreateText(graphics, text_input.c_str(), Fonts::Normal, Color::S(input_color), TTF_STYLE_NORMAL, wrap);
+                }
+            }
+
+            // disable text input events
+            Input::StopTextInput();
+
+            BloodSwordRogue::Free(&texture);
+
+            BloodSwordRogue::Free(&message);
+
+            input_text = std::string(input.TextInput);
+        }
+
+        return input_text;
+    }
+
+    // get text from user input (popup interface)
     std::string TextInput(Graphics::Base &graphics, Graphics::Scenery scenes, Point location, std::string question, std::string start_text, Uint32 question_color, Uint32 input_color, int input_limit, int box_w, int box_h, Uint32 border = Color::Active, Uint32 box_bg = Color::Background, int border_size = BloodSwordRogue::Border, bool blur = true)
     {
         auto message = Graphics::CreateText(graphics, question.c_str(), Fonts::Normal, Color::S(question_color), TTF_STYLE_NORMAL, 0);
@@ -1586,5 +1667,170 @@ namespace BloodSwordRogue::Interface
         }
 
         return filename;
+    }
+
+    std::vector<std::string> TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &seed, int width, int height)
+    {
+        // copy initial text list
+        auto text_list = seed;
+
+        auto text_height = 0;
+
+        auto text_width = 0;
+
+        // estimate size of text
+        TTF_SizeText(Fonts::Normal, "M", &text_width, &text_height);
+
+        auto max_text_height = text_height;
+
+        // allow for 20 characters
+        auto items = SafeCast(text_list.size());
+
+        auto limit = 5;
+
+        for (const auto &entry : text_list)
+        {
+            Graphics::Estimate(Fonts::Normal, entry.c_str(), &text_width, &text_height);
+
+            width = std::max(width, text_width + BloodSwordRogue::TileSize);
+
+            max_text_height = std::max(max_text_height, text_height);
+
+            height = std::max(height, (max_text_height + BloodSwordRogue::Pad) * limit + BloodSwordRogue::TileSize * 2);
+        }
+
+        auto done = false;
+
+        auto input = Controls::User();
+
+        auto offset = 0;
+
+        auto selected = -1;
+
+        while (!done)
+        {
+            auto scene = Scene::Base();
+
+            Asset::TextureList assets = {};
+
+            auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
+
+            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+            for (auto i = 0; i < limit; i++)
+            {
+                if ((offset + i) >= 0 && (offset + i) < items)
+                {
+                    auto color = selected == (offset + i) ? Color::S(Color::Highlight) : (input.Current == i ? Color::S(Color::Active) : Color::S(Color::Inactive));
+
+                    assets.push_back(Graphics::CreateText(graphics, text_list[offset + i].c_str(), Fonts::Normal, color, TTF_STYLE_NORMAL));
+
+                    auto loc = Point(box.X + BloodSwordRogue::Pad, box.Y + i * (max_text_height + BloodSwordRogue::Pad) + BloodSwordRogue::Pad);
+
+                    scene.VerifyAndAdd(Scene::Element(assets.back(), loc.X + 4, loc.Y));
+
+                    auto up = i > 0 ? i - 1 : i;
+
+                    auto down = i + 1;
+
+                    scene.Add(Controls::Base(Controls::MapType("SELECT"), i, i, i, up, down, loc.X - BloodSwordRogue::HalfTile / 2, loc.Y - 4, width + BloodSwordRogue::HalfTile / 2, max_text_height, Color::Transparent));
+                }
+            }
+
+            auto x_offset = (BloodSwordRogue::TileSize + BloodSwordRogue::Pad);
+
+            auto controls = 0;
+
+            // add main control
+
+            if (offset + limit < items)
+            {
+                auto down_id = SafeCast(scene.Controls.size());
+
+                auto down = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+                scene.Add(Scene::Element(Asset::Get(Asset::Map("DOWN")), down));
+
+                scene.Add(Controls::Base(Controls::MapType("DOWN"), down_id, controls > 0 ? down_id - 1 : down_id, down_id + 1, down_id - (controls + 1), down_id, down.X, down.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+                controls++;
+            }
+
+            if (offset > 0)
+            {
+                auto up_id = SafeCast(scene.Controls.size());
+
+                auto up = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+                scene.Add(Scene::Element(Asset::Get(Asset::Map("UP")), up));
+
+                scene.Add(Controls::Base(Controls::MapType("UP"), up_id, controls > 0 ? up_id - 1 : up_id, up_id + 1, up_id - (controls + 1), up_id, up.X, up.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+                controls++;
+            }
+
+            auto back_id = SafeCast(scene.Controls.size());
+
+            auto back = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+            scene.Add(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
+
+            scene.Add(Controls::Base(Controls::MapType("BACK"), back_id, controls > 0 ? back_id - 1 : back_id, back_id, back_id - (controls + 1), back_id, back.X, back.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+            // retain focus on scroll controls
+            if (input.Type == Controls::MapType("UP"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("UP"));
+            }
+            else if (input.Type == Controls::MapType("DOWN"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("DOWN"));
+            }
+
+            auto scenery = scenes;
+
+            scenes.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenery, scene.Controls, input);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("BACK"))
+                {
+                    selected = -1;
+
+                    done = true;
+                }
+                else if (input.Type == Controls::MapType("UP"))
+                {
+                    if (offset > 0)
+                    {
+                        offset--;
+                    }
+                }
+                else if (input.Type == Controls::MapType("DOWN"))
+                {
+                    if (offset + limit < items)
+                    {
+                        offset++;
+                    }
+                }
+                else if (input.Type == Controls::MapType("SELECT"))
+                {
+                    if (selected == (input.Current + offset))
+                    {
+                        selected = -1;
+                    }
+                    else
+                    {
+                        selected = input.Current + offset;
+                    }
+                }
+            }
+
+            BloodSwordRogue::Free(assets);
+        }
+
+        return text_list;
     }
 }
