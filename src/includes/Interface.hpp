@@ -6,38 +6,6 @@
 namespace BloodSwordRogue::Interface
 {
     //====================================================================
-    // SAVED GAMES CLASSES AND GLOBALS
-    //====================================================================
-
-    // class to represent saved game on save game menu
-    class SavedGame
-    {
-    public:
-        // slot number
-        int Number = 0;
-
-        // name of saved game file
-        std::string Filename = std::string();
-
-        // timestamp of saved game (string)
-        std::string TimeStamp = std::string();
-
-        // party composition in saved game
-        std::vector<Character::Class> Players = {};
-
-        // current map
-        std::string Map = std::string();
-
-        // whether game is completed
-        bool Completed = false;
-
-        SavedGame() {};
-    };
-
-    // list of saved games
-    std::vector<SavedGame> GamesList = {};
-
-    //====================================================================
     // MODULE BASE CLASS AND GLOBALS
     //====================================================================
 
@@ -60,9 +28,6 @@ namespace BloodSwordRogue::Interface
         // module is in a zipped archive
         bool Zipped = false;
     };
-
-    // save game slots
-    const int MaxGameFiles = 4;
 
     // list of available modules
     std::vector<Module> Modules = {};
