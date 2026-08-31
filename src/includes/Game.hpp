@@ -14,6 +14,8 @@ namespace BloodSwordRogue::Game
         {
             this->Locations.insert_or_assign(name, path);
         }
+
+        World() {}
     };
 
     class Base
@@ -55,9 +57,9 @@ namespace BloodSwordRogue::Game
         game.Party.Variables = party.Variables;
     }
 
-    bool HasLocation(Game::Base &save, std::string location)
+    bool HasLocation(Game::Base &game, std::string location)
     {
-        return BloodSwordRogue::Has(save.Locations, location);
+        return BloodSwordRogue::Has(game.Locations, location);
     }
 
     // move to a new location
@@ -118,7 +120,9 @@ namespace BloodSwordRogue::Game
     }
 
     // current save
-    Game::Base CurrentSave = Game::Base();
+    Game::Base CurrentGame = Game::Base();
+
+    Game::World CurrentWorld = Game::World();
 
     void CheckTrigger(Graphics::Base &graphics, Scene::Base &scene, Location::Base &location, Party::Base &party, Trigger::Base &trigger)
     {
@@ -141,6 +145,16 @@ namespace BloodSwordRogue::Game
             }
             else if (trigger.Type == Trigger::Type::EXIT)
             {
+                trigger.Completed = true;
+
+                if (SafeCast(trigger.Variables.size()) > 0)
+                {
+                    Game::Move(CurrentWorld, CurrentGame, location, party, trigger.Variables[0]);
+                }
+                else
+                {
+                    throw std::invalid_argument("NEXT LOCATION UNDEFIND!");
+                }
             }
 
             // send status message
