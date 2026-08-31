@@ -8,6 +8,8 @@ namespace BloodSwordRogue::Game
     class World
     {
     public:
+        std::string ZipFile = std::string();
+
         BloodSwordRogue::UnorderedMap<std::string, std::string> Locations = {};
 
         void Add(std::string name, std::string path)
@@ -62,6 +64,11 @@ namespace BloodSwordRogue::Game
         return BloodSwordRogue::Has(game.Locations, location);
     }
 
+    bool HasLocation(Game::World &world, std::string location)
+    {
+        return BloodSwordRogue::Has(world.Locations, location);
+    }
+
     // move to a new location
     void Move(Game::World &world, Game::Base &game, Location::Base &location, Party::Base &party, std::string next)
     {
@@ -79,20 +86,11 @@ namespace BloodSwordRogue::Game
 
             loaded = true;
         }
-        else if (BloodSwordRogue::Has(world.Locations, next))
+        else if (Game::HasLocation(world, next))
         {
             auto move = world.Locations[next];
 
-            auto json_file = Read(move.c_str());
-
-            if (!json_file.empty())
-            {
-                auto data = nlohmann::json::parse(json_file);
-
-                Location::Setup(location, data["location"]);
-
-                loaded = true;
-            }
+            loaded = Location::Load(location, move, world.ZipFile);
         }
         else
         {

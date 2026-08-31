@@ -169,6 +169,43 @@ namespace BloodSwordRogue::Location
         Location::Setup(location, data);
     }
 
+    bool Load(Location::Base &location, const char *filename, const char *zip_file)
+    {
+        auto loaded = false;
+
+        auto json_file = zip_file != nullptr ? ZipFile::Read(zip_file, filename) : Read(filename);
+
+        if (!json_file.empty())
+        {
+            auto data = nlohmann::json::parse(json_file);
+
+            Location::Setup(location, data["location"]);
+
+            loaded = true;
+        }
+
+        return loaded;
+    }
+
+    bool Load(Location::Base &location, std::string filename, std::string zip_file)
+    {
+        return Location::Load(location, filename.c_str(), zip_file.empty() ? nullptr : zip_file.c_str());
+    }
+
+    Location::Base Load(const char *filename, const char *zip_file)
+    {
+        auto location = Location::Base();
+
+        Location::Load(location, filename, zip_file);
+
+        return location;
+    }
+
+    Location::Base Load(std::string filename, std::string zip_file)
+    {
+        return Location::Load(filename.c_str(), zip_file.empty() ? nullptr : zip_file.c_str());
+    }
+
     void Save(Location::Base &location, const char *filename)
     {
         nlohmann::json data;
