@@ -126,7 +126,38 @@ namespace BloodSwordRogue::Game
 
     void CheckTrigger(Graphics::Base &graphics, Scene::Base &scene, Location::Base &location, Party::Base &party, Trigger::Base &trigger)
     {
-        if (!trigger.Activated)
+        if (trigger.Type == Trigger::Type::EXIT)
+        {
+            if (!trigger.Activated)
+            {
+                if (!trigger.EncounterMessage.empty())
+                {
+                    Interface::MessageBox(graphics, scene, trigger.EncounterMessage, Color::Active);
+                }
+
+                trigger.Activated = true;
+            }
+
+            if (!trigger.Completed)
+            {
+                if (!trigger.CompletedMessage.empty())
+                {
+                    Interface::MessageBox(graphics, scene, trigger.CompletedMessage, Color::Active);
+                }
+
+                trigger.Completed = true;
+            }
+
+            if (SafeCast(trigger.Variables.size()) > 0)
+            {
+                Game::Move(CurrentWorld, CurrentGame, location, party, trigger.Variables[0]);
+            }
+            else
+            {
+                throw std::invalid_argument("NEXT LOCATION UNDEFIND!");
+            }
+        }
+        else if (!trigger.Activated)
         {
             Interface::MessageBox(graphics, scene, trigger.EncounterMessage, Color::Active);
 
@@ -142,19 +173,6 @@ namespace BloodSwordRogue::Game
             else if (trigger.Type == Trigger::Type::ITEM)
             {
                 trigger.Completed = Evaluate::HasItem(trigger, party);
-            }
-            else if (trigger.Type == Trigger::Type::EXIT)
-            {
-                trigger.Completed = true;
-
-                if (SafeCast(trigger.Variables.size()) > 0)
-                {
-                    Game::Move(CurrentWorld, CurrentGame, location, party, trigger.Variables[0]);
-                }
-                else
-                {
-                    throw std::invalid_argument("NEXT LOCATION UNDEFIND!");
-                }
             }
 
             // send status message
