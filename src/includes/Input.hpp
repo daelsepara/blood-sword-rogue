@@ -201,6 +201,12 @@ namespace BloodSwordRogue::Input
 
                 input.RefreshText = true;
             }
+            else if ((result.key.keysym.sym == SDLK_KP_ENTER || result.key.keysym.sym == SDLK_RETURN || result.key.keysym.sym == SDLK_RETURN2) && SDL_GetModState() & CMD_BUTTON)
+            {
+                input.TextInput += std::string("\n");
+
+                input.RefreshText = true;
+            }
             else if (result.key.keysym.sym == SDLK_KP_ENTER || result.key.keysym.sym == SDLK_RETURN || result.key.keysym.sym == SDLK_RETURN2)
             {
                 input.Selected = true;

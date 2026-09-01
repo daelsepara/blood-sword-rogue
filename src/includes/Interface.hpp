@@ -1238,7 +1238,20 @@ namespace BloodSwordRogue::Interface
 
                 if (texture)
                 {
-                    box.VerifyAndAdd(Scene::Element(texture, location + Point(pad, BloodSwordRogue::TileSize)));
+                    auto threshold = (box_h - BloodSwordRogue::TileSize - pad);
+
+                    auto offset = 0;
+
+                    if (BloodSwordRogue::Height(texture) > threshold)
+                    {
+                        offset = BloodSwordRogue::Height(texture) - threshold;
+
+                        box.VerifyAndAdd(Scene::Element(texture, location.X + pad, location.Y + BloodSwordRogue::TileSize, threshold, offset));
+                    }
+                    else
+                    {
+                        box.VerifyAndAdd(Scene::Element(texture, location + Point(pad, BloodSwordRogue::TileSize)));
+                    }
                 }
 
                 blink = !blink;
@@ -1634,11 +1647,9 @@ namespace BloodSwordRogue::Interface
         return filename;
     }
 
-    std::vector<std::string> TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &seed, int width, int height)
+    // generic text list
+    int TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Asset::Type asset, Controls::Type action)
     {
-        // copy initial text list
-        auto text_list = seed;
-
         auto text_height = 0;
 
         auto text_width = 0;
@@ -1648,7 +1659,6 @@ namespace BloodSwordRogue::Interface
 
         auto max_text_height = text_height;
 
-        // allow for 20 characters
         auto items = SafeCast(text_list.size());
 
         auto limit = 5;
@@ -1707,7 +1717,17 @@ namespace BloodSwordRogue::Interface
             auto controls = 0;
 
             // add main control
+            auto action_id = SafeCast(scene.Controls.size());
 
+            auto action_pos = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+            scene.Add(Scene::Element(Asset::Get(asset), action_pos));
+
+            scene.Add(Controls::Base(action, action_id, controls > 0 ? action_id - 1 : action_id, action_id + 1, action_id - (controls + 1), action_id, action_pos.X, action_pos.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+            controls++;
+
+            // add scroll controls
             if (offset + limit < items)
             {
                 auto down_id = SafeCast(scene.Controls.size());
@@ -1734,6 +1754,7 @@ namespace BloodSwordRogue::Interface
                 controls++;
             }
 
+            // add back button
             auto back_id = SafeCast(scene.Controls.size());
 
             auto back = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
@@ -1791,11 +1812,18 @@ namespace BloodSwordRogue::Interface
                         selected = input.Current + offset;
                     }
                 }
+                else if (input.Type == action)
+                {
+                    if (selected >= 0 && selected < items)
+                    {
+                        done = true;
+                    }
+                }
             }
 
             BloodSwordRogue::Free(assets);
         }
 
-        return text_list;
+        return selected;
     }
 }

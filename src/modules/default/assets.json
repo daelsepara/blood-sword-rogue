@@ -1783,6 +1783,10 @@
         {
             "id": "SELECT TRANSPARENT BLUE",
             "path": "modules/default/images/system/select-transparent-blue.png"
+        },
+        {
+            "id": "SELECT TRANSPARENT RED",
+            "path": "modules/default/images/system/select-transparent-red.png"
         }
     ]
 }

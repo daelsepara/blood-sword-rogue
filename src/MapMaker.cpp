@@ -52,6 +52,8 @@ namespace BloodSwordRogue::MapMaker
 
     std::vector<std::string> ItemsAssets = {"ARROWS", "FOOD", "SHURIKEN", "MONEY", "ARROWS", "MONEY", "POWER LIGHTNING", "SHURIKEN"};
 
+    std::vector<std::string> TriggerTypes = {};
+
     BloodSwordRogue::UnorderedMap<Attribute::Type, Asset::Type> AttributeAssets = {};
 
     BloodSwordRogue::UnorderedMap<Item::Property, Asset::Type> PropertyAssets = {};
@@ -172,10 +174,10 @@ namespace BloodSwordRogue::MapMaker
                     scene.Add(Scene::Element(screen.X + 4, screen.Y + 4, map.TileSize - 8, map.TileSize - 8, Color::Transparent, Color::Highlight, 2));
                 }
 
-                if (tile.Type == Map::Object::TRIGGER)
+                if (tile.Occupant == Map::Object::TRIGGER)
                 {
                     // indicate that the tile is a trigger point
-                    scene.Add(Scene::Element(screen.X + 4, screen.Y + 4, map.TileSize - 8, map.TileSize - 8, Color::Transparent, Color::Inactive, 2));
+                    scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("SELECT TRANSPARENT RED")), screen));
                 }
 
                 // check if point is marked as an origin (party)
@@ -313,6 +315,16 @@ namespace BloodSwordRogue::MapMaker
             {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
             {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
             {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")}};
+
+        MapMaker::TriggerTypes.clear();
+
+        for (auto &trigger : Trigger::TypeMapping)
+        {
+            if (trigger.first != Trigger::Type::NONE)
+            {
+                MapMaker::TriggerTypes.push_back(std::string(trigger.second));
+            }
+        }
     }
 
     bool Generate(std::string &json_file)
@@ -2069,6 +2081,69 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
+    void AddTrigger(Graphics::Base &graphics, Scene::Base &scene, Map::Base &map, Map::Tile &tile, Point &point, Location::Base &location)
+    {
+        if (!map.IsValid(point))
+        {
+            SDL_Log("[INVALID LOCATION] (%d, %d)", point.X, point.Y);
+
+            return;
+        }
+
+        if ((tile.Type == Map::Object::PASSABLE || tile.Type == Map::Object::ENEMY_PASSABLE) && !tile.IsOccupied())
+        {
+            auto id = tile.Id - 1;
+
+            if (tile.Id == Map::NotFound)
+            {
+                Graphics::Scenery scenes = {scene};
+
+                // add trigger
+                auto type = Interface::TextList(graphics, scenes, MapMaker::TriggerTypes, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+
+                if (type >= 0 && type < SafeCast(MapMaker::TriggerTypes.size()))
+                {
+                    auto trigger = Trigger::Base();
+
+                    trigger.Type = Trigger::Map(MapMaker::TriggerTypes[type]);
+
+                    trigger.X = point.X;
+
+                    trigger.Y = point.Y;
+
+                    trigger.EncounterMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ENCOUNTER MESSAGE", "", Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+
+                    trigger.ActiveMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ACTIVE MESSAGE", "", Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+
+                    trigger.CompletedMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT COMPLETION MESSAGE", "", Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+
+                    // TODO: add variables (list of strings)
+
+                    // add trigger
+                    location.Triggers.push_back(trigger);
+
+                    tile.Occupant = Map::Object::TRIGGER;
+
+                    tile.Id = SafeCast(location.Triggers.size());
+                }
+            }
+            else if (id >= 0 && id < location.Triggers.size())
+            {
+                // edit trigger
+            }
+            else
+            {
+                Interface::MessageBox(graphics, scene, "TRIGGER NOT FOUND", Color::Highlight);
+            }
+        }
+        else
+        {
+            Interface::MessageBox(graphics, scene, "CANNOT ADD TRIGGER", Color::Highlight);
+
+            return;
+        }
+    }
+
     void Main(Graphics::Base &graphics)
     {
         FontCache::Base TextCache = FontCache::Base();
@@ -2485,6 +2560,10 @@ namespace BloodSwordRogue::MapMaker
                                         }
                                     }
                                 }
+                                else if (function == Function::TRIGGER && tile.Occupant == Map::Object::TRIGGER)
+                                {
+                                    // edit trigger
+                                }
                             }
                             else if (function == Function::TILE && asset != Asset::NONE)
                             {
@@ -2516,17 +2595,18 @@ namespace BloodSwordRogue::MapMaker
 
                                 map.Origins.push_back(point);
                             }
+                            else if (function == Function::TRIGGER && (tile.Type == Map::Object::PASSABLE || tile.Type == Map::Object::ENEMY_PASSABLE))
+                            {
+                                MapMaker::AddTrigger(graphics, scene, map, tile, point, location);
+                            }
                         }
                         else if (mode == Mode::ERASE)
                         {
                             if (!tile.IsOccupied())
                             {
-                                if (tile.Type != Map::Object::TRIGGER)
-                                {
-                                    tile.Asset = Asset::NONE;
+                                tile.Asset = Asset::NONE;
 
-                                    tile.Type = Map::Object::PASSABLE;
-                                }
+                                tile.Type = Map::Object::PASSABLE;
                             }
                             else if (tile.IsOccupied())
                             {
@@ -2537,6 +2617,10 @@ namespace BloodSwordRogue::MapMaker
                                 else if (tile.Occupant == Map::Object::ITEMS)
                                 {
                                     MapMaker::RemoveLoot(graphics, scene, map, tile, point, location);
+                                }
+                                else if (tile.Occupant == Map::Object::TRIGGER)
+                                {
+                                    // remove trigger
                                 }
                             }
                         }
@@ -2621,8 +2705,6 @@ namespace BloodSwordRogue::MapMaker
                 else if (input.Type == Controls::MapType("TRIGGER"))
                 {
                     function = Function::TRIGGER;
-
-                    Interface::MessageBox(graphics, scene, "NOT IMPLEMENTED YET", Color::Inactive);
                 }
                 else if (input.Type == Controls::MapType("TOGGLE"))
                 {
