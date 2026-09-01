@@ -1648,7 +1648,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // generic text list
-    int TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Asset::Type asset, Controls::Type action)
+    int TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Asset::Type asset, Controls::Type action, int selected = -1)
     {
         auto text_height = 0;
 
@@ -1680,7 +1680,8 @@ namespace BloodSwordRogue::Interface
 
         auto offset = 0;
 
-        auto selected = -1;
+        // clip selected
+        selected = std::min(std::max(-1, selected), items - 1);
 
         while (!done)
         {

@@ -1256,7 +1256,7 @@ namespace BloodSwordRogue::MapMaker
     }
 
     // renumber remaining map triggers
-    void RenumberTrigers(Location::Base &location)
+    void RenumberTriggers(Location::Base &location)
     {
         auto &map = location.Map;
 
@@ -1879,7 +1879,7 @@ namespace BloodSwordRogue::MapMaker
                         location.Triggers = triggers;
 
                         // renumber triggers
-                        MapMaker::RenumberTrigers(location);
+                        MapMaker::RenumberTriggers(location);
 
                         location.Map.ViewX = location.Map.Width;
 
@@ -1995,7 +1995,7 @@ namespace BloodSwordRogue::MapMaker
                         location.Triggers = triggers;
 
                         // renumber triggers
-                        MapMaker::RenumberTrigers(location);
+                        MapMaker::RenumberTriggers(location);
 
                         location.Map.ViewY = location.Map.Height;
 
@@ -2081,19 +2081,99 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
+    // helper function
+    void EditTriggerMessage(Graphics::Base &graphics, Graphics::Scenery &scenes, Map::Base &map, std::string question, std::string &message)
+    {
+        message = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), question, message, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+    }
+
+    // edit trigger
     void EditTrigger(Graphics::Base &graphics, Graphics::Scenery &scenes, Map::Base &map, Trigger::Base &trigger)
     {
-        auto type = Interface::TextList(graphics, scenes, MapMaker::TriggerTypes, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+        Asset::List assets = {
+            Asset::Map("CHECKBOX TREE"),
+            Asset::Map("READ"),
+            Asset::Map("READ"),
+            Asset::Map("READ"),
+            Asset::Map("CONFIRM")};
 
-        if (type >= 0 && type < SafeCast(MapMaker::TriggerTypes.size()))
+        std::vector<std::string> captions = {
+            "SELECT TRIGGER TYPE",
+            "EDIT ENCOUNTER MESSAGE",
+            "EDIT ACTIVE MESSAGE",
+            "EDIT COMPLETION MESSAGE",
+            "DONE"};
+
+        auto done = false;
+
+        while (!done)
         {
-            trigger.Type = Trigger::Map(MapMaker::TriggerTypes[type]);
+            auto selected = Interface::IconList(graphics, scenes, assets, captions);
 
-            trigger.EncounterMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ENCOUNTER MESSAGE", trigger.EncounterMessage, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+            if (selected >= 0 && selected < SafeCast(captions.size()))
+            {
+                if (selected == 0)
+                {
+                    // set trigger type
+                    auto select = -1;
 
-            trigger.ActiveMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ACTIVE MESSAGE", trigger.ActiveMessage, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+                    if (trigger.Type != Trigger::Type::NONE)
+                    {
+                        for (auto i = 0; i < SafeCast(MapMaker::TriggerTypes.size()); i++)
+                        {
+                            if (trigger.Type == Trigger::Map(MapMaker::TriggerTypes[i]))
+                            {
+                                select = i;
 
-            trigger.CompletedMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT COMPLETION MESSAGE", trigger.CompletedMessage, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+                                break;
+                            }
+                        }
+                    }
+
+                    auto type = Interface::TextList(graphics, scenes, MapMaker::TriggerTypes, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"), select);
+
+                    if (type >= 0 && type < SafeCast(MapMaker::TriggerTypes.size()))
+                    {
+                        trigger.Type = Trigger::Map(MapMaker::TriggerTypes[type]);
+                    }
+                    else
+                    {
+                        trigger.Type = Trigger::Type::NONE;
+                    }
+                }
+                else if (selected == 1)
+                {
+                    // edit encounter message
+                    MapMaker::EditTriggerMessage(graphics, scenes, map, "EDIT ENCOUNTER MESSAGE", trigger.EncounterMessage);
+                }
+                else if (selected == 2)
+                {
+                    // edit active message
+                    MapMaker::EditTriggerMessage(graphics, scenes, map, "EDIT ACTIVE MESSAGE", trigger.ActiveMessage);
+                }
+                else if (selected == 3)
+                {
+                    // edit completion message
+                    MapMaker::EditTriggerMessage(graphics, scenes, map, "EDIT COMPLETION MESSAGE", trigger.CompletedMessage);
+                }
+                else if (selected == 4)
+                {
+                    // check if trigger type is set
+                    if (trigger.Type != Trigger::Type::NONE)
+                    {
+                        done = true;
+                    }
+                    else
+                    {
+                        Interface::MessageBox(graphics, scenes.back(), "TRIGGER TYPE NOT SET", Color::Highlight);
+                    }
+                }
+            }
+            else
+            {
+                // go back
+                done = true;
+            }
         }
     }
 
