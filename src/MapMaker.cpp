@@ -2081,6 +2081,22 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
+    void EditTrigger(Graphics::Base &graphics, Graphics::Scenery &scenes, Map::Base &map, Trigger::Base &trigger)
+    {
+        auto type = Interface::TextList(graphics, scenes, MapMaker::TriggerTypes, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+
+        if (type >= 0 && type < SafeCast(MapMaker::TriggerTypes.size()))
+        {
+            trigger.Type = Trigger::Map(MapMaker::TriggerTypes[type]);
+
+            trigger.EncounterMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ENCOUNTER MESSAGE", trigger.EncounterMessage, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+
+            trigger.ActiveMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ACTIVE MESSAGE", trigger.ActiveMessage, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+
+            trigger.CompletedMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT COMPLETION MESSAGE", trigger.CompletedMessage, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+        }
+    }
+
     void AddTrigger(Graphics::Base &graphics, Scene::Base &scene, Map::Base &map, Map::Tile &tile, Point &point, Location::Base &location)
     {
         if (!map.IsValid(point))
@@ -2092,34 +2108,22 @@ namespace BloodSwordRogue::MapMaker
 
         if ((tile.Type == Map::Object::PASSABLE || tile.Type == Map::Object::ENEMY_PASSABLE) && !tile.IsOccupied())
         {
+            Graphics::Scenery scenes = {scene};
+
             auto id = tile.Id - 1;
 
             if (tile.Id == Map::NotFound)
             {
-                Graphics::Scenery scenes = {scene};
+                auto trigger = Trigger::Base();
 
-                // add trigger
-                auto type = Interface::TextList(graphics, scenes, MapMaker::TriggerTypes, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+                MapMaker::EditTrigger(graphics, scenes, map, trigger);
 
-                if (type >= 0 && type < SafeCast(MapMaker::TriggerTypes.size()))
+                if (trigger.Type != Trigger::Type::NONE)
                 {
-                    auto trigger = Trigger::Base();
-
-                    trigger.Type = Trigger::Map(MapMaker::TriggerTypes[type]);
-
                     trigger.X = point.X;
 
                     trigger.Y = point.Y;
 
-                    trigger.EncounterMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ENCOUNTER MESSAGE", "", Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
-
-                    trigger.ActiveMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT ACTIVE MESSAGE", "", Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
-
-                    trigger.CompletedMessage = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), "EDIT COMPLETION MESSAGE", "", Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
-
-                    // TODO: add variables (list of strings)
-
-                    // add trigger
                     location.Triggers.push_back(trigger);
 
                     tile.Occupant = Map::Object::TRIGGER;
@@ -2129,7 +2133,7 @@ namespace BloodSwordRogue::MapMaker
             }
             else if (id >= 0 && id < location.Triggers.size())
             {
-                // edit trigger
+                MapMaker::EditTrigger(graphics, scenes, map, location.Triggers[id]);
             }
             else
             {
@@ -2562,7 +2566,18 @@ namespace BloodSwordRogue::MapMaker
                                 }
                                 else if (function == Function::TRIGGER && tile.Occupant == Map::Object::TRIGGER)
                                 {
-                                    // edit trigger
+                                    auto id = tile.Id - 1;
+
+                                    if (id >= 0 && id < SafeCast(location.Triggers.size()))
+                                    {
+                                        Graphics::Scenery scenes = {scene};
+
+                                        MapMaker::EditTrigger(graphics, scenes, map, location.Triggers[id]);
+                                    }
+                                    else
+                                    {
+                                        Interface::MessageBox(graphics, scene, "TRIGGER NOT FOUND", Color::Highlight);
+                                    }
                                 }
                             }
                             else if (function == Function::TILE && asset != Asset::NONE)

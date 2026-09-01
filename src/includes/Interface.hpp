@@ -1716,17 +1716,6 @@ namespace BloodSwordRogue::Interface
 
             auto controls = 0;
 
-            // add main control
-            auto action_id = SafeCast(scene.Controls.size());
-
-            auto action_pos = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
-
-            scene.Add(Scene::Element(Asset::Get(asset), action_pos));
-
-            scene.Add(Controls::Base(action, action_id, controls > 0 ? action_id - 1 : action_id, action_id + 1, action_id - (controls + 1), action_id, action_pos.X, action_pos.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
-
-            controls++;
-
             // add scroll controls
             if (offset + limit < items)
             {
@@ -1753,6 +1742,17 @@ namespace BloodSwordRogue::Interface
 
                 controls++;
             }
+
+            // add action control
+            auto action_id = SafeCast(scene.Controls.size());
+
+            auto action_pos = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+            scene.Add(Scene::Element(Asset::Get(asset), action_pos));
+
+            scene.Add(Controls::Base(action, action_id, controls > 0 ? action_id - 1 : action_id, action_id + 1, action_id - (controls + 1), action_id, action_pos.X, action_pos.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+            controls++;
 
             // add back button
             auto back_id = SafeCast(scene.Controls.size());
