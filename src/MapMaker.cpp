@@ -2092,9 +2092,9 @@ namespace BloodSwordRogue::MapMaker
     {
         Asset::List assets = {
             Asset::Map("CHECKBOX TREE"),
-            Asset::Map("READ"),
-            Asset::Map("READ"),
-            Asset::Map("READ"),
+            Asset::Map("IDENTIFY"),
+            Asset::Map("IDENTIFY"),
+            Asset::Map("IDENTIFY"),
             Asset::Map("CONFIRM")};
 
         std::vector<std::string> captions = {
