@@ -2352,6 +2352,8 @@ namespace BloodSwordRogue::MapMaker
             "REMOVE",
             "EDIT"};
 
+        SDL_Texture *trigger_asset = nullptr;
+
         while (!done)
         {
             auto scene = Scene::Base();
@@ -2560,6 +2562,36 @@ namespace BloodSwordRogue::MapMaker
                         auto point = Point(BloodSwordRogue::HalfTile + i * (map.TileSize + BloodSwordRogue::Pad), graphics.Height - map.TileSize - BloodSwordRogue::HalfTile);
 
                         scene.VerifyAndAdd(Scene::Element(Asset::Get(loot[i].Asset), point));
+                    }
+                }
+                else if (tile.Occupant == Map::Object::TRIGGER)
+                {
+                    if (trigger_asset != nullptr)
+                    {
+                        BloodSwordRogue::Free(&trigger_asset);
+                    }
+
+                    if (id >= 0 && id < SafeCast(location.Triggers.size()))
+                    {
+                        auto &trigger = location.Triggers[id];
+
+                        std::string trigger_text = std::string();
+
+                        trigger_text += std::string("TRIGGER TYPE: ") + std::string(Trigger::TypeMapping[trigger.Type]) + std::string("\n");
+
+                        trigger_text += std::string("   ENCOUNTER: ") + trigger.EncounterMessage.substr(0, 75) + (trigger.EncounterMessage.size() > 40 ? std::string("...\n") : std::string("\n"));
+
+                        trigger_text += std::string("      ACTIVE: ") + trigger.ActiveMessage.substr(0, 75) + (trigger.ActiveMessage.size() > 40 ? std::string("...\n") : std::string("\n"));
+
+                        trigger_text += std::string("    COMPLETE: ") + trigger.CompletedMessage.substr(0, 75) + (trigger.CompletedMessage.size() > 40 ? std::string("...\n") : std::string());
+
+                        auto trigger_asset = Graphics::CreateText(graphics, trigger_text.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL);
+
+                        auto point = Point(BloodSwordRogue::HalfTile, graphics.Height - map.TileSize - BloodSwordRogue::HalfTile);
+
+                        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("TIME")), point));
+
+                        scene.VerifyAndAdd(Scene::Element(trigger_asset, point + Point(map.TileSize + BloodSwordRogue::Pad, -TTF_FontHeight(Fonts::Normal) / 2 - BloodSwordRogue::Pad)));
                     }
                 }
             }
@@ -2952,6 +2984,8 @@ namespace BloodSwordRogue::MapMaker
             BloodSwordRogue::Free(&mode_asset);
 
             BloodSwordRogue::Free(&add_asset);
+
+            BloodSwordRogue::Free(&trigger_asset);
         }
 
         BloodSwordRogue::Free(captions);
