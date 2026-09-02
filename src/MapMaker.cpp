@@ -2760,6 +2760,18 @@ namespace BloodSwordRogue::MapMaker
                                 else if (tile.Occupant == Map::Object::TRIGGER)
                                 {
                                     // remove trigger
+                                    auto id = tile.Id - 1;
+
+                                    if (id >= 0 && id < SafeCast(location.Triggers.size()))
+                                    {
+                                        location.Triggers.erase(location.Triggers.begin() + id);
+
+                                        tile.Id = Map::NotFound;
+
+                                        tile.Occupant = Map::Object::NONE;
+
+                                        MapMaker::RenumberTriggers(location);
+                                    }
                                 }
                             }
                         }
