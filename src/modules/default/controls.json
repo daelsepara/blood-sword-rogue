@@ -139,7 +139,9 @@
         "INCREASE",
         "DECREASE",
         "RESIZE WIDTH",
-        "RESIZE HEIGHT"
+        "RESIZE HEIGHT",
+        "ADD",
+        "REMOVE"
     ],
     "controls-spells": [
         "VOLCANO SPRAY",

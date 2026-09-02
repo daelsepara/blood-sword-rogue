@@ -2095,6 +2095,7 @@ namespace BloodSwordRogue::MapMaker
             Asset::Map("IDENTIFY"),
             Asset::Map("IDENTIFY"),
             Asset::Map("IDENTIFY"),
+            Asset::Map("IDENTIFY"),
             Asset::Map("CONFIRM")};
 
         std::vector<std::string> captions = {
@@ -2102,6 +2103,7 @@ namespace BloodSwordRogue::MapMaker
             "EDIT ENCOUNTER MESSAGE",
             "EDIT ACTIVE MESSAGE",
             "EDIT COMPLETION MESSAGE",
+            "EDIT VARIABLES",
             "DONE"};
 
         auto done = false;
@@ -2158,6 +2160,11 @@ namespace BloodSwordRogue::MapMaker
                 }
                 else if (selected == 4)
                 {
+                    // edit variables
+                    trigger.Variables = Interface::GetTextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4);
+                }
+                else if (selected == 5)
+                {
                     // check if trigger type is set
                     if (trigger.Type != Trigger::Type::NONE)
                     {
@@ -2171,7 +2178,12 @@ namespace BloodSwordRogue::MapMaker
             }
             else
             {
-                // go back
+                // check if trigger type is set
+                if (trigger.Type == Trigger::Type::NONE)
+                {
+                    Interface::MessageBox(graphics, scenes.back(), "TRIGGER TYPE NOT SET", Color::Highlight);
+                }
+
                 done = true;
             }
         }
