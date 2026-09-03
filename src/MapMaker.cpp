@@ -156,6 +156,13 @@ namespace BloodSwordRogue::MapMaker
                             }
                         }
 
+                    case Map::Object::TRIGGER:
+
+                        if (tile.Asset != Asset::NONE)
+                        {
+                            scene.VerifyAndAdd(Scene::Element(Asset::Get(tile.Asset), screen));
+                        }
+
                         break;
 
                     default:
