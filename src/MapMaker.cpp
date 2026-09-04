@@ -354,7 +354,8 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
-    bool Generate(std::string &json_file)
+    // load map maker settings json string
+    bool Load(std::string &json_file)
     {
         if (json_file.empty())
         {
@@ -383,7 +384,7 @@ namespace BloodSwordRogue::MapMaker
 
         if (!json_file.empty())
         {
-            result = Generate(json_file);
+            result = Load(json_file);
         }
 
         return result;
@@ -401,6 +402,7 @@ namespace BloodSwordRogue::MapMaker
         return zip_file.empty() ? Load(map_maker.c_str()) : Load(map_maker.c_str(), zip_file.c_str());
     }
 
+    // check if this is an item that requires a quantity to be set
     void CheckQuantity(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
     {
         for (auto i = 0; i < SafeCast(MapMaker::ItemsWithQuantities.size()); i++)
@@ -440,8 +442,8 @@ namespace BloodSwordRogue::MapMaker
         MapMaker::CheckQuantity(graphics, scenes, item);
     }
 
-    // view character skills
-    Skills::Type ViewSkills(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    // select character skill
+    Skills::Type SelectSkill(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
     {
         auto selected_skill = Skills::NONE;
 
@@ -510,7 +512,7 @@ namespace BloodSwordRogue::MapMaker
                     {
                         character.AddSkill(skills[selected]);
 
-                        Interface::MessageBox(graphics, scenes, character.Name + std::string(" ACQUIRES THE ") + Skills::TypeMapping[skills[selected]] + std::string(" SKILL"), Color::Active);
+                        Interface::MessageBox(graphics, scenes, character.Name + std::string(" GAINS THE ") + Skills::TypeMapping[skills[selected]] + std::string(" SKILL"), Color::Active);
                     }
                 }
                 else
@@ -526,7 +528,7 @@ namespace BloodSwordRogue::MapMaker
     {
         while (true && SafeCast(character.Skills.size()) > 0)
         {
-            auto selected = MapMaker::ViewSkills(graphics, scenes, character);
+            auto selected = MapMaker::SelectSkill(graphics, scenes, character);
 
             if (selected != Skills::NONE)
             {
@@ -625,7 +627,7 @@ namespace BloodSwordRogue::MapMaker
             }
         }
 
-        // add item attributes
+        // show item attributes
         for (auto attribute : item.Attributes)
         {
             assets.push_back(AttributeAssets[attribute.first]);
@@ -635,6 +637,7 @@ namespace BloodSwordRogue::MapMaker
             captions.push_back(caption);
         }
 
+        // show item properties
         for (auto &properties : MapMaker::PropertyAssets)
         {
             auto property = properties.first;
@@ -820,7 +823,7 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
-    // edit item main
+    // edit item
     void EditItem(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
     {
         auto done = false;
@@ -901,7 +904,7 @@ namespace BloodSwordRogue::MapMaker
     }
 
     // select item
-    int SelectItems(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
+    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
     {
         auto selected = Item::NONE;
 
@@ -932,9 +935,9 @@ namespace BloodSwordRogue::MapMaker
     }
 
     // select item
-    int SelectItems(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
     {
-        return MapMaker::SelectItems(graphics, scenes, character.Items);
+        return MapMaker::SelectItem(graphics, scenes, character.Items);
     }
 
     // view items
@@ -942,7 +945,7 @@ namespace BloodSwordRogue::MapMaker
     {
         while (true)
         {
-            auto selected = MapMaker::SelectItems(graphics, scenes, items);
+            auto selected = MapMaker::SelectItem(graphics, scenes, items);
 
             if (selected >= 0 && selected < SafeCast(items.size()))
             {
@@ -967,7 +970,7 @@ namespace BloodSwordRogue::MapMaker
     {
         while (true && SafeCast(character.Items.size() > 0))
         {
-            auto selected = MapMaker::SelectItems(graphics, scenes, character);
+            auto selected = MapMaker::SelectItem(graphics, scenes, character);
 
             if (selected >= 0 && selected < SafeCast(character.Items.size()))
             {
@@ -1260,7 +1263,7 @@ namespace BloodSwordRogue::MapMaker
                     {
                         if (object_controls[selected] == Controls::MapType("VIEW") && SafeCast(character.Skills.size() > 0))
                         {
-                            MapMaker::ViewSkills(graphics, {background, scene}, character);
+                            MapMaker::SelectSkill(graphics, {background, scene}, character);
                         }
                         else if (object_controls[selected] == Controls::MapType("CONFIRM"))
                         {
@@ -1474,48 +1477,6 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
-    // renumber remaining map stashes (loot)
-    void RenumberLoot(Location::Base &location)
-    {
-        auto &map = location.Map;
-
-        if (SafeCast(location.Loot.size()) > 0)
-        {
-            auto current = 1;
-
-            // renumber remaining stashes
-            for (auto &loot : location.Loot)
-            {
-                SDL_Log("[UPDATE LOOT %d] [NEW ID %d]", map[loot.Location()].Id, current);
-
-                map[loot.Location()].Id = current;
-
-                current++;
-            }
-        }
-    }
-
-    // renumber remaining map triggers
-    void RenumberTriggers(Location::Base &location)
-    {
-        auto &map = location.Map;
-
-        if (SafeCast(location.Triggers.size()) > 0)
-        {
-            auto current = 1;
-
-            // renumber remaining triggers
-            for (auto &trigger : location.Triggers)
-            {
-                SDL_Log("[UPDATE TRIGGER %d] [NEW ID %d]", map[trigger.Location()].Id, current);
-
-                map[trigger.Location()].Id = current;
-
-                current++;
-            }
-        }
-    }
-
     // remove item from loot (in map selected map location)
     void RemoveLoot(Graphics::Base &graphics, Scene::Base &scene, Map::Base &map, Map::Tile &tile, Point &point, Location::Base &location)
     {
@@ -1561,7 +1522,7 @@ namespace BloodSwordRogue::MapMaker
 
                 tile.Occupant = Map::Object::NONE;
 
-                MapMaker::RenumberLoot(location);
+                Location::RenumberLoot(location);
             }
         }
     }
@@ -2020,7 +1981,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Loot = bags;
 
-                        MapMaker::RenumberLoot(location);
+                        Location::RenumberLoot(location);
 
                         std::vector<Trigger::Base> triggers = {};
 
@@ -2037,7 +1998,7 @@ namespace BloodSwordRogue::MapMaker
                         location.Triggers = triggers;
 
                         // renumber triggers
-                        MapMaker::RenumberTriggers(location);
+                        Location::RenumberTriggers(location);
 
                         location.Map.ViewX = location.Map.Width;
 
@@ -2136,7 +2097,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Loot = bags;
 
-                        MapMaker::RenumberLoot(location);
+                        Location::RenumberLoot(location);
 
                         std::vector<Trigger::Base> triggers = {};
 
@@ -2153,7 +2114,7 @@ namespace BloodSwordRogue::MapMaker
                         location.Triggers = triggers;
 
                         // renumber triggers
-                        MapMaker::RenumberTriggers(location);
+                        Location::RenumberTriggers(location);
 
                         location.Map.ViewY = location.Map.Height;
 
@@ -2928,7 +2889,7 @@ namespace BloodSwordRogue::MapMaker
 
                                         tile.Occupant = Map::Object::NONE;
 
-                                        MapMaker::RenumberTriggers(location);
+                                        Location::RenumberTriggers(location);
                                     }
                                 }
                             }

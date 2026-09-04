@@ -64,6 +64,48 @@ namespace BloodSwordRogue::Location
         Base() {}
     };
 
+    // renumber remaining map stashes (loot)
+    void RenumberLoot(Location::Base &location)
+    {
+        auto &map = location.Map;
+
+        if (SafeCast(location.Loot.size()) > 0)
+        {
+            auto current = 1;
+
+            // renumber remaining stashes
+            for (auto &loot : location.Loot)
+            {
+                SDL_Log("[UPDATE LOOT %d] [NEW ID %d]", map[loot.Location()].Id, current);
+
+                map[loot.Location()].Id = current;
+
+                current++;
+            }
+        }
+    }
+
+    // renumber remaining map triggers
+    void RenumberTriggers(Location::Base &location)
+    {
+        auto &map = location.Map;
+
+        if (SafeCast(location.Triggers.size()) > 0)
+        {
+            auto current = 1;
+
+            // renumber remaining triggers
+            for (auto &trigger : location.Triggers)
+            {
+                SDL_Log("[UPDATE TRIGGER %d] [NEW ID %d]", map[trigger.Location()].Id, current);
+
+                map[trigger.Location()].Id = current;
+
+                current++;
+            }
+        }
+    }
+
     // load location
     void Setup(Location::Base &location, nlohmann::json &data)
     {
