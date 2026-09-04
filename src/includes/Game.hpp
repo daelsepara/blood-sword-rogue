@@ -186,16 +186,12 @@ namespace BloodSwordRogue::Game
 
                 trigger.Activated = true;
             }
-
-            if (!trigger.Completed)
+            else if (!trigger.ActiveMessage.empty())
             {
-                if (!trigger.CompletedMessage.empty())
-                {
-                    Interface::MessageBox(graphics, scene, trigger.CompletedMessage, Color::Active);
-                }
-
-                trigger.Completed = true;
+                Interface::MessageBox(graphics, scene, trigger.ActiveMessage, Color::Active);
             }
+
+            // exits do not complete
 
             if (SafeCast(trigger.Variables.size()) > 0)
             {
@@ -203,7 +199,7 @@ namespace BloodSwordRogue::Game
             }
             else
             {
-                throw std::invalid_argument("NEXT LOCATION UNDEFINED!");
+                throw std::invalid_argument("NEXT DESTINATION UNDEFINED!");
             }
         }
         else if (!trigger.Activated)
