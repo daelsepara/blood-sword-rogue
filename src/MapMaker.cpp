@@ -62,126 +62,16 @@ namespace BloodSwordRogue::MapMaker
 
     const int MaxItems = 10;
 
-    // renders score and toggles
-    void RenderScore(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int score, int x, int y, std::string inc, std::string dec)
-    {
-        // asset icon
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(asset), Point(x, y)));
-
-        // boxes around numbers
-        auto color = score < 0 ? Color::Highlight : Color::Inactive;
-
-        scene.Add(Scene::Element(x + BloodSwordRogue::TileSize + 4, y + 4, BloodSwordRogue::TileSize - 8, BloodSwordRogue::TileSize - 8, Color::Transparent, color, 2));
-
-        scene.Add(Scene::Element(x + BloodSwordRogue::TileSize * 2 + 4, y + 4, BloodSwordRogue::TileSize - 8, BloodSwordRogue::TileSize - 8, Color::Transparent, color, 2));
-
-        if (std::abs(score) >= 10)
-        {
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[std::abs(score / 10)]), Point(x + BloodSwordRogue::TileSize, y)));
-        }
-        else
-        {
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[0]), Point(x + BloodSwordRogue::TileSize, y)));
-        }
-
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[std::abs(score % 10)]), Point(x + BloodSwordRogue::TileSize * 2, y)));
-
-        // add increase/decrease controls
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("UP")), Point(x + BloodSwordRogue::TileSize * 3, y)));
-
-        auto inc_id = SafeCast(scene.Controls.size());
-
-        scene.Add(Controls::Base(Controls::MapType(inc), inc_id, inc_id, inc_id + 1, inc_id, inc_id, x + BloodSwordRogue::TileSize * 3, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
-
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("DOWN")), Point(x + BloodSwordRogue::TileSize * 4, y)));
-
-        auto dec_id = SafeCast(scene.Controls.size());
-
-        scene.Add(Controls::Base(Controls::MapType(dec), dec_id, dec_id - 1, dec_id, dec_id, dec_id, x + BloodSwordRogue::TileSize * 4, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
-    }
-
     // generic number setter
     int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, std::string asset, int value, int min_value, int max_value)
     {
-        auto tile = BloodSwordRogue::TileSize;
-
-        auto width = tile * 8;
-
-        auto height = tile * 2;
-
-        auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
-
-        auto input = Controls::User();
-
-        auto done = false;
-
-        auto scene = Scene::Base();
-
-        while (!done)
-        {
-            // icon grid
-            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
-
-            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map(asset), value, box.X + tile / 2, box.Y + tile / 2, "INCREASE", "DECREASE");
-
-            auto id = SafeCast(scene.Controls.size());
-
-            auto confirm = Point(box.X + tile * 5 + tile / 2, box.Y + tile / 2);
-
-            scene.Add(Scene::Element(Asset::Get(Asset::Map("CONFIRM")), confirm));
-
-            scene.Add(Controls::Base(Controls::MapType("CONFIRM"), id, id - 1, id + 1, id, id, confirm.X, confirm.Y, tile, tile, Color::Active));
-
-            id++;
-
-            auto back = Point(box.X + tile * 6 + tile / 2, box.Y + tile / 2);
-
-            scene.Add(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
-
-            scene.Add(Controls::Base(Controls::MapType("BACK"), id, id - 1, id, id, id, back.X, back.Y, tile, tile, Color::Active));
-
-            auto scenes = scenery;
-
-            scenes.push_back(scene);
-
-            input = Input::WaitForInput(graphics, scenes, scene.Controls, input);
-
-            if (Input::Check(input))
-            {
-                if (input.Type == Controls::MapType("BACK"))
-                {
-                    value = -1;
-
-                    done = true;
-                }
-                else if (input.Type == Controls::MapType("INCREASE"))
-                {
-                    if (value < max_value && value < 99)
-                    {
-                        value++;
-                    }
-                }
-                else if (input.Type == Controls::MapType("DECREASE"))
-                {
-                    if (value > min_value && value > -99)
-                    {
-                        value--;
-                    }
-                }
-                else if (input.Type == Controls::MapType("CONFIRM"))
-                {
-                    done = true;
-                }
-            }
-        }
-
-        return value;
+        return Interface::SetValue(graphics, scenery, MapMaker::Numbers, asset, value, min_value, max_value);
     }
 
     // generic number setter
     int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, std::string asset, int value)
     {
-        return MapMaker::SetValue(graphics, scenery, asset, value, 1, 99);
+        return Interface::SetValue(graphics, scenery, MapMaker::Numbers, asset, value);
     }
 
     // renders the current map
@@ -1209,37 +1099,37 @@ namespace BloodSwordRogue::MapMaker
             scene.Add(Controls::Base(Controls::MapType("ITEMS"), 2, 1, 2, 2, 2, box.X + tile * 3, box.Y + tile, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
 
             // fighting prowess
-            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::FIGHTING_PROWESS], character.Value(Attribute::Type::FIGHTING_PROWESS), box.X + tile, box.Y + tile * 3, "FPR+", "FPR-");
+            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::FIGHTING_PROWESS], character.Value(Attribute::Type::FIGHTING_PROWESS), box.X + tile, box.Y + tile * 3, "FPR+", "FPR-");
 
             // fighting prowess modifiers
-            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::FIGHTING_PROWESS), box.X + tile * 6, box.Y + tile * 3, "FPR MOD+", "FPR MOD-");
+            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::FIGHTING_PROWESS), box.X + tile * 6, box.Y + tile * 3, "FPR MOD+", "FPR MOD-");
 
             // awareness
-            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::AWARENESS], character.Value(Attribute::Type::AWARENESS), box.X + tile, box.Y + tile * 4, "AWR+", "AWR-");
+            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::AWARENESS], character.Value(Attribute::Type::AWARENESS), box.X + tile, box.Y + tile * 4, "AWR+", "AWR-");
 
             // awareness modifiers
-            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::AWARENESS), box.X + tile * 6, box.Y + tile * 4, "AWR MOD+", "AWR MOD-");
+            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::AWARENESS), box.X + tile * 6, box.Y + tile * 4, "AWR MOD+", "AWR MOD-");
 
             // psychic ability
-            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::PSYCHIC_ABILITY], character.Value(Attribute::Type::PSYCHIC_ABILITY), box.X + tile, box.Y + tile * 5, "PSY+", "PSY-");
+            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::PSYCHIC_ABILITY], character.Value(Attribute::Type::PSYCHIC_ABILITY), box.X + tile, box.Y + tile * 5, "PSY+", "PSY-");
 
             // psychic ability modifiers
-            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::PSYCHIC_ABILITY), box.X + tile * 6, box.Y + tile * 5, "PSY MOD+", "PSY MOD-");
+            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::PSYCHIC_ABILITY), box.X + tile * 6, box.Y + tile * 5, "PSY MOD+", "PSY MOD-");
 
             // damage
-            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::DAMAGE], character.Value(Attribute::Type::DAMAGE), box.X + tile, box.Y + tile * 6, "DMG+", "DMG-");
+            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::DAMAGE], character.Value(Attribute::Type::DAMAGE), box.X + tile, box.Y + tile * 6, "DMG+", "DMG-");
 
             // damage modifiers
-            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::DAMAGE), box.X + tile * 6, box.Y + tile * 6, "DMG MOD+", "DMG MOD-");
+            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::DAMAGE), box.X + tile * 6, box.Y + tile * 6, "DMG MOD+", "DMG MOD-");
 
             // endurance
-            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ENDURANCE], character.Value(Attribute::Type::ENDURANCE), box.X + tile, box.Y + tile * 7, "END+", "END-");
+            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ENDURANCE], character.Value(Attribute::Type::ENDURANCE), box.X + tile, box.Y + tile * 7, "END+", "END-");
 
             // encumbrance limit
-            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map("WEIGHT"), character.EncumbranceLimit, box.X + tile * 6, box.Y + tile * 7, "WT+", "WT-");
+            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("WEIGHT"), character.EncumbranceLimit, box.X + tile * 6, box.Y + tile * 7, "WT+", "WT-");
 
             // armour
-            MapMaker::RenderScore(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ARMOUR], character.Modifier(Attribute::Type::ARMOUR), box.X + tile, box.Y + tile * 8, "ARM+", "ARM-");
+            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ARMOUR], character.Modifier(Attribute::Type::ARMOUR), box.X + tile, box.Y + tile * 8, "ARM+", "ARM-");
 
             auto back_id = scene.Controls.size();
 
