@@ -1418,7 +1418,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // return a filename or new one from the list
-    std::string FilesList(Graphics::Base &graphics, Graphics::Scenery scenes, std::string path, int width, int height, Asset::Type asset, Controls::Type action)
+    std::string FilesList(Graphics::Base &graphics, Graphics::Scenery scenes, std::string path, std::string extension, int width, int height, Asset::Type asset, Controls::Type action)
     {
         auto filename = std::string();
 
@@ -1434,28 +1434,31 @@ namespace BloodSwordRogue::Interface
 
         for (const auto &entry : std::filesystem::directory_iterator(path))
         {
-            auto extension = entry.path().extension();
-
-            if (extension != std::string(".json"))
+            if (entry.is_regular_file())
             {
-                continue;
+                auto ext = entry.path().extension();
+
+                if (ext != extension.c_str())
+                {
+                    continue;
+                }
+
+                // List files in directory
+                auto file_entry = entry.path().stem();
+
+                files.push_back(file_entry);
+
+                Graphics::Estimate(Fonts::Normal, file_entry.c_str(), &text_width, &text_height);
+
+                width = std::max(width, text_width + BloodSwordRogue::TileSize);
+
+                max_text_height = std::max(max_text_height, text_height);
+
+                height = std::max(height, (max_text_height + BloodSwordRogue::Pad) * limit + BloodSwordRogue::TileSize * 2);
+
+                // List files in directory
+                SDL_Log("[DIRECTORY %s] [%s]", path.c_str(), file_entry.c_str());
             }
-
-            // List files in directory
-            auto file_entry = entry.path().stem();
-
-            files.push_back(file_entry);
-
-            Graphics::Estimate(Fonts::Normal, file_entry.c_str(), &text_width, &text_height);
-
-            width = std::max(width, text_width + BloodSwordRogue::TileSize);
-
-            max_text_height = std::max(max_text_height, text_height);
-
-            height = std::max(height, (max_text_height + BloodSwordRogue::Pad) * limit + BloodSwordRogue::TileSize * 2);
-
-            // List files in directory
-            SDL_Log("[DIRECTORY %s] [%s]", path.c_str(), file_entry.c_str());
         }
 
         auto items = SafeCast(files.size());

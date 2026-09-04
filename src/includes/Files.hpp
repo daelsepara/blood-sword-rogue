@@ -82,7 +82,7 @@ namespace BloodSwordRogue::Files
     // create directories
     void CreateDirectories()
     {
-        auto directories = std::vector<std::string>({"/Saved Games", "/Locations"});
+        auto directories = std::vector<std::string>({"/Saved Games", "/Locations", "/Locations/Exports"});
 
         for (auto &directory : directories)
         {

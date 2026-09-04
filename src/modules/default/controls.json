@@ -145,7 +145,8 @@
         "ENCUMBRANCE",
         "ATTRIBUTES",
         "PROPERTIES",
-        "QUANTITY"
+        "QUANTITY",
+        "EXPORT"
     ],
     "controls-spells": [
         "VOLCANO SPRAY",

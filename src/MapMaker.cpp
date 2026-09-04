@@ -2362,6 +2362,58 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
+    // export map to .png image file
+    void Export(Map::Base &map, const char *image_file)
+    {
+        SDL_Rect rect;
+
+        auto offset = 16;
+
+        rect.w = map.Width * map.TileSize + offset * 2;
+
+        rect.h = map.Height * map.TileSize + offset * 2;
+
+        auto surface = Graphics::CreateSurface(rect.w, rect.h);
+
+        if (surface)
+        {
+            // fill entire map
+            SDL_FillRect(surface, nullptr, SDL_MapRGBA(surface->format, 255, 255, 255, 255));
+
+            for (auto y = 0; y < map.Height; y++)
+            {
+                for (auto x = 0; x < map.Width; x++)
+                {
+                    SDL_Surface *surface_asset = nullptr;
+
+                    auto &tile = map[Point(x, y)];
+
+                    if (tile.Asset != Asset::NONE)
+                    {
+                        surface_asset = Asset::GetSurface(tile.Asset);
+                    }
+                    else
+                    {
+                        // fill empty space
+                        surface_asset = Graphics::CreateSurface(map.TileSize, map.TileSize);
+
+                        SDL_FillRect(surface_asset, nullptr, SDL_MapRGBA(surface->format, 0, 0, 0, 255));
+                    }
+
+                    rect.x = x * map.TileSize + offset;
+
+                    rect.y = y * map.TileSize + offset;
+
+                    Graphics::RenderAssetThenFree(surface, surface_asset, rect);
+                }
+            }
+
+            IMG_SavePNG(surface, image_file);
+
+            SDL_FreeSurface(surface);
+        }
+    }
+
     void Main(Graphics::Base &graphics)
     {
         FontCache::Base TextCache = FontCache::Base();
@@ -2408,6 +2460,7 @@ namespace BloodSwordRogue::MapMaker
             "NEW",
             "LOAD",
             "SAVE",
+            "EXPORT",
             "EXIT"};
 
         std::vector<std::string> controls_assets = {
@@ -2425,6 +2478,7 @@ namespace BloodSwordRogue::MapMaker
             "SELECT",
             "LOAD",
             "SAVE",
+            "HEXES",
             "EXIT"};
 
         std::vector<std::string> controls_captions = {
@@ -2442,6 +2496,7 @@ namespace BloodSwordRogue::MapMaker
             "NEW MAP",
             "LOAD LOCATION",
             "SAVE LOCATION",
+            "EXPORT TO PNG",
             "QUIT"};
 
         // generate caption textures for edit controls
@@ -3057,11 +3112,13 @@ namespace BloodSwordRogue::MapMaker
 
                         Graphics::Scenery scenes = {scene};
 
-                        auto filename = Interface::FilesList(graphics, scenes, path, map.TileSize * 6, map.TileSize * 4, Asset::Map("LOAD"), Controls::MapType("LOAD"));
+                        auto extension = std::string(".json");
+
+                        auto filename = Interface::FilesList(graphics, scenes, path, extension, map.TileSize * 6, map.TileSize * 4, Asset::Map("LOAD"), Controls::MapType("LOAD"));
 
                         if (!filename.empty())
                         {
-                            auto src = path + std::string("/") + filename + ".json";
+                            auto src = path + std::string("/") + filename + extension;
 
                             SDL_Log("[LOAD AREA] [FILE %s]", filename.c_str());
 
@@ -3088,17 +3145,42 @@ namespace BloodSwordRogue::MapMaker
 
                     Graphics::Scenery scenes = {scene};
 
-                    auto filename = Interface::FilesList(graphics, scenes, path, map.TileSize * 6, map.TileSize * 4, Asset::Map("SAVE"), Controls::MapType("SAVE"));
+                    auto extension = std::string(".json");
+
+                    auto filename = Interface::FilesList(graphics, scenes, path, extension, map.TileSize * 6, map.TileSize * 4, Asset::Map("SAVE"), Controls::MapType("SAVE"));
 
                     if (!filename.empty())
                     {
-                        auto dst = path + std::string("/") + filename + ".json";
+                        auto dst = path + std::string("/") + filename + extension;
 
                         SDL_Log("[SAVE AREA] [FILE %s]", filename.c_str());
 
                         Location::Save(location, dst.c_str());
 
                         auto saved = (!location.Name.empty() ? location.Name : std::string("MAP")) + std::string(" SAVED");
+
+                        Interface::MessageBox(graphics, scene, saved, Color::Active);
+                    }
+                }
+                else if (input.Type == Controls::MapType("EXPORT"))
+                {
+                    auto path = Files::GetMainPath() + std::string("/Locations/Exports");
+
+                    Graphics::Scenery scenes = {scene};
+
+                    auto extension = std::string(".png");
+
+                    auto filename = Interface::FilesList(graphics, scenes, path, extension, map.TileSize * 6, map.TileSize * 4, Asset::Map("SAVE"), Controls::MapType("SAVE"));
+
+                    if (!filename.empty())
+                    {
+                        auto dst = path + std::string("/") + filename + extension;
+
+                        SDL_Log("[EXPORT AREA] [FILE %s]", filename.c_str());
+
+                        MapMaker::Export(location.Map, dst.c_str());
+
+                        auto saved = (!location.Name.empty() ? location.Name : std::string("MAP")) + std::string(" EXPORTED");
 
                         Interface::MessageBox(graphics, scene, saved, Color::Active);
                     }
