@@ -1968,7 +1968,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Opponents = parties;
 
-                        Interface::RenumberParties(location.Map, location.Opponents);
+                        Location::RenumberParties(location);
 
                         std::vector<Location::Loot> bags = {};
 
@@ -2084,7 +2084,7 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Opponents = parties;
 
-                        Interface::RenumberParties(location.Map, location.Opponents);
+                        Location::RenumberParties(location);
 
                         std::vector<Location::Loot> bags = {};
 

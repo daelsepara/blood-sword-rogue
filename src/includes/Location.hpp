@@ -164,6 +164,12 @@ namespace BloodSwordRogue::Location
         }
     }
 
+    // renumber remaining map occupants
+    void RenumberParties(Location::Base &location)
+    {
+        Interface::RenumberParties(location.Map, location.Opponents);
+    }
+
     // generate location json data
     nlohmann::json Data(Location::Base &location)
     {
