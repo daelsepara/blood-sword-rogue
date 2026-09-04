@@ -419,6 +419,9 @@ namespace BloodSwordRogue::MapMaker
                 {
                     item.Quantity = std::stoi(quantity, nullptr, 10);
 
+                    // clamp quantity to a reasonable range
+                    item.Quantity = std::min(std::max(0, item.Quantity), 99);
+
                     if (item.Contains != Item::NONE)
                     {
                         SDL_Log("[UPDATE %s] [QUANTITY %d]", Item::TypeMapping[item.Contains].c_str(), item.Quantity);
