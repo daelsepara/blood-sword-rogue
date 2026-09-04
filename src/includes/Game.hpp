@@ -10,6 +10,8 @@ namespace BloodSwordRogue::Game
     public:
         std::string ZipFile = std::string();
 
+        std::string Start = std::string();
+
         BloodSwordRogue::UnorderedMap<std::string, std::string> Locations = {};
 
         void Add(std::string name, std::string path)
@@ -39,7 +41,7 @@ namespace BloodSwordRogue::Game
     }
 
     // update party state in game
-    void Update(Game::Base &game, Party::Base party)
+    void Copy(Game::Base &game, Party::Base party)
     {
         game.Party = Party::Base();
 
@@ -84,13 +86,15 @@ namespace BloodSwordRogue::Game
 
             world.ZipFile = zip_file != nullptr ? std::string(zip_file) : std::string();
 
+            world.Start = !data["start"].is_null() && data["start"].is_string() ? Engine::ToUpper(std::string(data["start"])) : std::string();
+
             if (!data["locations"].is_null() && data["locations"].is_object())
             {
                 for (auto &location : data["locations"].items())
                 {
-                    auto name = location.key();
+                    auto name = Engine::ToUpper(std::string(location.key()));
 
-                    auto path = location.value();
+                    auto path = std::string(location.value());
 
                     world.Add(name, path);
                 }
@@ -116,12 +120,9 @@ namespace BloodSwordRogue::Game
     }
 
     // move to a new location
-    void Move(Game::World &world, Game::Base &game, Location::Base &location, Party::Base &party, std::string next)
+    void Move(Game::World &world, Game::Base &game, Location::Base &location, std::string next)
     {
         auto loaded = false;
-
-        // save current party state
-        Game::Update(game, party);
 
         // check if area has been visited before
         if (Game::HasLocation(game, next))
@@ -148,14 +149,14 @@ namespace BloodSwordRogue::Game
 
         if (loaded)
         {
-            party.Location = std::string(next);
+            game.Party.Location = std::string(next);
 
             // move party to origin
             if (SafeCast(location.Map.Origins.size()) > 0)
             {
-                party.X = location.Map.Origins[0].X;
+                game.Party.X = location.Map.Origins[0].X;
 
-                party.Y = location.Map.Origins[0].Y;
+                game.Party.Y = location.Map.Origins[0].Y;
 
                 location.Map.Put(location.Map.Origins[0], Map::Object::PARTY, 1);
             }
@@ -169,9 +170,10 @@ namespace BloodSwordRogue::Game
     // current save
     Game::Base CurrentGame = Game::Base();
 
+    // current world
     Game::World CurrentWorld = Game::World();
 
-    void CheckTrigger(Graphics::Base &graphics, Scene::Base &scene, Location::Base &location, Party::Base &party, Trigger::Base &trigger)
+    void CheckTrigger(Graphics::Base &graphics, Scene::Base &scene, Game::World &world, Game::Base &game, Location::Base &location, Trigger::Base &trigger)
     {
         if (trigger.Type == Trigger::Type::EXIT)
         {
@@ -197,7 +199,7 @@ namespace BloodSwordRogue::Game
 
             if (SafeCast(trigger.Variables.size()) > 0)
             {
-                Game::Move(CurrentWorld, CurrentGame, location, party, trigger.Variables[0]);
+                Game::Move(world, game, location, trigger.Variables[0]);
             }
             else
             {
@@ -215,11 +217,11 @@ namespace BloodSwordRogue::Game
             // check trigger conditions
             if (trigger.Type == Trigger::Type::CHARACTER)
             {
-                trigger.Completed = Evaluate::InParty(trigger, party);
+                trigger.Completed = Evaluate::InParty(trigger, game.Party);
             }
             else if (trigger.Type == Trigger::Type::ITEM)
             {
-                trigger.Completed = Evaluate::HasItem(trigger, party);
+                trigger.Completed = Evaluate::HasItem(trigger, game.Party);
             }
 
             // send status message
