@@ -3136,8 +3136,6 @@ namespace BloodSwordRogue::MapMaker
 
         Interface::LoadSettings(graphics, "modules/default/settings.json");
 
-        auto scene = Scene::Base();
-
         MapMaker::Load("modules/default/map-maker.json");
 
         MapMaker::Main(graphics);
