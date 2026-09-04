@@ -62,6 +62,128 @@ namespace BloodSwordRogue::MapMaker
 
     const int MaxItems = 10;
 
+    // renders score and toggles
+    void RenderScore(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int score, int x, int y, std::string inc, std::string dec)
+    {
+        // asset icon
+        scene.VerifyAndAdd(Scene::Element(Asset::Get(asset), Point(x, y)));
+
+        // boxes around numbers
+        auto color = score < 0 ? Color::Highlight : Color::Inactive;
+
+        scene.Add(Scene::Element(x + BloodSwordRogue::TileSize + 4, y + 4, BloodSwordRogue::TileSize - 8, BloodSwordRogue::TileSize - 8, Color::Transparent, color, 2));
+
+        scene.Add(Scene::Element(x + BloodSwordRogue::TileSize * 2 + 4, y + 4, BloodSwordRogue::TileSize - 8, BloodSwordRogue::TileSize - 8, Color::Transparent, color, 2));
+
+        if (std::abs(score) >= 10)
+        {
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[std::abs(score / 10)]), Point(x + BloodSwordRogue::TileSize, y)));
+        }
+        else
+        {
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[0]), Point(x + BloodSwordRogue::TileSize, y)));
+        }
+
+        scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[std::abs(score % 10)]), Point(x + BloodSwordRogue::TileSize * 2, y)));
+
+        // add increase/decrease controls
+        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("UP")), Point(x + BloodSwordRogue::TileSize * 3, y)));
+
+        auto inc_id = SafeCast(scene.Controls.size());
+
+        scene.Add(Controls::Base(Controls::MapType(inc), inc_id, inc_id, inc_id + 1, inc_id, inc_id, x + BloodSwordRogue::TileSize * 3, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("DOWN")), Point(x + BloodSwordRogue::TileSize * 4, y)));
+
+        auto dec_id = SafeCast(scene.Controls.size());
+
+        scene.Add(Controls::Base(Controls::MapType(dec), dec_id, dec_id - 1, dec_id, dec_id, dec_id, x + BloodSwordRogue::TileSize * 4, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+    }
+
+    // generic number setter
+    int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, std::string asset, int value, int min_value, int max_value)
+    {
+        auto tile = BloodSwordRogue::TileSize;
+
+        auto width = tile * 8;
+
+        auto height = tile * 2;
+
+        auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
+
+        auto input = Controls::User();
+
+        auto done = false;
+
+        auto scene = Scene::Base();
+
+        while (!done)
+        {
+            // icon grid
+            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map(asset), value, box.X + tile / 2, box.Y + tile / 2, "INCREASE", "DECREASE");
+
+            auto id = SafeCast(scene.Controls.size());
+
+            auto confirm = Point(box.X + tile * 5 + tile / 2, box.Y + tile / 2);
+
+            scene.Add(Scene::Element(Asset::Get(Asset::Map("CONFIRM")), confirm));
+
+            scene.Add(Controls::Base(Controls::MapType("CONFIRM"), id, id - 1, id + 1, id, id, confirm.X, confirm.Y, tile, tile, Color::Active));
+
+            id++;
+
+            auto back = Point(box.X + tile * 6 + tile / 2, box.Y + tile / 2);
+
+            scene.Add(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
+
+            scene.Add(Controls::Base(Controls::MapType("BACK"), id, id - 1, id, id, id, back.X, back.Y, tile, tile, Color::Active));
+
+            auto scenes = scenery;
+
+            scenes.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenes, scene.Controls, input);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("BACK"))
+                {
+                    value = -1;
+
+                    done = true;
+                }
+                else if (input.Type == Controls::MapType("INCREASE"))
+                {
+                    if (value < max_value && value < 99)
+                    {
+                        value++;
+                    }
+                }
+                else if (input.Type == Controls::MapType("DECREASE"))
+                {
+                    if (value > min_value && value > -99)
+                    {
+                        value--;
+                    }
+                }
+                else if (input.Type == Controls::MapType("CONFIRM"))
+                {
+                    done = true;
+                }
+            }
+        }
+
+        return value;
+    }
+
+    // generic number setter
+    int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, std::string asset, int value)
+    {
+        return MapMaker::SetValue(graphics, scenery, asset, value, 1, 99);
+    }
+
     // renders the current map
     void RenderMap(Graphics::Base &graphics, Scene::Base &scene, Location::Base &location)
     {
@@ -321,7 +443,15 @@ namespace BloodSwordRogue::MapMaker
             {Item::MapProperty("EDIBLE"), Asset::Map("EDIBLE")},
             {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
             {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
-            {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")}};
+            {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")},
+            {Item::MapProperty("CANNOT DROP"), Asset::Map("CANNOT DROP")},
+            {Item::MapProperty("CANNOT TRADE"), Asset::Map("CANNOT TRADE")},
+            {Item::MapProperty("CONTAINER"), Asset::Map("CONTAINER")},
+            {Item::MapProperty("READABLE"), Asset::Map("READABLE")},
+            {Item::MapProperty("LIQUID"), Asset::Map("LIQUID")},
+            {Item::MapProperty("ALL RANGES"), Asset::Map("ALL RANGES")},
+            {Item::MapProperty("REQUIRES TARGET"), Asset::Map("REQUIRES TARGET")},
+            {Item::MapProperty("COMBAT"), Asset::Map("COMBAT")}};
 
         MapMaker::TriggerTypes.clear();
 
@@ -615,7 +745,7 @@ namespace BloodSwordRogue::MapMaker
             captions.push_back(caption);
         }
 
-        for (auto &properties : PropertyAssets)
+        for (auto &properties : MapMaker::PropertyAssets)
         {
             auto property = properties.first;
 
@@ -628,6 +758,256 @@ namespace BloodSwordRogue::MapMaker
         }
 
         Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 8, BloodSwordRogue::TileSize * 6, captions);
+    }
+
+    // edit item attributes
+    void EditAttributes(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
+    {
+        auto done = false;
+
+        Controls::List actions = {
+            Controls::MapType("EDIT"),
+            Controls::MapType("ADD"),
+            Controls::MapType("REMOVE")};
+
+        Asset::List assets = {
+            Asset::Map("GEARS"),
+            Asset::Map("CONFIRM"),
+            Asset::Map("CANCEL")};
+
+        Asset::List attribute_assets = {};
+
+        std::vector<std::string> attribute_captions = {};
+
+        std::vector<Attribute::Type> item_attributes = {};
+
+        for (auto &attribute : MapMaker::AttributeAssets)
+        {
+            attribute_assets.push_back(attribute.second);
+
+            attribute_captions.push_back(Attribute::TypeMapping[attribute.first]);
+
+            item_attributes.push_back(attribute.first);
+        }
+
+        while (!done)
+        {
+            std::vector<std::string> attributes = {};
+
+            for (auto attribute : item.Attributes)
+            {
+                attributes.push_back(Attribute::TypeMapping[attribute.first]);
+            }
+
+            auto action = Interface::TextAction(graphics, scenes, attributes, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, actions, assets);
+
+            if (action.Action == Controls::MapType("ADD"))
+            {
+                auto selected = Interface::IconGrid(graphics, scenes, attribute_assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, attribute_captions);
+
+                if (selected >= 0 && selected < SafeCast(item_attributes.size()))
+                {
+                    auto attribute = item_attributes[selected];
+
+                    auto asset = MapMaker::AttributeAssets[attribute];
+
+                    if (!item.HasAttribute(attribute))
+                    {
+                        auto modifier = MapMaker::SetValue(graphics, scenes, Asset::TypeMapping[asset], 0, Attribute::MinModifier, Attribute::MaxModifier);
+
+                        if (modifier >= Attribute::MinModifier && modifier <= Attribute::MaxModifier)
+                        {
+                            item.AddAttribute(attribute, modifier);
+                        }
+                    }
+                    else
+                    {
+                        auto modifier = MapMaker::SetValue(graphics, scenes, Asset::TypeMapping[asset], item.Attributes[attribute], Attribute::MinModifier, Attribute::MaxModifier);
+
+                        if (modifier >= Attribute::MinModifier && modifier <= Attribute::MaxModifier)
+                        {
+                            item.SetAttribute(attribute, modifier);
+                        }
+                    }
+                }
+            }
+            else if (action.Action == Controls::MapType("EDIT"))
+            {
+                if (action.Selected >= 0 && action.Selected < SafeCast(attributes.size()))
+                {
+                    auto attribute = Attribute::MapAttribute(attributes[action.Selected]);
+
+                    auto asset = MapMaker::AttributeAssets[attribute];
+
+                    auto modifier = MapMaker::SetValue(graphics, scenes, Asset::TypeMapping[asset], item.Attributes[attribute], Attribute::MinModifier, Attribute::MaxModifier);
+
+                    if (modifier >= Attribute::MinModifier && modifier <= Attribute::MaxModifier)
+                    {
+                        item.SetAttribute(attribute, modifier);
+                    }
+                }
+            }
+            else if (action.Action == Controls::MapType("REMOVE"))
+            {
+                if (action.Selected >= 0 && action.Selected < SafeCast(attributes.size()))
+                {
+                    auto attribute = Attribute::MapAttribute(attributes[action.Selected]);
+
+                    item.RemoveAttribute(attribute);
+                }
+            }
+            else
+            {
+                done = true;
+            }
+        }
+    }
+
+    // edit item properties
+    void EditProperties(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
+    {
+        auto done = false;
+
+        Controls::List actions = {
+            Controls::MapType("ADD"),
+            Controls::MapType("REMOVE")};
+
+        Asset::List assets = {
+            Asset::Map("CONFIRM"),
+            Asset::Map("CANCEL")};
+
+        Asset::List property_assets = {};
+
+        std::vector<std::string> property_captions = {};
+
+        Item::Properties item_properties = {};
+
+        for (auto &property : MapMaker::PropertyAssets)
+        {
+            property_assets.push_back(property.second);
+
+            property_captions.push_back(Item::PropertyMapping[property.first]);
+
+            item_properties.push_back(property.first);
+        }
+
+        while (!done)
+        {
+            std::vector<std::string> properties = {};
+
+            for (auto property : item.Properties)
+            {
+                properties.push_back(Item::PropertyMapping[property]);
+            }
+
+            auto action = Interface::TextAction(graphics, scenes, properties, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, actions, assets);
+
+            if (action.Action == Controls::MapType("ADD"))
+            {
+                auto property = Interface::IconGrid(graphics, scenes, property_assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, property_captions);
+
+                if (property >= 0 && property < SafeCast(item_properties.size()))
+                {
+                    item.AddProperty(item_properties[property]);
+                }
+            }
+            else if (action.Action == Controls::MapType("REMOVE"))
+            {
+                if (action.Selected >= 0 && action.Selected < SafeCast(properties.size()))
+                {
+                    auto property = Item::MapProperty(properties[action.Selected]);
+
+                    if (item.HasProperty(property))
+                    {
+                        item.RemoveProperty(property);
+                    }
+                }
+            }
+            else
+            {
+                done = true;
+            }
+        }
+    }
+
+    // edit item main
+    void EditItem(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
+    {
+        auto done = false;
+
+        Asset::List object_assets = {
+            Asset::Map("MAGNIFYING GLASS"),
+            Asset::Map("ONE"),
+            Asset::Map("WEIGHT"),
+            Asset::Map("GEARS"),
+            Asset::Map("IDENTIFY")};
+
+        Asset::List object_controls = {
+            Controls::MapType("VIEW"),
+            Controls::MapType("QUANTITY"),
+            Controls::MapType("ENCUMBRANCE"),
+            Controls::MapType("ATTRIBUTES"),
+            Controls::MapType("PROPERTIES")};
+
+        std::vector<std::string> object_captions = {
+            "VIEW",
+            "QUANTITY",
+            "ENCUMBRANCE",
+            "ATTRIBUTES",
+            "PROPERTIES"};
+
+        while (!done)
+        {
+            auto selected = Interface::IconList(graphics, scenes, object_assets, object_captions);
+
+            if (selected >= 0 && selected < SafeCast(object_controls.size()))
+            {
+                if (object_controls[selected] == Controls::MapType("VIEW"))
+                {
+                    MapMaker::ViewItem(graphics, scenes, item);
+                }
+                else if (object_controls[selected] == Controls::MapType("QUANTITY"))
+                {
+                    for (auto i = 0; i < SafeCast(MapMaker::ItemsWithQuantities.size()); i++)
+                    {
+                        auto item_quantity = MapMaker::ItemsWithQuantities[i];
+
+                        if (Item::MapType(item_quantity) == item.Type)
+                        {
+                            auto quantity = MapMaker::SetValue(graphics, scenes, MapMaker::ItemsAssets[i], item.Quantity, 0, 99);
+
+                            if (quantity >= 0 && quantity < 100)
+                            {
+                                item.Quantity = quantity;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+                else if (object_controls[selected] == Controls::MapType("ENCUMBRANCE"))
+                {
+                    auto encumbrance = MapMaker::SetValue(graphics, scenes, "WEIGHT", item.Encumbrance, 0, 99);
+
+                    if (encumbrance >= 0 && encumbrance < 100)
+                    {
+                        item.Encumbrance = encumbrance;
+                    }
+                }
+                else if (object_controls[selected] == Controls::MapType("ATTRIBUTES"))
+                {
+                    MapMaker::EditAttributes(graphics, scenes, item);
+                }
+                else if (object_controls[selected] == Controls::MapType("PROPERTIES"))
+                {
+                    MapMaker::EditProperties(graphics, scenes, item);
+                }
+            }
+            else
+            {
+                done = true;
+            }
+        }
     }
 
     // select item
@@ -667,6 +1047,7 @@ namespace BloodSwordRogue::MapMaker
         return MapMaker::SelectItems(graphics, scenes, character.Items);
     }
 
+    // view items
     void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
     {
         while (true)
@@ -675,8 +1056,8 @@ namespace BloodSwordRogue::MapMaker
 
             if (selected >= 0 && selected < SafeCast(items.size()))
             {
-                // view item
-                MapMaker::ViewItem(graphics, scenes, items[selected]);
+                // edit item details
+                MapMaker::EditItem(graphics, scenes, items[selected]);
             }
             else
             {
@@ -707,44 +1088,6 @@ namespace BloodSwordRogue::MapMaker
                 break;
             }
         }
-    }
-
-    // renders score and toggles
-    void RenderScore(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int score, int x, int y, std::string inc, std::string dec)
-    {
-        // asset icon
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(asset), Point(x, y)));
-
-        // boxes around numbers
-        auto color = score < 0 ? Color::Highlight : Color::Inactive;
-
-        scene.Add(Scene::Element(x + BloodSwordRogue::TileSize + 4, y + 4, BloodSwordRogue::TileSize - 8, BloodSwordRogue::TileSize - 8, Color::Transparent, color, 2));
-
-        scene.Add(Scene::Element(x + BloodSwordRogue::TileSize * 2 + 4, y + 4, BloodSwordRogue::TileSize - 8, BloodSwordRogue::TileSize - 8, Color::Transparent, color, 2));
-
-        if (std::abs(score) >= 10)
-        {
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[std::abs(score / 10)]), Point(x + BloodSwordRogue::TileSize, y)));
-        }
-        else
-        {
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[0]), Point(x + BloodSwordRogue::TileSize, y)));
-        }
-
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[std::abs(score % 10)]), Point(x + BloodSwordRogue::TileSize * 2, y)));
-
-        // add increase/decrease controls
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("UP")), Point(x + BloodSwordRogue::TileSize * 3, y)));
-
-        auto inc_id = SafeCast(scene.Controls.size());
-
-        scene.Add(Controls::Base(Controls::MapType(inc), inc_id, inc_id, inc_id + 1, inc_id, inc_id, x + BloodSwordRogue::TileSize * 3, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
-
-        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("DOWN")), Point(x + BloodSwordRogue::TileSize * 4, y)));
-
-        auto dec_id = SafeCast(scene.Controls.size());
-
-        scene.Add(Controls::Base(Controls::MapType(dec), dec_id, dec_id - 1, dec_id, dec_id, dec_id, x + BloodSwordRogue::TileSize * 4, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
     }
 
     // increase modifier
@@ -1191,7 +1534,7 @@ namespace BloodSwordRogue::MapMaker
         {
             while (true)
             {
-                auto selected = Interface::IconGrid(graphics, scene, MapMaker::ItemAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::HalfTile, MapMaker::ItemCaptions);
+                auto selected = Interface::IconGrid(graphics, scene, MapMaker::ItemAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::TileSize, MapMaker::ItemCaptions);
 
                 if (selected >= 0 && selected < SafeCast(MapMaker::ItemTypes.size()))
                 {
@@ -1338,10 +1681,6 @@ namespace BloodSwordRogue::MapMaker
     {
         if (tile.Id > 0 && tile.Id <= SafeCast(location.Loot.size()))
         {
-            Asset::List assets = {};
-
-            std::vector<std::string> captions = {};
-
             auto id = tile.Id - 1;
 
             auto &loot = location.Loot[id];
@@ -1354,7 +1693,7 @@ namespace BloodSwordRogue::MapMaker
             }
             else
             {
-                MapMaker::ViewItem(graphics, scenes, loot.Items[0]);
+                MapMaker::EditItem(graphics, scenes, loot.Items[0]);
             }
         }
     }
@@ -1656,84 +1995,6 @@ namespace BloodSwordRogue::MapMaker
         TilesH = std::min(map.ViewY, graphics.Height / map.TileSize - 7);
 
         MapMaker::ResetMapView(graphics, map, TilesW, TilesH);
-    }
-
-    // generic number setter
-    int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, std::string asset, int value)
-    {
-        auto tile = BloodSwordRogue::TileSize;
-
-        auto width = tile * 8;
-
-        auto height = tile * 2;
-
-        auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
-
-        auto input = Controls::User();
-
-        auto done = false;
-
-        auto scene = Scene::Base();
-
-        while (!done)
-        {
-            // icon grid
-            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
-
-            MapMaker::RenderScore(scene, MapMaker::Numbers, Asset::Map(asset), value, box.X + tile / 2, box.Y + tile / 2, "INCREASE", "DECREASE");
-
-            auto id = SafeCast(scene.Controls.size());
-
-            auto confirm = Point(box.X + tile * 5 + tile / 2, box.Y + tile / 2);
-
-            scene.Add(Scene::Element(Asset::Get(Asset::Map("CONFIRM")), confirm));
-
-            scene.Add(Controls::Base(Controls::MapType("CONFIRM"), id, id - 1, id + 1, id, id, confirm.X, confirm.Y, tile, tile, Color::Active));
-
-            id++;
-
-            auto back = Point(box.X + tile * 6 + tile / 2, box.Y + tile / 2);
-
-            scene.Add(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
-
-            scene.Add(Controls::Base(Controls::MapType("BACK"), id, id - 1, id, id, id, back.X, back.Y, tile, tile, Color::Active));
-
-            auto scenes = scenery;
-
-            scenes.push_back(scene);
-
-            input = Input::WaitForInput(graphics, scenes, scene.Controls, input);
-
-            if (Input::Check(input))
-            {
-                if (input.Type == Controls::MapType("BACK"))
-                {
-                    value = -1;
-
-                    done = true;
-                }
-                else if (input.Type == Controls::MapType("INCREASE"))
-                {
-                    if (value < 99)
-                    {
-                        value++;
-                    }
-                }
-                else if (input.Type == Controls::MapType("DECREASE"))
-                {
-                    if (value > 1)
-                    {
-                        value--;
-                    }
-                }
-                else if (input.Type == Controls::MapType("CONFIRM"))
-                {
-                    done = true;
-                }
-            }
-        }
-
-        return value;
     }
 
     void MapSettings(Graphics::Base &graphics, Graphics::Scenery scenes, Location::Base &location, Function &function)

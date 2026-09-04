@@ -1769,6 +1769,38 @@
             "path": "modules/default/images/items/properties/battle-gear.png"
         },
         {
+            "id": "CANNOT DROP",
+            "path": "modules/default/images/items/properties/fall-down.png"
+        },
+        {
+            "id": "CANNOT TRADE",
+            "path": "modules/default/images/items/properties/trade.png"
+        },
+        {
+            "id": "CONTAINER",
+            "path": "modules/default/images/items/properties/cardboard-box.png"
+        },
+        {
+            "id": "READABLE",
+            "path": "modules/default/images/items/properties/scroll-unfurled.png"
+        },
+        {
+            "id": "COMBAT",
+            "path": "modules/default/images/items/properties/crossed-swords.png"
+        },
+        {
+            "id": "LIQUID",
+            "path": "modules/default/images/items/properties/water-flask.png"
+        },
+        {
+            "id": "ALL RANGES",
+            "path": "modules/default/images/items/properties/lob-arrow.png"
+        },
+        {
+            "id": "REQUIRES TARGET",
+            "path": "modules/default/images/items/properties/targeting.png"
+        },
+        {
             "id": "HORIZONTAL FLIP",
             "path": "modules/default/images/system/horizontal-flip.png"
         },
@@ -1787,6 +1819,10 @@
         {
             "id": "SELECT TRANSPARENT RED",
             "path": "modules/default/images/system/select-transparent-red.png"
+        },
+        {
+            "id": "FALL DOWN",
+            "path": "modules/default/images/system/fall-down.png"
         }
     ]
 }

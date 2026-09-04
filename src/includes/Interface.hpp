@@ -2049,4 +2049,196 @@ namespace BloodSwordRogue::Interface
 
         return text_list;
     }
+
+    struct ListResult
+    {
+        int Selected = -1;
+
+        Controls::Type Action = Controls::NONE;
+    };
+
+    ListResult TextAction(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Controls::List actions, Asset::List action_assets)
+    {
+        auto result = ListResult();
+
+        if (SafeCast(actions.size()) != SafeCast(action_assets.size()))
+        {
+            SDL_Log("[ERROR] TextAction: actions and assets must be the same size");
+
+            return result;
+        }
+
+        auto done = false;
+
+        auto input = Controls::User();
+
+        auto offset = 0;
+
+        auto limit = 5;
+
+        auto selected = -1;
+
+        auto max_text_height = TTF_FontHeight(Fonts::Normal);
+
+        while (!done)
+        {
+            auto items = SafeCast(text_list.size());
+
+            auto scene = Scene::Base();
+
+            Asset::TextureList assets = {};
+
+            auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
+
+            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+            for (auto i = 0; i < limit; i++)
+            {
+                if ((offset + i) >= 0 && (offset + i) < items)
+                {
+                    auto color = selected == (offset + i) ? Color::S(Color::Highlight) : (input.Current == i ? Color::S(Color::Active) : Color::S(Color::Inactive));
+
+                    assets.push_back(Graphics::CreateText(graphics, text_list[offset + i].c_str(), Fonts::Normal, color, TTF_STYLE_NORMAL));
+
+                    auto loc = Point(box.X + BloodSwordRogue::Pad, box.Y + i * (max_text_height + BloodSwordRogue::Pad) + BloodSwordRogue::Pad);
+
+                    scene.VerifyAndAdd(Scene::Element(assets.back(), loc.X + 4, loc.Y));
+
+                    auto up = i > 0 ? i - 1 : i;
+
+                    auto down = i + 1;
+
+                    scene.Add(Controls::Base(Controls::MapType("SELECT"), i, i, i, up, down, loc.X - BloodSwordRogue::HalfTile / 2, loc.Y - 4, width + BloodSwordRogue::HalfTile / 2, max_text_height, Color::Transparent));
+                }
+            }
+
+            auto x_offset = (BloodSwordRogue::TileSize + BloodSwordRogue::Pad);
+
+            auto controls = 0;
+
+            // scroll down
+            if (offset + limit < items && items > 0)
+            {
+                auto down_id = SafeCast(scene.Controls.size());
+
+                auto down = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+                scene.Add(Scene::Element(Asset::Get(Asset::Map("DOWN")), down));
+
+                scene.Add(Controls::Base(Controls::MapType("DOWN"), down_id, controls > 0 ? down_id - 1 : down_id, down_id + 1, down_id - (controls + 1), down_id, down.X, down.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+                controls++;
+            }
+
+            // scroll up
+            if (offset > 0 && items > 0)
+            {
+                auto up_id = SafeCast(scene.Controls.size());
+
+                auto up = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+                scene.Add(Scene::Element(Asset::Get(Asset::Map("UP")), up));
+
+                scene.Add(Controls::Base(Controls::MapType("UP"), up_id, controls > 0 ? up_id - 1 : up_id, up_id + 1, up_id - (controls + 1), up_id, up.X, up.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+                controls++;
+            }
+
+            // action controls
+            for (auto i = 0; i < SafeCast(actions.size()); i++)
+            {
+                auto action_id = SafeCast(scene.Controls.size());
+
+                auto action_pos = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+                scene.Add(Scene::Element(Asset::Get(action_assets[i]), action_pos));
+
+                scene.Add(Controls::Base(actions[i], action_id, controls > 0 ? action_id - 1 : action_id, action_id + 1, action_id - (controls + 1), action_id, action_pos.X, action_pos.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+                controls++;
+            }
+
+            // add back button
+            auto back_id = SafeCast(scene.Controls.size());
+
+            auto back = Point(box.X + controls * x_offset + BloodSwordRogue::Pad, box.Y + height - BloodSwordRogue::Pad - BloodSwordRogue::TileSize);
+
+            scene.Add(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
+
+            scene.Add(Controls::Base(Controls::MapType("BACK"), back_id, controls > 0 ? back_id - 1 : back_id, back_id, back_id - (controls + 1), back_id, back.X, back.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+            // retain focus on scroll controls
+            if (input.Type == Controls::MapType("UP"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("UP"));
+            }
+            else if (input.Type == Controls::MapType("DOWN"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("DOWN"));
+            }
+
+            auto scenery = scenes;
+
+            scenes.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenery, scene.Controls, input);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("BACK"))
+                {
+                    result.Selected = -1;
+
+                    result.Action = Controls::NONE;
+
+                    done = true;
+                }
+                else if (input.Type == Controls::MapType("UP"))
+                {
+                    if (offset > 0)
+                    {
+                        offset--;
+                    }
+                }
+                else if (input.Type == Controls::MapType("DOWN"))
+                {
+                    if (offset + limit < items)
+                    {
+                        offset++;
+                    }
+                }
+                else if (input.Type == Controls::MapType("SELECT") && items > 0)
+                {
+                    if (selected == (input.Current + offset))
+                    {
+                        selected = -1;
+                    }
+                    else
+                    {
+                        selected = input.Current + offset;
+                    }
+                }
+                else
+                {
+                    for (auto action : actions)
+                    {
+                        if (input.Type == action)
+                        {
+                            result.Selected = selected;
+
+                            result.Action = action;
+
+                            done = true;
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            BloodSwordRogue::Free(assets);
+        }
+
+        return result;
+    }
 }

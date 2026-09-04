@@ -128,7 +128,7 @@ namespace BloodSwordRogue::Item
             return BloodSwordRogue::Found(this->Properties, property);
         }
 
-        // this item contains a type of item and of sufficient quanity
+        // this item contains a type of item and of sufficient quantity
         bool HasQuantity(Item::Type type, int quantity)
         {
             return (this->HasProperty(Item::MapProperty("CONTAINER")) && (this->Contains == type) && (this->Quantity >= quantity) && ((this->Limit != Item::Unlimited && quantity >= 1) || this->Limit == Item::Unlimited));
@@ -202,7 +202,7 @@ namespace BloodSwordRogue::Item
             return this->HasQuantity(item, 1);
         }
 
-        // add item (of quanity) to this container
+        // add item (of quantity) to this container
         bool Add(Item::Type item, int quantity)
         {
             auto result = false;
@@ -243,6 +243,25 @@ namespace BloodSwordRogue::Item
             }
 
             return modifier;
+        }
+
+        // set attribute-modifier value of this item
+        void SetAttribute(Attribute::Type attribute, int modifier)
+        {
+            this->Attributes.insert_or_assign(attribute, modifier);
+        }
+
+        // add attribute to item
+        bool AddAttribute(Attribute::Type attribute, int modifier)
+        {
+            auto result = !this->HasAttribute(attribute);
+
+            if (result)
+            {
+                this->SetAttribute(attribute, modifier);
+            }
+
+            return this->HasAttribute(attribute);
         }
 
         // return attribute-modifier value of this item (with specific property), if any
@@ -296,7 +315,7 @@ namespace BloodSwordRogue::Item
         }
 
         // add property to item
-        bool Add(Item::Property property)
+        bool AddProperty(Item::Property property)
         {
             auto result = !this->HasProperty(property);
 
@@ -309,13 +328,13 @@ namespace BloodSwordRogue::Item
         }
 
         // add properties to item
-        bool Add(Item::Properties properties)
+        bool AddProperties(Item::Properties properties)
         {
             auto result = false;
 
             for (auto &property : properties)
             {
-                result |= this->Add(property);
+                result |= this->AddProperty(property);
             }
 
             return result;

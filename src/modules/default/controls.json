@@ -141,7 +141,11 @@
         "RESIZE WIDTH",
         "RESIZE HEIGHT",
         "ADD",
-        "REMOVE"
+        "REMOVE",
+        "ENCUMBRANCE",
+        "ATTRIBUTES",
+        "PROPERTIES",
+        "QUANTITY"
     ],
     "controls-spells": [
         "VOLCANO SPRAY",
