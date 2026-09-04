@@ -2584,7 +2584,7 @@ namespace BloodSwordRogue::MapMaker
 
                         std::string trigger_text = std::string();
 
-                        trigger_text += std::string("TRIGGER TYPE: ") + std::string(Trigger::TypeMapping[trigger.Type]) + std::string("\n");
+                        trigger_text += std::string("TRIGGER TYPE: ") + std::string(Trigger::TypeMapping[trigger.Type]) + (SafeCast(trigger.Variables.size()) > 0 ? (std::string(" (") + std::to_string(SafeCast(trigger.Variables.size())) + std::string(" VARIABLES)")) : std::string()) + std::string("\n");
 
                         trigger_text += std::string("   ENCOUNTER: ") + trigger.EncounterMessage.substr(0, 75) + (trigger.EncounterMessage.size() > 40 ? std::string("...\n") : std::string("\n"));
 
