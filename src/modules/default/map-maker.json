@@ -208,9 +208,6 @@
         "HEXES MAGENTA",
         "HEXES LIGHT GREEN"
     ],
-    "enemy-assets": [
-        "ASSASSIN"
-    ],
     "enemies": {
         "WARRIOR": {
             "asset": "WARRIOR",

@@ -1449,7 +1449,7 @@ namespace BloodSwordRogue::MapMaker
                     }
                     else
                     {
-                        auto loot = BloodSwordRogue::Location::Loot();
+                        auto loot = Location::Loot();
 
                         auto item = Items::Defaults[MapMaker::ItemTypes[selected]];
 
@@ -2368,7 +2368,7 @@ namespace BloodSwordRogue::MapMaker
 
         TextCache.Create(graphics.Renderer, Fonts::Normal, "0123456789(),", Color::S(Color::Active), TTF_STYLE_NORMAL);
 
-        auto location = BloodSwordRogue::Location::Base();
+        auto location = Location::Base();
 
         auto &map = location.Map;
 
@@ -3132,7 +3132,7 @@ namespace BloodSwordRogue::MapMaker
     {
         auto return_code = 0;
 
-        auto graphics = Graphics::Initialize("BloodSwordRogue: Map Maker", "modules/default/images/icons/sword-wound.png");
+        auto graphics = Graphics::Initialize("BloodSword Rogue: Map Maker", "modules/default/images/icons/sword-wound.png");
 
         Interface::LoadSettings(graphics, "modules/default/settings.json");
 

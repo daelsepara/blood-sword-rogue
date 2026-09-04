@@ -8,17 +8,9 @@ namespace BloodSwordRogue
     {
         auto return_code = 0;
 
-        auto graphics = Graphics::Initialize("Blood Sword Rogue", "modules/default/images/icons/sword-wound.png");
+        auto graphics = Graphics::Initialize("BloodSword Rogue", "modules/default/images/icons/sword-wound.png");
 
         Interface::LoadSettings(graphics, "modules/default/settings.json");
-
-        FontCache::Base TextCache = FontCache::Base();
-
-        auto scene = Scene::Base();
-
-        Interface::MessageBox(graphics, scene, "ASSETS LOADED: PRESS BUTTON TO EXIT", Color::Active);
-
-        TextCache.Free();
 
         Interface::UnloadAssets();
 
