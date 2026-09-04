@@ -78,7 +78,7 @@ namespace BloodSwordRogue::Target
 
         auto data = nlohmann::json::parse(json_file);
 
-        // load item types
+        // load target types
         LoadListMap(data, "target-types", Target::Mapping);
 
         return !Target::Mapping.empty();

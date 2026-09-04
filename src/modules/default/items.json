@@ -245,7 +245,7 @@
             "quantity": 4,
             "encumbrance": 1,
             "type": "STEEL SCEPTRE",
-            "damage_types": {
+            "damage-types": {
                 "PLAYER": {
                     "damage": 5,
                     "modifier": 0
@@ -255,7 +255,7 @@
                     "modifier": 0
                 }
             },
-            "target_effects": {
+            "target-effects": {
                 "PLAYER": "DAMAGE TARGET",
                 "ENEMY": "DAMAGE TARGET",
                 "EIDOLON": "IMMUNE"
@@ -355,7 +355,7 @@
             "quantity": 1,
             "encumbrance": 1,
             "type": "DAGGER OF VISLET",
-            "damage_types": {
+            "damage-types": {
                 "NEBULARON": {
                     "damage": 1,
                     "modifier": -2
@@ -365,7 +365,7 @@
                     "modifier": 0
                 }
             },
-            "target_effects": {
+            "target-effects": {
                 "NEBULARON": "THROW",
                 "ENEMY": "THROW"
             },
@@ -390,7 +390,7 @@
             "quantity": 1,
             "encumbrance": 1,
             "type": "DRAGONLORD GEM",
-            "target_effects": {
+            "target-effects": {
                 "NEBULARON": "KILL TARGET"
             }
         },
@@ -400,7 +400,7 @@
             "quantity": 1,
             "encumbrance": 1,
             "type": "RUBY RING",
-            "target_effects": {
+            "target-effects": {
                 "NEBULARON": "SELF BURN"
             }
         },

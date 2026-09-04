@@ -558,11 +558,11 @@ namespace BloodSwordRogue::Item
 
         item.Name = !data["name"].is_null() ? std::string(data["name"]) : std::string();
 
-        if (!data["damage_types"].is_null() && data["damage_types"].is_object())
+        if (!data["damage-types"].is_null() && data["damage-types"].is_object())
         {
             item.DamageTypes.clear();
 
-            for (auto &[key, val] : data["damage_types"].items())
+            for (auto &[key, val] : data["damage-types"].items())
             {
                 if (val.is_object())
                 {
@@ -606,11 +606,11 @@ namespace BloodSwordRogue::Item
             }
         }
 
-        if (!data["target_effects"].is_null() && data["target_effects"].is_object())
+        if (!data["target-effects"].is_null() && data["target-effects"].is_object())
         {
             item.TargetEffects.clear();
 
-            for (auto &[key, val] : data["target_effects"].items())
+            for (auto &[key, val] : data["target-effects"].items())
             {
                 auto target = Target::Map(std::string(key));
 
@@ -739,7 +739,7 @@ namespace BloodSwordRogue::Items
                     damage_types.emplace(target, damage_type);
                 }
 
-                row["damage_types"] = damage_types;
+                row["damage-types"] = damage_types;
             }
 
             if (SafeCast(item.TargetEffects.size()) > 0)
@@ -759,7 +759,7 @@ namespace BloodSwordRogue::Items
 
                 if (SafeCast(target_effects.size()) > 0)
                 {
-                    row["target_effects"] = target_effects;
+                    row["target-effects"] = target_effects;
                 }
             }
 

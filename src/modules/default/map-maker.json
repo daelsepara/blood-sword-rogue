@@ -1970,7 +1970,7 @@
                     "quantity": 4,
                     "encumbrance": 1,
                     "type": "STEEL SCEPTRE",
-                    "damage_types": {
+                    "damage-types": {
                         "PLAYER": {
                             "damage": 5,
                             "modifier": 0
@@ -1980,7 +1980,7 @@
                             "modifier": 0
                         }
                     },
-                    "target_effects": {
+                    "target-effects": {
                         "PLAYER": "DAMAGE TARGET",
                         "ENEMY": "DAMAGE TARGET",
                         "EIDOLON": "IMMUNE"
