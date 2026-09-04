@@ -170,6 +170,66 @@ namespace BloodSwordRogue::Location
         Interface::RenumberParties(location.Map, location.Opponents);
     }
 
+    // check if there is loot at this location
+    int FindLoot(Location::Base &location, Point point)
+    {
+        auto &loot = location.Loot;
+
+        auto found = -1;
+
+        for (auto id = 0; id < SafeCast(loot.size()); id++)
+        {
+            if (loot[id].Location() == point)
+            {
+                found = id;
+
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    // check if there is an opponent party at this location
+    int FindOpponents(Location::Base &location, Point point)
+    {
+        auto &opponents = location.Opponents;
+
+        auto found = -1;
+
+        for (auto id = 0; id < SafeCast(opponents.size()); id++)
+        {
+            if (opponents[id].Origin() == point)
+            {
+                found = id;
+
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    // check if there is a trigger at this location
+    int FindTrigger(Location::Base &location, Point point)
+    {
+        auto found = -1;
+
+        auto &triggers = location.Triggers;
+
+        for (auto id = 0; id < SafeCast(triggers.size()); id++)
+        {
+            if (triggers[id].Location() == point)
+            {
+                found = id;
+
+                break;
+            }
+        }
+
+        return found;
+    }
+
     // generate location json data
     nlohmann::json Data(Location::Base &location)
     {

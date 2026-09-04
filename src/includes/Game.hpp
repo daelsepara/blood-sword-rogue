@@ -32,12 +32,14 @@ namespace BloodSwordRogue::Game
         Base() {}
     };
 
-    void Save(Game::Base &game, Location::Base location)
+    // update / add visited location to game
+    void Update(Game::Base &game, Location::Base location)
     {
         game.Locations.insert_or_assign(location.Name, location);
     }
 
-    void Save(Game::Base &game, Party::Base party)
+    // update party state in game
+    void Update(Game::Base &game, Party::Base party)
     {
         game.Party = Party::Base();
 
@@ -69,16 +71,63 @@ namespace BloodSwordRogue::Game
         return BloodSwordRogue::Has(world.Locations, location);
     }
 
+    // load game world
+    Game::World LoadWorld(const char *filename, const char *zip_file)
+    {
+        auto world = Game::World();
+
+        auto json_file = zip_file != nullptr ? ZipFile::Read(zip_file, filename) : Read(filename);
+
+        if (!json_file.empty())
+        {
+            auto data = nlohmann::json::parse(json_file);
+
+            world.ZipFile = zip_file != nullptr ? std::string(zip_file) : std::string();
+
+            if (!data["locations"].is_null() && data["locations"].is_object())
+            {
+                for (auto &location : data["locations"].items())
+                {
+                    auto name = location.key();
+
+                    auto path = location.value();
+
+                    world.Add(name, path);
+                }
+            }
+        }
+
+        return world;
+    }
+
+    Game::World LoadWorld(std::string filename, std::string zip_file)
+    {
+        return Game::LoadWorld(filename.c_str(), zip_file.empty() ? nullptr : zip_file.c_str());
+    }
+
+    Game::World LoadWorld(const char *filename)
+    {
+        return Game::LoadWorld(filename, nullptr);
+    }
+
+    Game::World LoadWorld(std::string filename)
+    {
+        return Game::LoadWorld(filename.c_str(), nullptr);
+    }
+
     // move to a new location
     void Move(Game::World &world, Game::Base &game, Location::Base &location, Party::Base &party, std::string next)
     {
         auto loaded = false;
 
+        // save current party state
+        Game::Update(game, party);
+
         // check if area has been visited before
         if (Game::HasLocation(game, next))
         {
             // copy updates
-            Game::Save(game, location);
+            Game::Update(game, location);
 
             auto move = game.Locations[next];
 
@@ -152,7 +201,7 @@ namespace BloodSwordRogue::Game
             }
             else
             {
-                throw std::invalid_argument("NEXT LOCATION UNDEFIND!");
+                throw std::invalid_argument("NEXT LOCATION UNDEFINED!");
             }
         }
         else if (!trigger.Activated)
@@ -185,67 +234,7 @@ namespace BloodSwordRogue::Game
         }
     }
 
-    // check if there is loot at this location
-    int FindLoot(Location::Base &location, Point point)
-    {
-        auto &loot = location.Loot;
-
-        auto found = -1;
-
-        for (auto id = 0; id < SafeCast(loot.size()); id++)
-        {
-            if (loot[id].Location() == point)
-            {
-                found = id;
-
-                break;
-            }
-        }
-
-        return found;
-    }
-
-    // check if there is an opponent party at this location
-    int FindOpponents(Location::Base &location, Point point)
-    {
-        auto &opponents = location.Opponents;
-
-        auto found = -1;
-
-        for (auto id = 0; id < SafeCast(opponents.size()); id++)
-        {
-            if (opponents[id].Origin() == point)
-            {
-                found = id;
-
-                break;
-            }
-        }
-
-        return found;
-    }
-
-    // check if there is a trigger at this location
-    int FindTrigger(Location::Base &location, Point point)
-    {
-        auto found = -1;
-
-        auto &triggers = location.Triggers;
-
-        for (auto id = 0; id < SafeCast(triggers.size()); id++)
-        {
-            if (triggers[id].Location() == point)
-            {
-                found = id;
-
-                break;
-            }
-        }
-
-        return found;
-    }
-
-    // render battlepits
+    // render location map and contents
     void RenderLocation(Scene::Base &scene, Location::Base &location, Party::Base &party, FieldOfView::Method method, bool sight = true)
     {
         auto &map = location.Map;
@@ -313,7 +302,7 @@ namespace BloodSwordRogue::Game
 
                         case Map::Object::ENEMIES:
 
-                            opponent_id = Game::FindOpponents(location, Point(x, y));
+                            opponent_id = Location::FindOpponents(location, Point(x, y));
 
                             if (opponent_id >= 0 && opponent_id < SafeCast(location.Opponents.size()) && SafeCast(location.Opponents.size()) > 0)
                             {
@@ -347,7 +336,7 @@ namespace BloodSwordRogue::Game
 
                         case Map::Object::ITEMS:
 
-                            loot_id = Game::FindLoot(location, Point(x, y));
+                            loot_id = Location::FindLoot(location, Point(x, y));
 
                             if (loot_id >= 0 && loot_id < SafeCast(location.Loot.size()) && SafeCast(location.Loot.size()) > 0)
                             {

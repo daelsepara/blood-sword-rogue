@@ -111,7 +111,7 @@ namespace BloodSwordRogue::MapMaker
 
                     case Map::Object::ENEMIES:
 
-                        opponent_id = Game::FindOpponents(location, Point(x, y));
+                        opponent_id = Location::FindOpponents(location, Point(x, y));
 
                         if (opponent_id >= 0 && opponent_id < SafeCast(location.Opponents.size()) && SafeCast(location.Opponents.size()) > 0)
                         {
@@ -145,7 +145,7 @@ namespace BloodSwordRogue::MapMaker
 
                     case Map::Object::ITEMS:
 
-                        loot_id = Game::FindLoot(location, Point(x, y));
+                        loot_id = Location::FindLoot(location, Point(x, y));
 
                         if (loot_id >= 0 && loot_id < SafeCast(location.Loot.size()) && SafeCast(location.Loot.size()) > 0)
                         {
