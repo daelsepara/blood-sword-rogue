@@ -1000,6 +1000,11 @@ namespace BloodSwordRogue::MapMaker
 
         std::vector<std::string> target_types = {};
 
+        for (auto &target_type : Target::Mapping)
+        {
+            target_types.push_back(target_type.second);
+        }
+
         Asset::List damage_assets = {
             MapMaker::AttributeAssets[Attribute::Type::DAMAGE],
             Asset::Map("PLUS"),
