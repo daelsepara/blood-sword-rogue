@@ -1823,6 +1823,10 @@
         {
             "id": "FALL DOWN",
             "path": "modules/default/images/system/fall-down.png"
+        },
+        {
+            "id": "TARGETING",
+            "path": "modules/default/images/system/targeting.png"
         }
     ]
 }

@@ -175,7 +175,7 @@
             "quantity": 1,
             "encumbrance": 1,
             "type": "BLUTGETRANKER",
-            "damage_modifiers": {
+            "damage-modifiers": {
                 "GIANT": {
                     "damage": 1,
                     "modifier": 0
@@ -764,7 +764,7 @@
             "quantity": 1,
             "encumbrance": 1,
             "type": "MAGIC BOW",
-            "damage_modifiers": {
+            "damage-modifiers": {
                 "ENEMY": {
                     "damage": 0,
                     "modifier": 1

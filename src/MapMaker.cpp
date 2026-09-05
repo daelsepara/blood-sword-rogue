@@ -826,6 +826,309 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
+    // edit item target-specific effects
+    void EditTargetEffects(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
+    {
+        auto done = false;
+
+        Controls::List actions = {
+            Controls::MapType("EDIT"),
+            Controls::MapType("ADD"),
+            Controls::MapType("REMOVE")};
+
+        Asset::List assets = {
+            Asset::Map("GEARS"),
+            Asset::Map("CONFIRM"),
+            Asset::Map("CANCEL")};
+
+        std::vector<std::string> target_types = {};
+
+        std::vector<std::string> effect_types = {};
+
+        for (auto &target_type : Target::Mapping)
+        {
+            target_types.push_back(target_type.second);
+        }
+
+        for (auto &target_effect : Item::TargetEffectMapping)
+        {
+            effect_types.push_back(target_effect.second);
+        }
+
+        while (!done)
+        {
+            std::vector<std::string> targets = {};
+
+            for (auto target_effect : item.TargetEffects)
+            {
+                targets.push_back(Target::Mapping[target_effect.first]);
+            }
+
+            auto action = Interface::TextAction(graphics, scenes, targets, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, actions, assets);
+
+            if (action.Action == Controls::MapType("ADD"))
+            {
+                auto target = Interface::TextList(graphics, scenes, target_types, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, Asset::Map("TARGETING"), Controls::MapType("CONFIRM"));
+
+                if (target >= 0 && target < SafeCast(target_types.size()))
+                {
+                    auto target_type = Target::Map(target_types[target]);
+
+                    if (!item.HasTargetEffect(target_type))
+                    {
+                        auto target_effect = Interface::TextList(graphics, scenes, effect_types, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, Asset::Map("TARGETING"), Controls::MapType("CONFIRM"));
+
+                        if (target_effect >= 0 && target_effect < SafeCast(effect_types.size()))
+                        {
+                            item.AddTargetEffect(target_type, Item::MapTargetEffect(effect_types[target_effect]));
+                        }
+                    }
+                    else
+                    {
+                        auto selected = -1;
+
+                        for (auto effect_type = 0; effect_type < SafeCast(effect_types.size()); effect_type++)
+                        {
+                            auto effect = Item::TargetEffectMapping[item.TargetEffects[target_type]];
+
+                            if (effect_types[effect_type] == effect.c_str())
+                            {
+                                selected = effect_type;
+
+                                break;
+                            }
+                        }
+
+                        auto target_effect = Interface::TextList(graphics, scenes, effect_types, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"), selected);
+
+                        if (target_effect >= 0 && target_effect < SafeCast(effect_types.size()))
+                        {
+                            item.SetTargetEffect(target_type, Item::MapTargetEffect(effect_types[target_effect]));
+                        }
+                    }
+                }
+            }
+            else if (action.Action == Controls::MapType("EDIT"))
+            {
+                if (action.Selected >= 0 && action.Selected < SafeCast(targets.size()))
+                {
+                    auto target_type = Target::Map(targets[action.Selected]);
+
+                    auto selected = -1;
+
+                    for (auto effect_type = 0; effect_type < SafeCast(effect_types.size()); effect_type++)
+                    {
+                        auto effect = Item::TargetEffectMapping[item.TargetEffects[target_type]];
+
+                        if (effect_types[effect_type] == effect.c_str())
+                        {
+                            selected = effect_type;
+
+                            break;
+                        }
+                    }
+
+                    auto target_effect = Interface::TextList(graphics, scenes, effect_types, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"), selected);
+
+                    if (target_effect >= 0 && target_effect < SafeCast(effect_types.size()))
+                    {
+                        item.SetTargetEffect(target_type, Item::MapTargetEffect(effect_types[target_effect]));
+                    }
+                }
+            }
+            else if (action.Action == Controls::MapType("REMOVE"))
+            {
+                if (action.Selected >= 0 && action.Selected < SafeCast(targets.size()))
+                {
+                    auto target_type = Target::Map(targets[action.Selected]);
+
+                    item.RemoveTargetEffect(target_type);
+                }
+            }
+            else
+            {
+                done = true;
+            }
+        }
+    }
+
+    // update damage
+    void UpdateDamage(Graphics::Base &graphics, Graphics::Scenery &scenes, Asset::List &damage_assets, Controls::List &damage_controls, std::vector<std::string> &damage_captions, Item::Damage &damage_type)
+    {
+        while (true)
+        {
+            damage_assets[2] = damage_type.IgnoreArmour ? Asset::Map("PLAIN CIRCLE") : Asset::Map("CIRCLE");
+
+            auto selected = Interface::IconList(graphics, scenes, damage_assets, damage_captions);
+
+            if (selected >= 0 && selected < SafeCast(damage_controls.size()))
+            {
+                if (damage_controls[selected] == Controls::MapType("DAMAGE"))
+                {
+                    damage_type.Value = Interface::SetValue(graphics, scenes, Interface::Numbers, "BLOOD", damage_type.Value, 0, 12);
+                }
+                else if (damage_controls[selected] == Controls::MapType("MODIFIER"))
+                {
+                    damage_type.Modifier = Interface::SetValue(graphics, scenes, Interface::Numbers, "PLUS", damage_type.Modifier, -5, 5);
+                }
+                else if (damage_controls[selected] == Controls::MapType("ARMOUR"))
+                {
+                    damage_type.IgnoreArmour = !damage_type.IgnoreArmour;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    // edit target specific damage modifiers
+    void EditDamage(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item, bool modifier)
+    {
+        auto done = false;
+
+        Controls::List actions = {
+            Controls::MapType("EDIT"),
+            Controls::MapType("ADD"),
+            Controls::MapType("REMOVE")};
+
+        Asset::List assets = {
+            Asset::Map("GEARS"),
+            Asset::Map("CONFIRM"),
+            Asset::Map("CANCEL")};
+
+        std::vector<std::string> target_types = {};
+
+        Asset::List damage_assets = {
+            MapMaker::AttributeAssets[Attribute::Type::DAMAGE],
+            Asset::Map("PLUS"),
+            Asset::Map("CIRCLE"),
+        };
+
+        Controls::List damage_controls = {
+            Controls::MapType("DAMAGE"),
+            Controls::MapType("MODIFIER"),
+            Controls::MapType("ARMOUR"),
+        };
+
+        std::vector<std::string> damage_captions = {
+            "DAMAGE VALUE",
+            "DAMAGE MODIFIER",
+            "TOGGLE IGNORE ARMOUR"};
+
+        while (!done)
+        {
+            std::vector<std::string> targets = {};
+
+            if (!modifier)
+            {
+                for (auto target : item.DamageTypes)
+                {
+                    targets.push_back(Target::Mapping[target.first]);
+                }
+            }
+            else
+            {
+                for (auto target : item.DamageModifiers)
+                {
+                    targets.push_back(Target::Mapping[target.first]);
+                }
+            }
+
+            auto action = Interface::TextAction(graphics, scenes, targets, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, actions, assets);
+
+            if (action.Action == Controls::MapType("ADD"))
+            {
+                auto selected = Interface::TextList(graphics, scenes, target_types, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, Asset::Map("TARGETING"), Controls::MapType("CONFIRM"));
+
+                if (selected >= 0 && selected < SafeCast(target_types.size()))
+                {
+                    auto target = Target::Map(target_types[selected]);
+
+                    auto exist = !modifier ? item.HasDamageType(target) : item.HasDamageModifier(target);
+
+                    if (!exist)
+                    {
+                        auto damage = Item::Damage(0, 0, false);
+
+                        MapMaker::UpdateDamage(graphics, scenes, damage_assets, damage_controls, damage_captions, damage);
+
+                        if (!modifier)
+                        {
+                            item.AddDamageType(target, damage);
+                        }
+                        else
+                        {
+                            item.AddDamageModifier(target, damage);
+                        }
+                    }
+                    else
+                    {
+                        auto damage = !modifier ? item.DamageTypes[target] : item.DamageModifiers[target];
+
+                        MapMaker::UpdateDamage(graphics, scenes, damage_assets, damage_controls, damage_captions, damage);
+
+                        if (!modifier)
+                        {
+                            item.SetDamageType(target, damage);
+                        }
+                        else
+                        {
+                            item.SetDamageModifier(target, damage);
+                        }
+                    }
+                }
+            }
+            else if (action.Action == Controls::MapType("EDIT"))
+            {
+                if (action.Selected >= 0 && action.Selected < SafeCast(targets.size()))
+                {
+                    auto target = Target::Map(targets[action.Selected]);
+
+                    auto damage = !modifier ? item.DamageTypes[target] : item.DamageModifiers[target];
+
+                    MapMaker::UpdateDamage(graphics, scenes, damage_assets, damage_controls, damage_captions, damage);
+
+                    if (!modifier)
+                    {
+                        item.SetDamageType(target, damage);
+                    }
+                    else
+                    {
+                        item.SetDamageModifier(target, damage);
+                    }
+                }
+            }
+            else if (action.Action == Controls::MapType("REMOVE"))
+            {
+                if (action.Selected >= 0 && action.Selected < SafeCast(targets.size()))
+                {
+                    auto target = Target::Map(targets[action.Selected]);
+
+                    if (!modifier)
+                    {
+                        if (item.HasDamageType(target))
+                        {
+                            item.RemoveDamageType(target);
+                        }
+                    }
+                    else
+                    {
+                        if (item.HasDamageModifier(target))
+                        {
+                            item.RemoveDamageModifier(target);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                done = true;
+            }
+        }
+    }
+
     // edit item
     void EditItem(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
     {
@@ -836,21 +1139,30 @@ namespace BloodSwordRogue::MapMaker
             Asset::Map("ONE"),
             Asset::Map("WEIGHT"),
             Asset::Map("GEARS"),
-            Asset::Map("IDENTIFY")};
+            Asset::Map("IDENTIFY"),
+            Asset::Map("BLOOD"),
+            Asset::Map("BLOODY SWORD"),
+            Asset::Map("TARGETING")};
 
         Asset::List object_controls = {
             Controls::MapType("VIEW"),
             Controls::MapType("QUANTITY"),
             Controls::MapType("ENCUMBRANCE"),
             Controls::MapType("ATTRIBUTES"),
-            Controls::MapType("PROPERTIES")};
+            Controls::MapType("PROPERTIES"),
+            Controls::MapType("DAMAGE TYPE"),
+            Controls::MapType("DAMAGE MODIFIER"),
+            Controls::MapType("TARGET")};
 
         std::vector<std::string> object_captions = {
             "VIEW",
             "QUANTITY",
             "ENCUMBRANCE",
             "ATTRIBUTES",
-            "PROPERTIES"};
+            "PROPERTIES",
+            "DAMAGE TYPES",
+            "DAMAGE MODIFIERS",
+            "TARGET EFFECTS"};
 
         while (!done)
         {
@@ -897,6 +1209,18 @@ namespace BloodSwordRogue::MapMaker
                 else if (object_controls[selected] == Controls::MapType("PROPERTIES"))
                 {
                     MapMaker::EditProperties(graphics, scenes, item);
+                }
+                else if (object_controls[selected] == Controls::MapType("TARGET"))
+                {
+                    MapMaker::EditTargetEffects(graphics, scenes, item);
+                }
+                else if (object_controls[selected] == Controls::MapType("DAMAGE TYPE"))
+                {
+                    MapMaker::EditDamage(graphics, scenes, item, false);
+                }
+                else if (object_controls[selected] == Controls::MapType("DAMAGE MODIFIER"))
+                {
+                    MapMaker::EditDamage(graphics, scenes, item, true);
                 }
             }
             else
@@ -1430,7 +1754,7 @@ namespace BloodSwordRogue::MapMaker
         {
             while (true)
             {
-                auto selected = Interface::IconGrid(graphics, scene, MapMaker::ItemAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::TileSize, MapMaker::ItemCaptions);
+                auto selected = Interface::IconGrid(graphics, scene, MapMaker::ItemAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::HalfTile, MapMaker::ItemCaptions);
 
                 if (selected >= 0 && selected < SafeCast(MapMaker::ItemTypes.size()))
                 {

@@ -648,7 +648,7 @@ namespace BloodSwordRogue::Interface
         auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
 
         // number of icon rows
-        auto limit_y = ((height - BloodSwordRogue::TileSize) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+        auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
 
         auto items = SafeCast(assets.size());
 

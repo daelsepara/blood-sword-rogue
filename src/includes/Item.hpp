@@ -153,9 +153,37 @@ namespace BloodSwordRogue::Item
         }
 
         // item has target-specific effect
-        bool HasEffect(Target::Type target)
+        bool HasTargetEffect(Target::Type target)
         {
             return BloodSwordRogue::Has(this->TargetEffects, target);
+        }
+
+        // set target-specific effect
+        void SetTargetEffect(Target::Type target, Item::TargetEffect effect)
+        {
+            this->TargetEffects.insert_or_assign(target, effect);
+        }
+
+        // add target-specific effect
+        bool AddTargetEffect(Target::Type target, Item::TargetEffect effect)
+        {
+            if (!this->HasTargetEffect(target))
+            {
+                this->SetTargetEffect(target, effect);
+            }
+
+            return this->HasTargetEffect(target);
+        }
+
+        // remove target effect
+        bool RemoveTargetEffect(Target::Type target)
+        {
+            if (this->HasTargetEffect(target))
+            {
+                this->TargetEffects.erase(target);
+            }
+
+            return !this->HasTargetEffect(target);
         }
 
         // item has target-specific damage type
@@ -164,10 +192,66 @@ namespace BloodSwordRogue::Item
             return BloodSwordRogue::Has(this->DamageTypes, target);
         }
 
+        // set damage type
+        void SetDamageType(Target::Type target, Item::Damage damage)
+        {
+            this->DamageTypes.insert_or_assign(target, damage);
+        }
+
+        // add damage type
+        bool AddDamageType(Target::Type target, Item::Damage damage)
+        {
+            if (!this->HasDamageType(target))
+            {
+                this->SetDamageType(target, damage);
+            }
+
+            return this->HasDamageType(target);
+        }
+
+        // remove damage type
+        bool RemoveDamageType(Target::Type target)
+        {
+            if (this->HasDamageType(target))
+            {
+                this->DamageTypes.erase(target);
+            }
+
+            return !this->HasDamageType(target);
+        }
+
         // item has target-specific damage modifiers
         bool HasDamageModifier(Target::Type target)
         {
             return BloodSwordRogue::Has(this->DamageModifiers, target);
+        }
+
+        // set damage modifier
+        void SetDamageModifier(Target::Type target, Item::Damage damage)
+        {
+            this->DamageModifiers.insert_or_assign(target, damage);
+        }
+
+        // add damage modifier
+        bool AddDamageModifier(Target::Type target, Item::Damage damage)
+        {
+            if (!this->HasDamageModifier(target))
+            {
+                this->SetDamageModifier(target, damage);
+            }
+
+            return this->HasDamageModifier(target);
+        }
+
+        // remove damage modifer
+        bool RemoveDamageModifier(Target::Type target)
+        {
+            if (this->HasDamageModifier(target))
+            {
+                this->DamageModifiers.erase(target);
+            }
+
+            return !this->HasDamageModifier(target);
         }
 
         // item has all of the properties
@@ -582,11 +666,11 @@ namespace BloodSwordRogue::Item
             }
         }
 
-        if (!data["damage_modifiers"].is_null() && data["damage_modifiers"].is_object())
+        if (!data["damage-modifiers"].is_null() && data["damage-modifiers"].is_object())
         {
             item.DamageModifiers.clear();
 
-            for (auto &[key, val] : data["damage_modifiers"].items())
+            for (auto &[key, val] : data["damage-modifiers"].items())
             {
                 if (val.is_object())
                 {

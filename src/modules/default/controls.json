@@ -146,7 +146,12 @@
         "ATTRIBUTES",
         "PROPERTIES",
         "QUANTITY",
-        "EXPORT"
+        "EXPORT",
+        "TARGET",
+        "DAMAGE TYPE",
+        "DAMAGE MODIFIER",
+        "MODIFIER",
+        "ARMOUR"
     ],
     "controls-spells": [
         "VOLCANO SPRAY",
