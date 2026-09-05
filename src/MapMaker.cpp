@@ -626,7 +626,16 @@ namespace BloodSwordRogue::MapMaker
                     assets[0] = Asset::Map("ITEMS");
                 }
 
-                captions.push_back(std::to_string(item.Quantity) + std::string(" ") + MapMaker::ItemPlurals[i]);
+                std::string quantity_caption = std::to_string(item.Quantity);
+
+                if (item.Limit != Item::Unlimited)
+                {
+                    quantity_caption += std::string("/") + std::to_string(item.Limit);
+                }
+
+                quantity_caption += std::string(" ") + MapMaker::ItemPlurals[i];
+
+                captions.push_back(quantity_caption);
             }
         }
 
@@ -1631,6 +1640,11 @@ namespace BloodSwordRogue::MapMaker
                 }
                 else if (input.Type == Controls::MapType("ITEMS"))
                 {
+                    if (character.TotalEncumbrance() > character.EncumbranceLimit)
+                    {
+                        Interface::MessageBox(graphics, {background, scene}, "WARNING: CHARACTER IS OVER ENCUMBRANCE LIMIT", Color::Highlight);
+                    }
+
                     auto selected = Interface::IconList(graphics, {background, scene}, object_assets, item_captions);
 
                     if (selected >= 0 && selected < SafeCast(object_controls.size()))
@@ -2829,7 +2843,7 @@ namespace BloodSwordRogue::MapMaker
             "SELECT",
             "LOAD",
             "SAVE",
-            "HEXES",
+            "EASEL",
             "EXIT"};
 
         std::vector<std::string> controls_captions = {

@@ -1827,6 +1827,10 @@
         {
             "id": "TARGETING",
             "path": "modules/default/images/system/targeting.png"
+        },
+        {
+            "id": "EASEL",
+            "path": "modules/default/images/system/easels.png"
         }
     ]
 }
