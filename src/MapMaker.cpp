@@ -42,6 +42,8 @@ namespace BloodSwordRogue::MapMaker
 
     Asset::List ItemAssets = {};
 
+    Asset::List ItemImages = {};
+
     Items::List ItemTypes = {};
 
     std::vector<std::string> ItemCaptions = {};
@@ -365,6 +367,8 @@ namespace BloodSwordRogue::MapMaker
         auto data = nlohmann::json::parse(json_file);
 
         LoadList(data, "map-assets", MapMaker::Assets, Asset::Map);
+
+        LoadList(data, "item-assets", MapMaker::ItemImages, Asset::Map);
 
         LoadRoster(data, "enemies");
 
@@ -1150,6 +1154,9 @@ namespace BloodSwordRogue::MapMaker
 
         Asset::List object_assets = {
             Asset::Map("MAGNIFYING GLASS"),
+            item.Asset,
+            Asset::Map("EASEL"),
+            Asset::Map("CHECKBOX TREE"),
             Asset::Map("ONE"),
             Asset::Map("VERTICAL FLIP"),
             Asset::Map("WEIGHT"),
@@ -1161,6 +1168,9 @@ namespace BloodSwordRogue::MapMaker
 
         Asset::List object_controls = {
             Controls::MapType("VIEW"),
+            Controls::MapType("NAME"),
+            Controls::MapType("ASSET"),
+            Controls::MapType("TYPE"),
             Controls::MapType("QUANTITY"),
             Controls::MapType("LIMIT"),
             Controls::MapType("ENCUMBRANCE"),
@@ -1172,6 +1182,9 @@ namespace BloodSwordRogue::MapMaker
 
         std::vector<std::string> object_captions = {
             "VIEW",
+            "NAME",
+            "IMAGE",
+            "TYPE",
             "QUANTITY",
             "LIMIT",
             "ENCUMBRANCE",
@@ -1181,15 +1194,65 @@ namespace BloodSwordRogue::MapMaker
             "DAMAGE MODIFIERS",
             "TARGET EFFECTS"};
 
+        std::vector<std::string> item_types = {};
+
+        for (auto &item_type : Item::TypeMapping)
+        {
+            item_types.push_back(item_type.second);
+        }
+
         while (!done)
         {
-            auto selected = Interface::IconList(graphics, scenes, object_assets, object_captions);
+            auto selected = Interface::IconGrid(graphics, scenes, object_assets, BloodSwordRogue::TileSize * 8, BloodSwordRogue::TileSize * 6, object_captions);
 
             if (selected >= 0 && selected < SafeCast(object_controls.size()))
             {
                 if (object_controls[selected] == Controls::MapType("VIEW"))
                 {
                     MapMaker::ViewItem(graphics, scenes, item);
+                }
+                else if (object_controls[selected] == Controls::MapType("NAME"))
+                {
+                    auto question = std::string("EDIT NAME");
+
+                    auto name = BloodSwordRogue::Trim(Interface::TextInput(graphics, scenes, question, item.Name, 20, true));
+
+                    if (SafeCast(name.size()) > 0)
+                    {
+                        item.Name = std::string(name);
+                    }
+                }
+                else if (object_controls[selected] == Controls::MapType("ASSET"))
+                {
+                    auto asset = Interface::IconGrid(graphics, scenes, MapMaker::ItemImages, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5);
+
+                    if (asset >= 0 && asset < SafeCast(MapMaker::ItemImages.size()))
+                    {
+                        item.Asset = MapMaker::ItemImages[asset];
+
+                        object_assets[1] = item.Asset;
+                    }
+                }
+                else if (object_controls[selected] == Controls::MapType("TYPE"))
+                {
+                    auto type = -1;
+
+                    for (auto item_type = 0; item_type < SafeCast(item_types.size()); item_type++)
+                    {
+                        if (item.Type == Item::MapType(item_types[item_type]))
+                        {
+                            type = item_type;
+
+                            break;
+                        }
+                    }
+
+                    auto item_type = Interface::TextList(graphics, scenes, item_types, BloodSwordRogue::TileSize * 6, BloodSwordRogue::TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"), type);
+
+                    if (item_type >= 0 && item_type < SafeCast(item_types.size()))
+                    {
+                        item.Type = Item::MapType(item_types[item_type]);
+                    }
                 }
                 else if (object_controls[selected] == Controls::MapType("QUANTITY"))
                 {

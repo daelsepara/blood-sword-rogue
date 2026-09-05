@@ -1830,7 +1830,99 @@
         },
         {
             "id": "EASEL",
-            "path": "modules/default/images/system/easels.png"
+            "path": "modules/default/images/system/easel.png"
+        },
+        {
+            "id": "SKULL RING",
+            "path": "modules/default/images/items/skull-ring.png"
+        },
+        {
+            "id": "TOY MALLET",
+            "path": "modules/default/images/items/toy-mallet.png"
+        },
+        {
+            "id": "THROWN KNIFE",
+            "path": "modules/default/images/items/thrown-knife.png"
+        },
+        {
+            "id": "PLASTRON",
+            "path": "modules/default/images/items/plastron.png"
+        },
+        {
+            "id": "LAMELLAR",
+            "path": "modules/default/images/items/lamellar.png"
+        },
+        {
+            "id": "CRYSTALIZE",
+            "path": "modules/default/images/items/crystalize.png"
+        },
+        {
+            "id": "CUT DIAMOND",
+            "path": "modules/default/images/items/cut-diamond.png"
+        },
+        {
+            "id": "TOPAZ",
+            "path": "modules/default/images/items/topaz.png"
+        },
+        {
+            "id": "SHOULDER ARMOR",
+            "path": "modules/default/images/items/shoulder-armor.png"
+        },
+        {
+            "id": "FLAMING TRIDENT",
+            "path": "modules/default/images/items/flaming-trident.png"
+        },
+        {
+            "id": "HARPOON TRIDENT",
+            "path": "modules/default/images/items/harpoon-trident.png"
+        },
+        {
+            "id": "MAGIC TRIDENT",
+            "path": "modules/default/images/items/magic-trident.png"
+        },
+        {
+            "id": "TRIDENT SHIELD",
+            "path": "modules/default/images/items/trident-shield.png"
+        },
+        {
+            "id": "TRIDENT",
+            "path": "modules/default/images/items/trident.png"
+        },
+        {
+            "id": "TWO HANDED SWORD",
+            "path": "modules/default/images/items/two-handed-sword.png"
+        },
+        {
+            "id": "SWORD HILT",
+            "path": "modules/default/images/items/sword-hilt.png"
+        },
+        {
+            "id": "DERVISH SWORDS",
+            "path": "modules/default/images/items/dervish-swords.png"
+        },
+        {
+            "id": "ENERGY SWORD",
+            "path": "modules/default/images/items/energy-sword.png"
+        },
+        {
+            "id": "PIERCING SWORD",
+            "path": "modules/default/images/items/piercing-sword.png"
+        },
+        {
+            "id": "HOOK SWORDS",
+            "path": "modules/default/images/items/hook-swords.png"
+        },
+        {
+            "id": "SPIKED MACE",
+            "path": "modules/default/images/items/spiked-mace.png"
+        },
+        {
+            "id": "FLANGED MACE",
+            "path": "modules/default/images/items/flanged-mace.png"
+        },
+        {
+            "id": "BONE MACE",
+            "path": "modules/default/images/items/bone-mace.png"
         }
     ]
 }

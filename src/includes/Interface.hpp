@@ -1686,6 +1686,17 @@ namespace BloodSwordRogue::Interface
         // clip selected
         selected = std::min(std::max(-1, selected), items - 1);
 
+        // move offset so selected text is in the center
+        if (selected != -1 && items > limit)
+        {
+            offset = selected - limit / 2;
+
+            if (offset > items - limit)
+            {
+                offset = items - limit;
+            }
+        }
+
         while (!done)
         {
             auto scene = Scene::Base();
