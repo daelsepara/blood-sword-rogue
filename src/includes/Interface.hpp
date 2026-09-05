@@ -2339,14 +2339,14 @@ namespace BloodSwordRogue::Interface
                 }
                 else if (input.Type == Controls::MapType("INCREASE"))
                 {
-                    if (value < max_value && value < 99)
+                    if (value < max_value)
                     {
                         value++;
                     }
                 }
                 else if (input.Type == Controls::MapType("DECREASE"))
                 {
-                    if (value > min_value && value > -99)
+                    if (value > min_value)
                     {
                         value--;
                     }

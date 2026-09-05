@@ -151,7 +151,8 @@
         "DAMAGE TYPE",
         "DAMAGE MODIFIER",
         "MODIFIER",
-        "ARMOUR"
+        "ARMOUR",
+        "LIMIT"
     ],
     "controls-spells": [
         "VOLCANO SPRAY",

@@ -420,7 +420,7 @@ namespace BloodSwordRogue::MapMaker
                     item.Quantity = std::stoi(quantity, nullptr, 10);
 
                     // clamp quantity to a reasonable range
-                    item.Quantity = std::min(std::max(0, item.Quantity), 99);
+                    item.Quantity = std::min(std::max(0, item.Quantity), item.Limit != Item::Unlimited ? item.Limit : 99);
 
                     if (item.Contains != Item::NONE)
                     {
@@ -1142,6 +1142,7 @@ namespace BloodSwordRogue::MapMaker
         Asset::List object_assets = {
             Asset::Map("MAGNIFYING GLASS"),
             Asset::Map("ONE"),
+            Asset::Map("VERTICAL FLIP"),
             Asset::Map("WEIGHT"),
             Asset::Map("GEARS"),
             Asset::Map("IDENTIFY"),
@@ -1152,6 +1153,7 @@ namespace BloodSwordRogue::MapMaker
         Asset::List object_controls = {
             Controls::MapType("VIEW"),
             Controls::MapType("QUANTITY"),
+            Controls::MapType("LIMIT"),
             Controls::MapType("ENCUMBRANCE"),
             Controls::MapType("ATTRIBUTES"),
             Controls::MapType("PROPERTIES"),
@@ -1162,6 +1164,7 @@ namespace BloodSwordRogue::MapMaker
         std::vector<std::string> object_captions = {
             "VIEW",
             "QUANTITY",
+            "LIMIT",
             "ENCUMBRANCE",
             "ATTRIBUTES",
             "PROPERTIES",
@@ -1187,11 +1190,30 @@ namespace BloodSwordRogue::MapMaker
 
                         if (Item::MapType(item_quantity) == item.Type)
                         {
-                            auto quantity = MapMaker::SetValue(graphics, scenes, MapMaker::ItemsAssets[i], item.Quantity, 0, 99);
+                            auto quantity = MapMaker::SetValue(graphics, scenes, MapMaker::ItemsAssets[i], item.Quantity, 0, item.Limit != Item::Unlimited ? item.Limit : 99);
 
                             if (quantity >= 0 && quantity < 100)
                             {
                                 item.Quantity = quantity;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+                else if (object_controls[selected] == Controls::MapType("LIMIT"))
+                {
+                    for (auto i = 0; i < SafeCast(MapMaker::ItemsWithQuantities.size()); i++)
+                    {
+                        auto item_limit = MapMaker::ItemsWithQuantities[i];
+
+                        if (Item::MapType(item_limit) == item.Type)
+                        {
+                            auto limit = MapMaker::SetValue(graphics, scenes, MapMaker::ItemsAssets[i], item.Limit, -1, 99);
+
+                            if (limit >= -1 && limit < 100)
+                            {
+                                item.Limit = limit;
                             }
 
                             break;
