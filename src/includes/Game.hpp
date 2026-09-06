@@ -195,6 +195,19 @@ namespace BloodSwordRogue::Game
 
             if (SafeCast(trigger.Variables.size()) > 0)
             {
+                if (location.Map.IsValid(game.Party.Origin()))
+                {
+                    auto &tile = location.Map[game.Party.Origin()];
+
+                    tile.Id = Map::NotFound;
+
+                    tile.Occupant = Map::Object::NONE;
+                }
+                else
+                {
+                    throw std::invalid_argument("PARTY'S LOCATION IS INVALID!");
+                }
+
                 Game::Move(world, game, location, trigger.Variables[0]);
             }
             else
