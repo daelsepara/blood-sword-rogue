@@ -908,11 +908,11 @@ namespace BloodSwordRogue::Interface
     }
 
     // draws a scrollable image box
-    void ScrollableImageBox(Graphics::Base &graphics, Scene::Base &background, SDL_Texture *texture, int width, int height, int x, int y, Uint32 bg_color, Uint32 border, int border_size, Uint32 highlight, Asset::Type asset, Asset::Type left, Asset::Type right, bool blur = true, int offset = 0)
+    void ScrollableImageBox(Graphics::Base &graphics, Graphics::Scenery scenes, SDL_Texture *texture, int width, int height, int x, int y, Uint32 bg_color, Uint32 border, int border_size, Uint32 highlight, Asset::Type asset, Asset::Type left, Asset::Type right, bool blur = true, int offset = 0)
     {
         if (texture)
         {
-            auto text_h = std::min(height - (BloodSwordRogue::TileSize + 24), BloodSwordRogue::Height(texture));
+            auto text_h = std::min(height - (BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 3), BloodSwordRogue::Height(texture));
 
             auto texture_h = BloodSwordRogue::Height(texture);
 
@@ -922,7 +922,7 @@ namespace BloodSwordRogue::Interface
 
             auto input = Controls::User();
 
-            auto controls_x = x + (width - 208) / 2;
+            auto controls_x = x + (width - (BloodSwordRogue::TileSize * 3 + BloodSwordRogue::Pad * 2)) / 2;
 
             auto controls_y = y + height - BloodSwordRogue::Pad;
 
@@ -936,7 +936,11 @@ namespace BloodSwordRogue::Interface
 
                 Interface::AddScrollableTextureBox(scene, x, y, width, height, bg_color, border, border_size, texture, texture_h, text_x, text_y, text_h, offset, controls_x, controls_y, asset, left, right, scroll_speed);
 
-                input = Input::WaitForInput(graphics, {background, scene}, scene.Controls, input, blur);
+                auto scenery = scenes;
+
+                scenery.push_back(scene);
+
+                input = Input::WaitForInput(graphics, scenery, scene.Controls, input, blur);
 
                 if (Input::Validate(input))
                 {
@@ -957,6 +961,14 @@ namespace BloodSwordRogue::Interface
                 }
             }
         }
+    }
+
+    // draws a scrollable image box
+    void ScrollableImageBox(Graphics::Base &graphics, Scene::Base &background, SDL_Texture *texture, int width, int height, int x, int y, Uint32 bg_color, Uint32 border, int border_size, Uint32 highlight, Asset::Type asset, Asset::Type left, Asset::Type right, bool blur = true, int offset = 0)
+    {
+        Graphics::Scenery scenes = {background};
+
+        Interface::ScrollableImageBox(graphics, scenes, texture, width, height, x, y, bg_color, border, border_size, highlight, asset, left, right, blur, offset);
     }
 
     // show scaled version of map
@@ -1040,14 +1052,14 @@ namespace BloodSwordRogue::Interface
             {
                 auto width = BloodSwordRogue::Width(texture) + 16;
 
-                auto height = std::min(400, BloodSwordRogue::Height(texture) + BloodSwordRogue::TileSize + 24);
+                auto height = std::min(BloodSwordRogue::TileSize * 6 + BloodSwordRogue::Pad * 2, BloodSwordRogue::Height(texture) + BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 3);
 
                 auto x = (graphics.Width - width) / 2;
 
                 auto y = (graphics.Height - height) / 2;
 
                 // calculate offset to center current location
-                auto text_h = std::min(height - (BloodSwordRogue::TileSize + 24), BloodSwordRogue::Height(texture));
+                auto text_h = std::min(height - (BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 3), BloodSwordRogue::Height(texture));
 
                 auto loc = map.ViewY * scale.Y + scale.Y / 2;
 
@@ -1260,7 +1272,7 @@ namespace BloodSwordRogue::Interface
 
                 scenery.push_back(box);
 
-                input = Input::WaitForText(graphics, scenery, box.Controls, input, blur, BloodSwordRogue::StandardDelay);
+                input = Input::WaitForText(graphics, scenery, box.Controls, input, true, blur, BloodSwordRogue::StandardDelay);
 
                 if (input.Selected && (allow_empty || (!allow_empty && SafeCast(input.TextInput.size()) > 0)))
                 {
@@ -1353,7 +1365,7 @@ namespace BloodSwordRogue::Interface
 
                 scenery.push_back(box);
 
-                input = Input::WaitForText(graphics, scenery, box.Controls, input, blur, BloodSwordRogue::StandardDelay);
+                input = Input::WaitForText(graphics, scenery, box.Controls, input, false, blur, BloodSwordRogue::StandardDelay);
 
                 if (input.RefreshText)
                 {

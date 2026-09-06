@@ -299,6 +299,17 @@ namespace BloodSwordRogue
         return text;
     }
 
+    // replace instances of characters (in *chars) with another (replacement)
+    std::string CleanString(std::string text, const char *chars, const char replacement)
+    {
+        for (auto i = 0; i < strlen(chars); ++i)
+        {
+            std::replace(text.begin(), text.end(), chars[i], replacement);
+        }
+
+        return text;
+    }
+
     // get size of texture
     Point Size(SDL_Texture *texture)
     {

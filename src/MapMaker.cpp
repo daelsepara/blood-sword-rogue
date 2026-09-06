@@ -2631,10 +2631,73 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
+    // view trigger
+    void ViewTrigger(Graphics::Base &graphics, Graphics::Scenery &scenes, Map::Base &map, Trigger::Base &trigger)
+    {
+        Asset::List assets = {
+            Asset::Map("CHECKBOX TREE"),
+            Asset::Map("IDENTIFY"),
+            Asset::Map("IDENTIFY"),
+            Asset::Map("IDENTIFY"),
+            Asset::Map("IDENTIFY")};
+
+        std::vector<std::string> captions = {
+            "TYPE: " + std::string(trigger.Type != Trigger::Type::NONE ? Trigger::TypeMapping[trigger.Type] : "NONE"),
+            "VIEW ENCOUNTER MESSAGE",
+            "VIEW ACTIVE MESSAGE",
+            "VIEW COMPLETION MESSAGE",
+            "VIEW VARIABLES"};
+
+        auto done = false;
+
+        while (!done)
+        {
+            auto selected = Interface::IconList(graphics, scenes, assets, captions);
+
+            // skip trigger type
+            if (selected >= 1 && selected < 4)
+            {
+                auto width = map.ViewX * map.TileSize + BloodSwordRogue::Border * 2;
+
+                auto height = map.ViewY * map.TileSize + (BloodSwordRogue::Pad * 3);
+
+                SDL_Texture *texture = nullptr;
+
+                if (selected == 1 && !trigger.EncounterMessage.empty())
+                {
+                    texture = Graphics::CreateText(graphics, trigger.EncounterMessage.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, map.ViewX * map.TileSize);
+                }
+                else if (selected == 2 && !trigger.ActiveMessage.empty())
+                {
+                    texture = Graphics::CreateText(graphics, trigger.ActiveMessage.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, map.ViewX * map.TileSize);
+                }
+                else if (selected == 3 && !trigger.CompletedMessage.empty())
+                {
+                    texture = Graphics::CreateText(graphics, trigger.CompletedMessage.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, map.ViewX * map.TileSize);
+                }
+
+                if (texture != nullptr)
+                {
+                    Interface::ScrollableImageBox(graphics, scenes, texture, width, height, map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border, Color::Background, Color::Active, BloodSwordRogue::Border, Color::Active, Asset::Map("CONFIRM"), Asset::Map("UP"), Asset::Map("DOWN"), true, 0);
+
+                    BloodSwordRogue::Free(&texture);
+                }
+            }
+            else if (selected == 4)
+            {
+                Interface::TextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+            }
+            else
+            {
+                done = true;
+            }
+        }
+    }
+
     // helper function
     void EditTriggerMessage(Graphics::Base &graphics, Graphics::Scenery &scenes, Map::Base &map, std::string question, std::string &message)
     {
-        message = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), question, message, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
+        message = Interface::TextBoxInput(graphics, scenes, Point(map.DrawX - BloodSwordRogue::Border, map.DrawY - BloodSwordRogue::Border), question, message, Color::Inactive, Color::Active, 1000, map.ViewX * map.TileSize + BloodSwordRogue::Border * 2, map.ViewY * map.TileSize + BloodSwordRogue::Border * 2, map.ViewX * map.TileSize - BloodSwordRogue::Border, Color::Active, Color::Background, BloodSwordRogue::Border, true, true);
     }
 
     // edit trigger
@@ -2687,10 +2750,6 @@ namespace BloodSwordRogue::MapMaker
                     if (type >= 0 && type < SafeCast(MapMaker::TriggerTypes.size()))
                     {
                         trigger.Type = Trigger::Map(MapMaker::TriggerTypes[type]);
-                    }
-                    else
-                    {
-                        trigger.Type = Trigger::Type::NONE;
                     }
                 }
                 else if (selected == 1)
@@ -3184,11 +3243,11 @@ namespace BloodSwordRogue::MapMaker
 
                         trigger_text += std::string("TRIGGER TYPE: ") + std::string(Trigger::TypeMapping[trigger.Type]) + (SafeCast(trigger.Variables.size()) > 0 ? (std::string(" (") + std::to_string(SafeCast(trigger.Variables.size())) + std::string(" VARIABLES)")) : std::string()) + std::string("\n");
 
-                        trigger_text += std::string("   ENCOUNTER: ") + trigger.EncounterMessage.substr(0, 75) + (trigger.EncounterMessage.size() > 40 ? std::string("...\n") : std::string("\n"));
+                        trigger_text += std::string("   ENCOUNTER: ") + BloodSwordRogue::CleanString(trigger.EncounterMessage.substr(0, 75), "\r\n", ' ') + (trigger.EncounterMessage.size() > 75 ? std::string("...\n") : std::string("\n"));
 
-                        trigger_text += std::string("      ACTIVE: ") + trigger.ActiveMessage.substr(0, 75) + (trigger.ActiveMessage.size() > 40 ? std::string("...\n") : std::string("\n"));
+                        trigger_text += std::string("      ACTIVE: ") + BloodSwordRogue::CleanString(trigger.ActiveMessage.substr(0, 75), "\r\n", ' ') + (trigger.ActiveMessage.size() > 75 ? std::string("...\n") : std::string("\n"));
 
-                        trigger_text += std::string("    COMPLETE: ") + trigger.CompletedMessage.substr(0, 75) + (trigger.CompletedMessage.size() > 40 ? std::string("...\n") : std::string());
+                        trigger_text += std::string("    COMPLETE: ") + BloodSwordRogue::CleanString(trigger.CompletedMessage.substr(0, 75), "\r\n", ' ') + (trigger.CompletedMessage.size() > 75 ? std::string("...\n") : std::string());
 
                         auto trigger_asset = Graphics::CreateText(graphics, trigger_text.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL);
 
@@ -3295,17 +3354,41 @@ namespace BloodSwordRogue::MapMaker
                                 }
                                 else if (function == Function::TRIGGER && tile.Occupant == Map::Object::TRIGGER)
                                 {
-                                    auto id = tile.Id - 1;
+                                    auto selected = Interface::IconList(graphics, scene, object_assets, object_captions);
 
-                                    if (id >= 0 && id < SafeCast(location.Triggers.size()))
+                                    if (selected >= 0 && selected < SafeCast(object_controls.size()))
                                     {
-                                        Graphics::Scenery scenes = {scene};
+                                        auto id = tile.Id - 1;
 
-                                        MapMaker::EditTrigger(graphics, scenes, map, location.Triggers[id]);
-                                    }
-                                    else
-                                    {
-                                        Interface::MessageBox(graphics, scene, "TRIGGER NOT FOUND", Color::Highlight);
+                                        if (id >= 0 && id < SafeCast(location.Triggers.size()))
+                                        {
+                                            if (object_controls[selected] == Controls::MapType("CONFIRM"))
+                                            {
+                                                Graphics::Scenery scenes = {scene};
+
+                                                MapMaker::ViewTrigger(graphics, scenes, map, location.Triggers[id]);
+                                            }
+                                            else if (object_controls[selected] == Controls::MapType("CANCEL"))
+                                            {
+                                                location.Triggers.erase(location.Triggers.begin() + id);
+
+                                                tile.Id = Map::NotFound;
+
+                                                tile.Occupant = Map::Object::NONE;
+
+                                                Location::RenumberTriggers(location);
+                                            }
+                                            else if (object_controls[selected] == Controls::MapType("SETTINGS"))
+                                            {
+                                                Graphics::Scenery scenes = {scene};
+
+                                                MapMaker::EditTrigger(graphics, scenes, map, location.Triggers[id]);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Interface::MessageBox(graphics, scene, "TRIGGER NOT FOUND", Color::Highlight);
+                                        }
                                     }
                                 }
                             }

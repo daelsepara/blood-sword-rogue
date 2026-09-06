@@ -174,7 +174,7 @@ namespace BloodSwordRogue::Input
     }
 
     // wait for text input from user
-    Controls::User WaitForText(Graphics::Base &graphics, Graphics::Scenery scenes, Controls::Collection &controls, Controls::User input, bool blur = true, int delay = BloodSwordRogue::StandardDelay)
+    Controls::User WaitForText(Graphics::Base &graphics, Graphics::Scenery scenes, Controls::Collection &controls, Controls::User input, bool multiline = false, bool blur = true, int delay = BloodSwordRogue::StandardDelay)
     {
         Input::RenderWhileWaiting(graphics, scenes, controls, input, blur);
 
@@ -226,7 +226,7 @@ namespace BloodSwordRogue::Input
 
                 if (std::strlen(clipboard_text) > 0)
                 {
-                    auto text = BloodSwordRogue::CleanString(std::string(clipboard_text), "\n\r");
+                    auto text = multiline ? clipboard_text : BloodSwordRogue::CleanString(std::string(clipboard_text), "\n\r");
 
                     input.TextInput = (std::string(input.TextInput) + std::string(text)).substr(0, input.TextLimit);
 
@@ -257,19 +257,19 @@ namespace BloodSwordRogue::Input
     }
 
     // Handler for text input events. Must be called from other handler since it does not render screens
-    Controls::User WaitForText(Graphics::Base &graphics, Scene::Base &background, Scene::Base &scene, Controls::User input, bool is_dialog = false, bool blur = true, int delay = BloodSwordRogue::StandardDelay)
+    Controls::User WaitForText(Graphics::Base &graphics, Scene::Base &background, Scene::Base &scene, Controls::User input, bool is_dialog = false, bool multiline = false, bool blur = true, int delay = BloodSwordRogue::StandardDelay)
     {
         auto &controls = is_dialog ? scene.Controls : background.Controls;
 
-        return Input::WaitForText(graphics, {background, scene}, controls, input, blur, delay);
+        return Input::WaitForText(graphics, {background, scene}, controls, input, multiline, blur, delay);
     }
 
     // render all scenes and wait for input from specified controls set
-    Controls::User WaitForInput(Graphics::Base &graphics, Graphics::Scenery scenes, Controls::Collection &controls, Controls::User input, bool blur = true, int delay = BloodSwordRogue::StandardDelay)
+    Controls::User WaitForInput(Graphics::Base &graphics, Graphics::Scenery scenes, Controls::Collection &controls, Controls::User input, bool multiline = false, bool blur = true, int delay = BloodSwordRogue::StandardDelay)
     {
         if (input.Text)
         {
-            return Input::WaitForText(graphics, scenes, controls, input, blur, delay);
+            return Input::WaitForText(graphics, scenes, controls, input, multiline, blur, delay);
         }
 
         Input::RenderWhileWaiting(graphics, scenes, controls, input, blur);
