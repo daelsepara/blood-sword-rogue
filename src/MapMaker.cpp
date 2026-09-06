@@ -2655,11 +2655,11 @@ namespace BloodSwordRogue::MapMaker
             auto selected = Interface::IconList(graphics, scenes, assets, captions);
 
             // skip trigger type
-            if (selected >= 1 && selected < 4)
+            if (selected >= 0 && selected < 4)
             {
                 auto width = map.ViewX * map.TileSize + BloodSwordRogue::Border * 2;
 
-                auto height = map.ViewY * map.TileSize + (BloodSwordRogue::Pad * 3);
+                auto height = map.ViewY * map.TileSize + (BloodSwordRogue::Pad + BloodSwordRogue::Border);
 
                 SDL_Texture *texture = nullptr;
 
@@ -2685,7 +2685,10 @@ namespace BloodSwordRogue::MapMaker
             }
             else if (selected == 4)
             {
-                Interface::TextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+                if (SafeCast(trigger.Variables.size()) > 0)
+                {
+                    Interface::TextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+                }
             }
             else
             {
@@ -3013,6 +3016,16 @@ namespace BloodSwordRogue::MapMaker
 
         std::vector<std::string> object_captions = {
             "ADD",
+            "REMOVE",
+            "EDIT"};
+
+        Asset::List trigger_assets = {
+            Asset::Map("MAGNIFYING GLASS"),
+            Asset::Map("CROSS MARK"),
+            Asset::Map("GEARS")};
+
+        std::vector<std::string> trigger_captions = {
+            "VIEW",
             "REMOVE",
             "EDIT"};
 
@@ -3354,7 +3367,7 @@ namespace BloodSwordRogue::MapMaker
                                 }
                                 else if (function == Function::TRIGGER && tile.Occupant == Map::Object::TRIGGER)
                                 {
-                                    auto selected = Interface::IconList(graphics, scene, object_assets, object_captions);
+                                    auto selected = Interface::IconList(graphics, scene, trigger_assets, trigger_captions);
 
                                     if (selected >= 0 && selected < SafeCast(object_controls.size()))
                                     {
