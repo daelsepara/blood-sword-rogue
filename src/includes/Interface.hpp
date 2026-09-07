@@ -752,6 +752,15 @@ namespace BloodSwordRogue::Interface
 
                         auto down = (y < limit_y - 1) && (index + limit_x < items) ? id + limit_x : id;
 
+                        if (index + limit_x >= items)
+                        {
+                            down = id + (items - index);
+                        }
+                        else if (y == limit_y - 1)
+                        {
+                            down = id + (limit_x - x);
+                        }
+
                         scene.Add(Controls::Base(Controls::MapType("SELECT"), id, left, right, up, down, point.X, point.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
                         page_count++;
@@ -789,29 +798,37 @@ namespace BloodSwordRogue::Interface
 
             auto has_next = items > (offset + page_count);
 
+            auto controls = 0;
+
             // check if there are previous items
             if (has_prev)
             {
+                controls++;
+
                 auto prev_id = scene.Controls.size();
 
                 auto prev = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * (has_next ? 3 : 2) + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
                 scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("LEFT")), prev));
 
-                scene.Add(Controls::Base(Controls::MapType("LEFT"), prev_id, prev_id, prev_id + 1, prev_id, prev_id, prev.X, prev.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+                scene.Add(Controls::Base(Controls::MapType("LEFT"), prev_id, prev_id, prev_id + 1, prev_id - controls, prev_id, prev.X, prev.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
             }
 
             // check if there are more items
             if (has_next)
             {
+                controls++;
+
                 auto next_id = scene.Controls.size();
 
                 auto next = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * 2 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
                 scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("RIGHT")), next));
 
-                scene.Add(Controls::Base(Controls::MapType("RIGHT"), next_id, has_prev ? next_id - 1 : next_id, next_id + 1, next_id, next_id, next.X, next.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+                scene.Add(Controls::Base(Controls::MapType("RIGHT"), next_id, has_prev ? next_id - 1 : next_id, next_id + 1, next_id - controls, next_id, next.X, next.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
             }
+
+            controls++;
 
             auto back_id = scene.Controls.size();
 
@@ -819,7 +836,7 @@ namespace BloodSwordRogue::Interface
 
             scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
 
-            scene.Add(Controls::Base(Controls::MapType("BACK"), back_id, has_next || has_prev ? back_id - 1 : back_id, back_id, back_id, back_id, back.X, back.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+            scene.Add(Controls::Base(Controls::MapType("BACK"), back_id, has_next || has_prev ? back_id - 1 : back_id, back_id, back_id - controls, back_id, back.X, back.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
             if (input.Type == Controls::MapType("LEFT"))
             {
@@ -871,6 +888,7 @@ namespace BloodSwordRogue::Interface
         return selected;
     }
 
+    // select icon from a grid
     int IconGrid(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, int width, int height, Strings captions_text = {})
     {
         Graphics::Scenery scenes = {background};
