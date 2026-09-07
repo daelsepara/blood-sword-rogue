@@ -12,6 +12,8 @@ namespace BloodSwordRogue
 
         Interface::LoadSettings(graphics, "modules/default/settings.json");
 
+        Game::Main(graphics);
+
         Interface::UnloadAssets();
 
         Graphics::Quit(graphics);

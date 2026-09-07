@@ -13,7 +13,7 @@ namespace BloodSwordRogue::Map
     const int NotFound = -1;
 
     // party on map
-    const int Party = 0;
+    const int Party = 1;
 
     // define neighbors (X, Y): up, down, left, right
     const Points Directions = {Point(0, -1), Point(1, 0), Point(0, 1), Point(-1, 0)};
@@ -231,6 +231,14 @@ namespace BloodSwordRogue::Map
 
                 tile.Id = id;
             }
+        }
+
+        // check if map tile is empty
+        bool Empty(Point point)
+        {
+            auto &tile = (*this)[point];
+
+            return (tile.Type == Map::Object::NONE);
         }
 
         // temporary object

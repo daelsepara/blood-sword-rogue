@@ -12,9 +12,9 @@ namespace BloodSwordRogue::Location
     {
     public:
         // location in map
-        int X = -1;
+        int X = Map::NotFound;
 
-        int Y = -1;
+        int Y = Map::NotFound;
 
         // items in this location
         Items::Inventory Items = {};
@@ -138,9 +138,9 @@ namespace BloodSwordRogue::Location
             {
                 auto loot = Loot();
 
-                loot.X = !data["loot"][i]["x"].is_null() ? int(data["loot"][i]["x"]) : -1;
+                loot.X = !data["loot"][i]["x"].is_null() ? int(data["loot"][i]["x"]) : Map::NotFound;
 
-                loot.Y = !data["loot"][i]["y"].is_null() ? int(data["loot"][i]["y"]) : -1;
+                loot.Y = !data["loot"][i]["y"].is_null() ? int(data["loot"][i]["y"]) : Map::NotFound;
 
                 if (!data["loot"][i]["items"].is_null() && data["loot"][i]["items"].is_array() && data["loot"][i]["items"].size() > 0)
                 {
@@ -175,7 +175,7 @@ namespace BloodSwordRogue::Location
     {
         auto &loot = location.Loot;
 
-        auto found = -1;
+        auto found = Map::NotFound;
 
         for (auto id = 0; id < SafeCast(loot.size()); id++)
         {
@@ -195,7 +195,7 @@ namespace BloodSwordRogue::Location
     {
         auto &opponents = location.Opponents;
 
-        auto found = -1;
+        auto found = Map::NotFound;
 
         for (auto id = 0; id < SafeCast(opponents.size()); id++)
         {
@@ -213,7 +213,7 @@ namespace BloodSwordRogue::Location
     // check if there is a trigger at this location
     int FindTrigger(Location::Base &location, Point point)
     {
-        auto found = -1;
+        auto found = Map::NotFound;
 
         auto &triggers = location.Triggers;
 

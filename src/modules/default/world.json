@@ -1,0 +1,9 @@
+{
+    "start": "town",
+    "locations": {
+        "town": "modules/default/locations/town.json",
+        "tower": "modules/default/locations/tower.json",
+        "map01": "modules/default/locations/map01.json",
+        "map02": "modules/default/locations/map02.json"
+    }
+}

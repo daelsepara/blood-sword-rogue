@@ -388,7 +388,7 @@ namespace BloodSwordRogue::MapMaker
 
         if (!json_file.empty())
         {
-            result = Load(json_file);
+            result = MapMaker::Load(json_file);
         }
 
         return result;
@@ -397,13 +397,13 @@ namespace BloodSwordRogue::MapMaker
     // load map maker settings
     bool Load(const char *map_maker)
     {
-        return Load(map_maker, nullptr);
+        return MapMaker::Load(map_maker, nullptr);
     }
 
     // load map maker settings
     bool Load(std::string map_maker, std::string zip_file)
     {
-        return zip_file.empty() ? Load(map_maker.c_str()) : Load(map_maker.c_str(), zip_file.c_str());
+        return zip_file.empty() ? MapMaker::Load(map_maker.c_str()) : MapMaker::Load(map_maker.c_str(), zip_file.c_str());
     }
 
     // check if this is an item that requires a quantity to be set
@@ -2597,6 +2597,8 @@ namespace BloodSwordRogue::MapMaker
 
                         location.Opponents.clear();
 
+                        location.Map.Origins.clear();
+
                         auto max_rooms = std::max(location.Map.Width, location.Map.Height) * 2 / 5;
 
                         location.Map = Battlepits::Generate(location.Map.Width, location.Map.Height, max_rooms, 2, 3, false, 0);
@@ -2615,6 +2617,8 @@ namespace BloodSwordRogue::MapMaker
                         location.Loot.clear();
 
                         location.Opponents.clear();
+
+                        location.Map.Origins.clear();
 
                         Maze::Generate(location.Map, location.Map.Width, location.Map.Height);
 
@@ -3617,7 +3621,9 @@ namespace BloodSwordRogue::MapMaker
                 }
                 else if (input.Type == Controls::MapType("MAP"))
                 {
-                    Interface::ShowMap(graphics, scene, map);
+                    Graphics::Scenery scenes = {scene};
+                    
+                    Interface::ShowMap(graphics, scenes, map);
                 }
                 else if (input.Type == Controls::MapType("NEW"))
                 {
@@ -3628,6 +3634,10 @@ namespace BloodSwordRogue::MapMaker
                         location.Loot.clear();
 
                         location.Opponents.clear();
+
+                        location.Map.Origins.clear();
+
+                        location.Name = std::string();
 
                         map.Initialize(map.Width, map.Height);
 

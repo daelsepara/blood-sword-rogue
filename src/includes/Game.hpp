@@ -37,7 +37,10 @@ namespace BloodSwordRogue::Game
     // update / add visited location to game
     void Update(Game::Base &game, Location::Base location)
     {
-        game.Locations.insert_or_assign(location.Name, location);
+        if (!location.Name.empty())
+        {
+            game.Locations.insert_or_assign(location.Name, location);
+        }
     }
 
     // update party state in game
@@ -101,6 +104,8 @@ namespace BloodSwordRogue::Game
             }
         }
 
+        SDL_Log("[LOAD WORLD] [START %s] [LOCATIONS %d]", world.Start.c_str(), SafeCast(world.Locations.size()));
+
         return world;
     }
 
@@ -119,14 +124,59 @@ namespace BloodSwordRogue::Game
         return Game::LoadWorld(filename.c_str(), nullptr);
     }
 
+    void ResetMapView(Graphics::Base &graphics, Map::Base &map, int tiles_w, int tiles_h)
+    {
+        // set edit window dimensions with spaces for map controls
+        map.ViewX = tiles_w;
+
+        map.ViewY = tiles_h;
+
+        // set map offsets within the edit window
+        map.X = (map.Width - map.ViewX) / 2;
+
+        map.Y = (map.Height - map.ViewY) / 2;
+
+        // set edit window positions on screen
+        map.DrawX = (graphics.Width - (map.ViewX * map.TileSize)) / 2;
+
+        map.DrawY = (graphics.Height - (map.ViewY * map.TileSize)) / 2;
+    }
+
+    // refresh map view
+    void RefreshMapView(Graphics::Base &graphics, Map::Base &map, int &TilesW, int &TilesH)
+    {
+        TilesW = std::min(map.ViewX, graphics.Width / map.TileSize - 2);
+
+        TilesH = std::min(map.ViewY, graphics.Height / map.TileSize - 5);
+
+        Game::ResetMapView(graphics, map, TilesW, TilesH);
+    }
+
+    // leave location
+    void Leave(Game::Base &game, Location::Base &location)
+    {
+        if (location.Map.IsValid(game.Party.Origin()))
+        {
+            auto &tile = location.Map[game.Party.Origin()];
+
+            tile.Id = Map::NotFound;
+
+            tile.Occupant = Map::Object::NONE;
+        }
+    }
+
     // move to a new location
-    void Move(Game::World &world, Game::Base &game, Location::Base &location, std::string next)
+    bool Move(Game::World &world, Game::Base &game, Location::Base &location, std::string next)
     {
         auto loaded = false;
 
         // check if area has been visited before
         if (Game::HasLocation(game, next))
         {
+            SDL_Log("[MOVE %s] [VISITED]", next.c_str());
+
+            Game::Leave(game, location);
+
             // copy updates
             Game::Update(game, location);
 
@@ -138,6 +188,13 @@ namespace BloodSwordRogue::Game
         }
         else if (Game::HasLocation(world, next))
         {
+            SDL_Log("[MOVE %s] [NEW]", next.c_str());
+
+            Game::Leave(game, location);
+
+            // copy updates
+            Game::Update(game, location);
+
             auto move = world.Locations[next];
 
             loaded = Location::Load(location, move, world.ZipFile);
@@ -146,6 +203,38 @@ namespace BloodSwordRogue::Game
         {
             throw std::invalid_argument("LOCATION NOT FOUND!");
         }
+
+        return loaded;
+    }
+
+    // exit to another area
+    void Exit(Game::World &world, Game::Base &game, Location::Base &location, std::string next, int x, int y)
+    {
+        auto loaded = Game::Move(world, game, location, next);
+
+        if (loaded)
+        {
+            game.Party.Location = std::string(next);
+
+            if (location.Map.IsValid(Point(x, y)))
+            {
+                game.Party.X = x;
+
+                game.Party.Y = y;
+
+                location.Map.Put(Point(x, y), Map::Object::PARTY, 1);
+            }
+            else
+            {
+                throw std::invalid_argument("ENTRY POINT INVALID!");
+            }
+        }
+    }
+
+    // move to a new location (start at location's origin point)
+    void Travel(Game::World &world, Game::Base &game, Location::Base &location, std::string next)
+    {
+        auto loaded = Game::Move(world, game, location, next);
 
         if (loaded)
         {
@@ -167,57 +256,71 @@ namespace BloodSwordRogue::Game
         }
     }
 
-    // current save
-    Game::Base CurrentGame = Game::Base();
-
-    // current world
-    Game::World CurrentWorld = Game::World();
-
-    void CheckTrigger(Graphics::Base &graphics, Scene::Base &scene, Game::World &world, Game::Base &game, Location::Base &location, Trigger::Base &trigger)
+    Models::Update CheckTrigger(Graphics::Base &graphics, Graphics::Scenery scenes, Game::World &world, Game::Base &game, Location::Base &location, Trigger::Base &trigger)
     {
-        if (trigger.Type == Trigger::Type::EXIT)
+        Models::Update update = {false, false, false};
+
+        if (trigger.Type == Trigger::Type::TRAVEL)
         {
             if (!trigger.Activated)
             {
                 if (!trigger.EncounterMessage.empty())
                 {
-                    Interface::MessageBox(graphics, scene, trigger.EncounterMessage, Color::Active);
+                    Interface::MessageBox(graphics, scenes, trigger.EncounterMessage, Color::Active);
                 }
 
                 trigger.Activated = true;
             }
             else if (!trigger.ActiveMessage.empty())
             {
-                Interface::MessageBox(graphics, scene, trigger.ActiveMessage, Color::Active);
+                Interface::MessageBox(graphics, scenes, trigger.ActiveMessage, Color::Active);
             }
-
-            // exits do not complete
 
             if (SafeCast(trigger.Variables.size()) > 0)
             {
-                if (location.Map.IsValid(game.Party.Origin()))
-                {
-                    auto &tile = location.Map[game.Party.Origin()];
+                Game::Travel(world, game, location, trigger.Variables[0]);
 
-                    tile.Id = Map::NotFound;
+                auto width = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
 
-                    tile.Occupant = Map::Object::NONE;
-                }
-                else
-                {
-                    throw std::invalid_argument("PARTY'S LOCATION IS INVALID!");
-                }
+                auto height = std::min(graphics.Height / BloodSwordRogue::TileSize - 5, 32);
 
-                Game::Move(world, game, location, trigger.Variables[0]);
+                Game::RefreshMapView(graphics, location.Map, width, height);
+
+                update.Scene = true;
             }
             else
             {
                 throw std::invalid_argument("NEXT DESTINATION UNDEFINED!");
             }
         }
+        else if (trigger.Type == Trigger::Type::EXIT)
+        {
+            if (SafeCast(trigger.Variables.size()) > 2)
+            {
+                auto next = trigger.Variables[0];
+
+                auto x = BloodSwordRogue::IsANumber(trigger.Variables[1]) ? std::stoi(trigger.Variables[1], nullptr, 10) : -1;
+
+                auto y = BloodSwordRogue::IsANumber(trigger.Variables[2]) ? std::stoi(trigger.Variables[2], nullptr, 10) : -1;
+
+                Game::Exit(world, game, location, next, x, y);
+
+                auto width = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
+
+                auto height = std::min(graphics.Height / BloodSwordRogue::TileSize - 5, 32);
+
+                Game::RefreshMapView(graphics, location.Map, width, height);
+
+                update.Scene = true;
+            }
+            else
+            {
+                throw std::invalid_argument("CANNOT MOVE TO NEXT LOCATION!");
+            }
+        }
         else if (!trigger.Activated)
         {
-            Interface::MessageBox(graphics, scene, trigger.EncounterMessage, Color::Active);
+            Interface::MessageBox(graphics, scenes, trigger.EncounterMessage, Color::Active);
 
             trigger.Activated = true;
         }
@@ -236,13 +339,15 @@ namespace BloodSwordRogue::Game
             // send status message
             if (trigger.Completed)
             {
-                Interface::MessageBox(graphics, scene, trigger.CompletedMessage, Color::Active);
+                Interface::MessageBox(graphics, scenes, trigger.CompletedMessage, Color::Active);
             }
             else
             {
-                Interface::MessageBox(graphics, scene, trigger.ActiveMessage, Color::Inactive);
+                Interface::MessageBox(graphics, scenes, trigger.ActiveMessage, Color::Inactive);
             }
         }
+
+        return update;
     }
 
     // render location map and contents
@@ -372,6 +477,15 @@ namespace BloodSwordRogue::Game
 
                             break;
 
+                        case Map::Object::TRIGGER:
+
+                            if (tile.Asset != Asset::NONE)
+                            {
+                                scene.VerifyAndAdd(Scene::Element(Asset::Get(tile.Asset), screen));
+                            }
+
+                            break;
+
                         default:
 
                             break;
@@ -420,5 +534,316 @@ namespace BloodSwordRogue::Game
                 id++;
             }
         }
+    }
+
+    // center map on src (point)
+    void Center(Location::Base &location, Point src)
+    {
+        location.Map.X = src.X - (location.Map.ViewX) / 2 + 1;
+
+        location.Map.Y = src.Y - (location.Map.ViewY) / 2 + 1;
+
+        location.Map.CheckBounds();
+    }
+
+    // center map on entity (map object type, id)
+    void Center(Location::Base &location, Map::Object entity, int id)
+    {
+        auto src = location.Map.Find(entity, id);
+
+        Game::Center(location, src);
+    }
+
+    // check if tile is blocked for movement
+    bool Blocked(Location::Base &location, Point point)
+    {
+        auto &tile = location.Map[point];
+
+        auto triggered = (tile.Type == Map::Object::TRIGGER);
+
+        auto items = (tile.IsOccupied() && tile.Type == Map::Object::ITEMS);
+
+        auto blockers = (tile.IsOccupied() && tile.Type != Map::Object::ITEMS && tile.Type != Map::Object::TRIGGER);
+
+        // additional checks
+        if (items)
+        {
+            auto loot = Location::FindLoot(location, point);
+
+            if (loot >= 0 && loot < SafeCast(location.Loot.size()))
+            {
+                items &= (SafeCast(location.Loot[loot].Items.size()) > 0);
+            }
+            else
+            {
+                items = false;
+            }
+        }
+
+        if (triggered)
+        {
+            triggered &= (Location::FindTrigger(location, point) != Map::NotFound);
+        }
+
+        return (items || blockers || triggered || tile.IsBlocked() || !tile.IsPassable());
+    }
+
+    // check if party can move to location (point)
+    bool Move(Game::Base &game, Location::Base &location, Point point)
+    {
+        auto moved = !Game::Blocked(location, point);
+
+        auto &party = game.Party;
+
+        if (moved)
+        {
+            auto from = party.Origin();
+
+            auto &origin = location.Map[from];
+
+            auto &destination = location.Map[point];
+
+            origin.Occupant = Map::Object::NONE;
+
+            origin.Id = Map::NotFound;
+
+            destination.Occupant = Map::Object::PARTY;
+
+            destination.Id = Map::Party;
+
+            party.X = point.X;
+
+            party.Y = point.Y;
+        }
+
+        return moved;
+    }
+
+    // handle tile interaction (items/enemies)
+    Models::Update Handle(Graphics::Base &graphics, Graphics::Scenery background, Game::World &world, Game::Base &game, Location::Base &location, Point point)
+    {
+        Models::Update update = {false, false, false};
+
+        auto &tile = location.Map[point];
+
+        if (tile.IsOccupied())
+        {
+            if (tile.Occupant == Map::Object::ITEMS)
+            {
+                update.Scene = true;
+
+                update.Party = true;
+            }
+            else if (tile.Occupant == Map::Object::ENEMIES)
+            {
+                auto enemy = Location::FindOpponents(location, point);
+
+                if (enemy >= 0 && enemy < SafeCast(location.Opponents.size()))
+                {
+                    update.Scene = true;
+
+                    update.Party = true;
+
+                    Input::Clear();
+                }
+            }
+            else if (tile.Occupant == Map::Object::TRIGGER)
+            {
+                // handle trigger
+                auto id = Location::FindTrigger(location, point);
+
+                if (id >= 0 && id < SafeCast(location.Triggers.size()))
+                {
+                    auto &trigger = location.Triggers[id];
+
+                    update = Game::CheckTrigger(graphics, background, world, game, location, trigger);
+                }
+            }
+        }
+
+        return update;
+    }
+
+    // process party actions
+    Models::Update Actions(Graphics::Base &graphics, Graphics::Scenery background, Game::World &world, Game::Base &game, Location::Base &location, Point point, Controls::List &input_buffer)
+    {
+        Models::Update result = {false, false};
+
+        if (Game::Blocked(location, point))
+        {
+            // clear input buffer
+            input_buffer.clear();
+
+            result = Game::Handle(graphics, background, world, game, location, point);
+        }
+        else if (Game::Move(game, location, point))
+        {
+            result.Scene = true;
+        }
+
+        return result;
+    }
+
+    // update scene for location mode
+    Scene::Base UpdateScene(Graphics::Base &graphics, Game::Base &game, Location::Base &location, FieldOfView::Method method, bool animating)
+    {
+        auto scene = Scene::Base();
+
+        auto panel_w = graphics.Width / BloodSwordRogue::TileSize - 2;
+
+        auto panel_h = graphics.Height / BloodSwordRogue::TileSize - 5;
+
+        auto panel_x = (graphics.Width - panel_w * BloodSwordRogue::TileSize) / 2;
+
+        auto panel_y = (graphics.Height - panel_h * BloodSwordRogue::TileSize) / 2;
+
+        // map panel
+        scene.Add(Scene::Element(panel_x - BloodSwordRogue::Border, panel_y - BloodSwordRogue::Border, panel_w * BloodSwordRogue::TileSize + BloodSwordRogue::Border * 2, panel_h * BloodSwordRogue::TileSize + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+        Game::Center(location, Map::Object::PARTY, Map::Party);
+
+        Game::RenderLocation(scene, location, game.Party, method, false);
+
+        return scene;
+    }
+
+    void Main(Graphics::Base &graphics)
+    {
+        FontCache::Base TextCache = FontCache::Base();
+
+        TextCache.Create(graphics.Renderer, Fonts::Normal, "0123456789(),", Color::S(Color::Active), TTF_STYLE_NORMAL);
+
+        // set FOV algorithm
+        auto method = FieldOfView::Map(Engine::ToUpper(Interface::Settings["fov"]));
+
+        auto game = Game::Base();
+
+        auto world = Game::LoadWorld("modules/default/world.json");
+
+        auto location = Location::Base();
+
+        auto character = Generate::Character(Character::Class::WARRIOR, 8);
+
+        game.Party.Add(character);
+
+        int TilesW = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
+
+        int TilesH = std::min(graphics.Height / BloodSwordRogue::TileSize - 5, 32);
+
+        Game::Travel(world, game, location, world.Start);
+
+        Game::RefreshMapView(graphics, location.Map, TilesW, TilesH);
+
+        auto input_buffer = Controls::List();
+
+        auto animating = false;
+
+        Models::Update update = {true, false, false};
+
+        auto scene = Scene::Base();
+
+        auto input = Controls::User();
+
+        auto done = false;
+
+        while (!done)
+        {
+            if (update.Scene || animating)
+            {
+                scene = Game::UpdateScene(graphics, game, location, method, false);
+
+                update.Scene = false;
+            }
+
+            // top panel
+            scene.Add(Scene::Element(BloodSwordRogue::Border, BloodSwordRogue::Border, graphics.Width - BloodSwordRogue::Border * 2, BloodSwordRogue::TileSize * 2 - BloodSwordRogue::Border * 2, Color::Background, Color::Inactive, BloodSwordRogue::Border));
+
+            // bottom panel
+            scene.Add(Scene::Element(BloodSwordRogue::Border, graphics.Height - BloodSwordRogue::TileSize * 2 + BloodSwordRogue::Border, graphics.Width - BloodSwordRogue::Border * 2, BloodSwordRogue::TileSize * 2 - BloodSwordRogue::Border * 2, Color::Background, Color::Inactive, BloodSwordRogue::Border));
+
+            Graphics::Scenery scenes = {scene};
+
+            if (!animating)
+            {
+                auto input = Input::RogueInput(graphics, scenes);
+
+                auto prev = game.Party.Origin();
+
+                // check for buffered input
+                if (input_buffer.size() > 0)
+                {
+                    input.Selected = true;
+
+                    input.Type = input_buffer.front();
+
+                    input_buffer.erase(input_buffer.begin());
+
+                    SDL_Delay(BloodSwordRogue::StandardDelay);
+                }
+
+                if (Input::Check(input))
+                {
+                    auto point = game.Party.Origin();
+
+                    if (input.Type == Controls::MapType("MENU"))
+                    {
+                        done = update.Quit;
+                    }
+                    else if (input.Type == Controls::MapType("MAP"))
+                    {
+                        Interface::ShowMap(graphics, scenes, location.Map, true);
+                    }
+                    else if (input.Type == Controls::MapType("UP"))
+                    {
+                        if (point.Y > 0)
+                        {
+                            point.Y--;
+
+                            update = Game::Actions(graphics, scenes, world, game, location, point, input_buffer);
+                        }
+                    }
+                    else if (input.Type == Controls::MapType("DOWN"))
+                    {
+                        if (point.Y < location.Map.Height - 1)
+                        {
+                            point.Y++;
+
+                            update = Game::Actions(graphics, scenes, world, game, location, point, input_buffer);
+                        }
+                    }
+                    else if (input.Type == Controls::MapType("LEFT"))
+                    {
+                        if (point.X > 0)
+                        {
+                            point.X--;
+
+                            update = Game::Actions(graphics, scenes, world, game, location, point, input_buffer);
+                        }
+                    }
+                    else if (input.Type == Controls::MapType("RIGHT"))
+                    {
+                        if (point.X < location.Map.Width - 1)
+                        {
+                            point.X++;
+
+                            update = Game::Actions(graphics, scenes, world, game, location, point, input_buffer);
+                        }
+                    }
+                    else if (input.Type == Controls::MapType("EXIT"))
+                    {
+                        done = Interface::Confirm(graphics, scenes, "ARE YOU SURE?", Color::Background, Color::Active, BloodSwordRogue::Border, Color::Active, true);
+                    }
+
+                    // trigger event on movement
+                    if (prev != game.Party.Origin())
+                    {
+                    }
+
+                    input.Selected = false;
+                }
+            }
+        }
+
+        TextCache.Free();
     }
 }

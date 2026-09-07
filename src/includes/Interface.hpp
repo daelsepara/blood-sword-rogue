@@ -963,16 +963,8 @@ namespace BloodSwordRogue::Interface
         }
     }
 
-    // draws a scrollable image box
-    void ScrollableImageBox(Graphics::Base &graphics, Scene::Base &background, SDL_Texture *texture, int width, int height, int x, int y, Uint32 bg_color, Uint32 border, int border_size, Uint32 highlight, Asset::Type asset, Asset::Type left, Asset::Type right, bool blur = true, int offset = 0)
-    {
-        Graphics::Scenery scenes = {background};
-
-        Interface::ScrollableImageBox(graphics, scenes, texture, width, height, x, y, bg_color, border, border_size, highlight, asset, left, right, blur, offset);
-    }
-
     // show scaled version of map
-    void ShowMap(Graphics::Base &graphics, Scene::Base &background, Map::Base &map, bool hide = false)
+    void ShowMap(Graphics::Base &graphics, Graphics::Scenery scenes, Map::Base &map, bool hide = false)
     {
         auto scale = Point(16, 16);
 
@@ -1004,7 +996,7 @@ namespace BloodSwordRogue::Interface
                     {
                         if ((tile.Occupant == Map::Object::PARTY) || (tile.Occupant == Map::Object::PLAYER))
                         {
-                            surface_asset = Asset::GetSurface("WHITE SPACE", Color::Active);
+                            surface_asset = Asset::GetSurface("WHITE SPACE", Color::Highlight);
                         }
                         else if (tile.Explored && tile.Asset != Asset::NONE)
                         {
@@ -1061,18 +1053,16 @@ namespace BloodSwordRogue::Interface
                 // calculate offset to center current location
                 auto text_h = std::min(height - (BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 3), BloodSwordRogue::Height(texture));
 
-                auto loc = map.ViewY * scale.Y + scale.Y / 2;
+                auto offset = ((map.Y + map.ViewY / 2) * scale.Y + scale.Y / 2) - height / 2;
 
-                auto offset = 0;
-
-                if (loc > text_h / 2)
+                if (offset > BloodSwordRogue::Height(texture) - text_h)
                 {
-                    offset = (loc - text_h / 2);
+                    offset = BloodSwordRogue::Height(texture) - text_h;
                 }
 
                 offset = std::min(std::max(0, offset), BloodSwordRogue::Height(texture) - text_h);
 
-                Interface::ScrollableImageBox(graphics, background, texture, width, height, x, y, Color::Background, Color::Active, BloodSwordRogue::Border, Color::Active, Asset::Map("CONFIRM"), Asset::Map("UP"), Asset::Map("DOWN"), true, offset);
+                Interface::ScrollableImageBox(graphics, scenes, texture, width, height, x, y, Color::Background, Color::Active, BloodSwordRogue::Border, Color::Active, Asset::Map("CONFIRM"), Asset::Map("UP"), Asset::Map("DOWN"), true, offset);
 
                 BloodSwordRogue::Free(&texture);
             }
@@ -1707,7 +1697,7 @@ namespace BloodSwordRogue::Interface
             {
                 offset = items - limit;
             }
-            
+
             if (offset < 0)
             {
                 offset = 0;

@@ -305,20 +305,6 @@ namespace BloodSwordRogue::Battlepits
     // checker function type
     typedef bool (*Checker)(Map::Base &map, Point point);
 
-    // check if map tile is empty
-    bool Empty(Map::Base &map, Point point)
-    {
-        return (map[point].Type == Map::Object::NONE);
-    }
-
-    // check if map tile is blocked
-    bool Blocked(Map::Base &map, Point point)
-    {
-        auto &tile = map[point];
-
-        return tile.Type == Map::Object::NONE || (tile.Type != Map::Object::PASSABLE && tile.Type != Map::Object::ENEMY_PASSABLE);
-    }
-
     // check if map tile is passable
     bool Passable(Map::Base &map, Point point)
     {

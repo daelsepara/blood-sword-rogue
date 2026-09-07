@@ -114,7 +114,7 @@ namespace BloodSwordRogue::FieldOfView
     // check if map cell blocks light
     bool BlocksLight(Map::Base &map, int x, int y)
     {
-        return (x < 0 || x >= map.Width || y < 0 || y >= map.Height) || (map(x, y).IsOccupied() && map(x, y).Occupant != Map::Object::ITEMS) || map(x, y).IsBlocked();
+        return (x < 0 || x >= map.Width || y < 0 || y >= map.Height) || (map(x, y).IsOccupied() && map(x, y).Occupant != Map::Object::ITEMS && map(x, y).Occupant != Map::Object::TRIGGER) || map(x, y).IsBlocked();
     }
 
     // check if map cell blocks light with local coordinates
@@ -122,7 +122,7 @@ namespace BloodSwordRogue::FieldOfView
     {
         auto point = TranslateLocalToMap(x, y, origin, octant);
 
-        return (x < 0 || x >= map.Width || y < 0 || y >= map.Height) || (map[point].IsOccupied() && map[point].Occupant != Map::Object::ITEMS) || map[point].IsBlocked();
+        return (x < 0 || x >= map.Width || y < 0 || y >= map.Height) || (map[point].IsOccupied() && map[point].Occupant != Map::Object::ITEMS && map(x, y).Occupant != Map::Object::TRIGGER) || map[point].IsBlocked();
     }
 
     // compute the sign of a value
