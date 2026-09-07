@@ -230,6 +230,55 @@ namespace BloodSwordRogue::Location
         return found;
     }
 
+    // drop item
+    void DropItem(Location::Base &location, Item::Base &item, Point &point)
+    {
+        auto &map = location.Map;
+
+        if (!map.IsValid(point))
+        {
+            return;
+        }
+
+        auto &tile = map[point];
+
+        if (tile.Type == Map::Object::PASSABLE || tile.Type == Map::Object::ENEMY_PASSABLE)
+        {
+            if (tile.IsOccupied() && tile.Occupant == Map::Object::ITEMS && tile.Id != Map::NotFound)
+            {
+                // add item to existing loot
+                auto id = tile.Id - 1;
+
+                if (id >= 0 && id < SafeCast(location.Loot.size()))
+                {
+                    location.Loot[id].Items.push_back(item);
+
+                    SDL_Log("[ADDED TO LOOT %d] [ADD %s]", id + 1, item.Name.c_str());
+                }
+            }
+            else if (!tile.IsOccupied())
+            {
+                auto loot = Location::Loot();
+
+                loot.Items.push_back(item);
+
+                loot.X = point.X;
+
+                loot.Y = point.Y;
+
+                auto id = SafeCast(location.Loot.size()) + 1;
+
+                location.Loot.push_back(loot);
+
+                tile.Id = id;
+
+                tile.Occupant = Map::Object::ITEMS;
+
+                SDL_Log("[CREATE LOOT %d] [ADD %s]", id, item.Name.c_str());
+            }
+        }
+    }
+
     // generate location json data
     nlohmann::json Data(Location::Base &location)
     {

@@ -124,12 +124,12 @@ namespace BloodSwordRogue::Game
         return Game::LoadWorld(filename.c_str(), nullptr);
     }
 
-    void ResetMapView(Graphics::Base &graphics, Map::Base &map, int tiles_w, int tiles_h)
+    void ResetMapView(Graphics::Base &graphics, Map::Base &map, int width, int height)
     {
         // set edit window dimensions with spaces for map controls
-        map.ViewX = tiles_w;
+        map.ViewX = width;
 
-        map.ViewY = tiles_h;
+        map.ViewY = height;
 
         // set map offsets within the edit window
         map.X = (map.Width - map.ViewX) / 2;
@@ -143,13 +143,23 @@ namespace BloodSwordRogue::Game
     }
 
     // refresh map view
-    void RefreshMapView(Graphics::Base &graphics, Map::Base &map, int &TilesW, int &TilesH)
+    void RefreshMapView(Graphics::Base &graphics, Map::Base &map, int &width, int &height)
     {
-        TilesW = std::min(map.ViewX, graphics.Width / map.TileSize - 2);
+        width = std::min(map.ViewX, graphics.Width / map.TileSize - 2);
 
-        TilesH = std::min(map.ViewY, graphics.Height / map.TileSize - 5);
+        height = std::min(map.ViewY, graphics.Height / map.TileSize - 5);
 
-        Game::ResetMapView(graphics, map, TilesW, TilesH);
+        Game::ResetMapView(graphics, map, width, height);
+    }
+
+    // refresh map view
+    void RefreshMapView(Graphics::Base &graphics, Map::Base &map)
+    {
+        auto width = 0;
+
+        auto height = 0;
+
+        Game::RefreshMapView(graphics, map, width, height);
     }
 
     // leave location
@@ -280,11 +290,7 @@ namespace BloodSwordRogue::Game
             {
                 Game::Travel(world, game, location, trigger.Variables[0]);
 
-                auto width = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
-
-                auto height = std::min(graphics.Height / BloodSwordRogue::TileSize - 5, 32);
-
-                Game::RefreshMapView(graphics, location.Map, width, height);
+                Game::RefreshMapView(graphics, location.Map);
 
                 update.Scene = true;
             }
@@ -305,11 +311,7 @@ namespace BloodSwordRogue::Game
 
                 Game::Exit(world, game, location, next, x, y);
 
-                auto width = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
-
-                auto height = std::min(graphics.Height / BloodSwordRogue::TileSize - 5, 32);
-
-                Game::RefreshMapView(graphics, location.Map, width, height);
+                Game::RefreshMapView(graphics, location.Map);
 
                 update.Scene = true;
             }
@@ -707,8 +709,15 @@ namespace BloodSwordRogue::Game
         return scene;
     }
 
+    void Setup()
+    {
+        // additional setup
+    }
+
     void Main(Graphics::Base &graphics)
     {
+        Game::Setup();
+
         FontCache::Base TextCache = FontCache::Base();
 
         TextCache.Create(graphics.Renderer, Fonts::Normal, "0123456789(),", Color::S(Color::Active), TTF_STYLE_NORMAL);

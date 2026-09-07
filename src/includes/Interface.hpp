@@ -5,6 +5,8 @@
 
 namespace BloodSwordRogue::Interface
 {
+    typedef std::vector<std::string> Strings;
+
     //====================================================================
     // MODULE BASE CLASS AND GLOBALS
     //====================================================================
@@ -101,6 +103,16 @@ namespace BloodSwordRogue::Interface
     // dice textures
     Asset::TextureList DiceTextures = {};
 
+    Strings ItemsWithQuantities = {"ARROW", "FOOD", "SHURIKEN", "GOLD", "QUIVER", "POUCH", "STEEL SCEPTRE", "LIMITED SHURIKEN"};
+
+    Strings ItemPlurals = {"ARROWS", "FOOD PORTIONS", "SHURIKENS", "GOLD PIECES", "ARROWS", "GOLD PIECES", "CHARGES", "SHURIKEN"};
+
+    Strings ItemsAssets = {"ARROWS", "FOOD", "SHURIKEN", "MONEY", "ARROWS", "MONEY", "POWER LIGHTNING", "SHURIKEN"};
+
+    Asset::Lookup<Attribute::Type> AttributeAssets = {};
+
+    Asset::Lookup<Item::Property> PropertyAssets = {};
+
     void InitializeDice()
     {
         // initialize dice asset ids
@@ -173,6 +185,43 @@ namespace BloodSwordRogue::Interface
 
         // initialize character class to asset mapping
         Asset::MapTypes(Interface::ClassAssets, Interface::ClassAssetsNames);
+
+        Interface::AttributeAssets.clear();
+
+        Interface::AttributeAssets = {
+            {Attribute::Type::FIGHTING_PROWESS, Asset::Map("FIGHT")},
+            {Attribute::Type::AWARENESS, Asset::Map("BRAIN")},
+            {Attribute::Type::PSYCHIC_ABILITY, Asset::Map("CALL TO MIND")},
+            {Attribute::Type::ENDURANCE, Asset::Map("ENDURANCE")},
+            {Attribute::Type::DAMAGE, Asset::Map("BLOOD")},
+            {Attribute::Type::ARMOUR, Asset::Map("LAYERED ARMOUR")}};
+
+        Interface::PropertyAssets.clear();
+
+        Interface::PropertyAssets = {
+            {Item::MapProperty("EQUIPPED"), Asset::Map("EQUIPPED")},
+            {Item::MapProperty("WEAPON"), Asset::Map("WEAPON")},
+            {Item::MapProperty("ARMOUR"), Asset::Map("ARMOUR")},
+            {Item::MapProperty("ACCESSORY"), Asset::Map("ACCESSORY")},
+            {Item::MapProperty("MELEE"), Asset::Map("MELEE")},
+            {Item::MapProperty("RANGED"), Asset::Map("RANGED")},
+            {Item::MapProperty("RUSTY"), Asset::Map("RUSTY")},
+            {Item::MapProperty("BROKEN"), Asset::Map("BROKEN")},
+            {Item::MapProperty("POISONED"), Asset::Map("POISONED")},
+            {Item::MapProperty("CURSED"), Asset::Map("CURSED")},
+            {Item::MapProperty("RESURRECTION"), Asset::Map("RESURRECTION")},
+            {Item::MapProperty("EDIBLE"), Asset::Map("EDIBLE")},
+            {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
+            {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
+            {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")},
+            {Item::MapProperty("CANNOT DROP"), Asset::Map("CANNOT DROP")},
+            {Item::MapProperty("CANNOT TRADE"), Asset::Map("CANNOT TRADE")},
+            {Item::MapProperty("CONTAINER"), Asset::Map("CONTAINER")},
+            {Item::MapProperty("READABLE"), Asset::Map("READABLE")},
+            {Item::MapProperty("LIQUID"), Asset::Map("LIQUID")},
+            {Item::MapProperty("ALL RANGES"), Asset::Map("ALL RANGES")},
+            {Item::MapProperty("REQUIRES TARGET"), Asset::Map("REQUIRES TARGET")},
+            {Item::MapProperty("COMBAT"), Asset::Map("COMBAT")}};
     }
 
     // switch texture and reload all textures
@@ -505,7 +554,8 @@ namespace BloodSwordRogue::Interface
         }
     }
 
-    int IconList(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, std::vector<std::string> captions_text = {})
+    // select icon from a list
+    int IconList(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, Strings captions_text = {})
     {
         auto selected = -1;
 
@@ -625,7 +675,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // select icon from a list
-    int IconList(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, std::vector<std::string> captions_text = {})
+    int IconList(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, Strings captions_text = {})
     {
         Graphics::Scenery scenes = {background};
 
@@ -633,7 +683,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // select icon from a grid
-    int IconGrid(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, int width, int height, std::vector<std::string> captions_text = {})
+    int IconGrid(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, int width, int height, Strings captions_text = {})
     {
         auto selected = -1;
 
@@ -821,7 +871,7 @@ namespace BloodSwordRogue::Interface
         return selected;
     }
 
-    int IconGrid(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, int width, int height, std::vector<std::string> captions_text = {})
+    int IconGrid(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, int width, int height, Strings captions_text = {})
     {
         Graphics::Scenery scenes = {background};
 
@@ -1424,7 +1474,7 @@ namespace BloodSwordRogue::Interface
     {
         auto filename = std::string();
 
-        std::vector<std::string> files = {};
+        Strings files = {};
 
         auto limit = 5;
 
@@ -1653,7 +1703,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // generic text list
-    int TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Asset::Type asset, Controls::Type action, int selected = -1, bool allow_none = false)
+    int TextList(Graphics::Base &graphics, Graphics::Scenery scenes, Strings &text_list, int width, int height, Asset::Type asset, Controls::Type action, int selected = -1, bool allow_none = false)
     {
         auto text_height = 0;
 
@@ -1849,7 +1899,7 @@ namespace BloodSwordRogue::Interface
         return selected;
     }
 
-    std::vector<std::string> GetTextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &seed, int width, int height)
+    Strings GetTextList(Graphics::Base &graphics, Graphics::Scenery scenes, Strings &seed, int width, int height)
     {
         auto text_list = seed;
 
@@ -2078,7 +2128,7 @@ namespace BloodSwordRogue::Interface
         Controls::Type Action = Controls::NONE;
     };
 
-    ListResult TextAction(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Controls::List actions, Asset::List action_assets)
+    ListResult TextAction(Graphics::Base &graphics, Graphics::Scenery scenes, Strings &text_list, int width, int height, Controls::List actions, Asset::List action_assets)
     {
         auto result = ListResult();
 
@@ -2383,5 +2433,135 @@ namespace BloodSwordRogue::Interface
     int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, Asset::List &numbers, std::string asset, int value)
     {
         return Interface::SetValue(graphics, scenery, numbers, asset, value, 1, 99);
+    }
+
+    // item details
+    void ViewItem(Graphics::Base &graphics, Graphics::Scenery scenes, Item::Base &item)
+    {
+        if (item.Asset == Asset::NONE || item.Type == Item::NONE)
+        {
+            return;
+        }
+
+        Asset::List assets = {};
+
+        Strings captions = {};
+
+        assets.push_back(item.Asset);
+
+        captions.push_back(Item::TypeMapping[item.Type]);
+
+        assets.push_back(Asset::Map("WEIGHT"));
+
+        captions.push_back(std::string("ENCUMBRANCE: ") + std::to_string(item.Encumbrance));
+
+        // show this item's quantity or any it contains
+        for (auto i = 0; i < SafeCast(Interface::ItemsWithQuantities.size()); i++)
+        {
+            auto item_quantity = Interface::ItemsWithQuantities[i];
+
+            if (Item::MapType(item_quantity) == item.Type)
+            {
+                auto asset_quantity = Asset::Map(Interface::ItemsAssets[i]);
+
+                assets.push_back(asset_quantity);
+
+                if (assets[0] == asset_quantity)
+                {
+                    assets[0] = Asset::Map("ITEMS");
+                }
+
+                std::string quantity_caption = std::to_string(item.Quantity);
+
+                if (item.Limit != Item::Unlimited)
+                {
+                    quantity_caption += std::string("/") + std::to_string(item.Limit);
+                }
+
+                quantity_caption += std::string(" ") + Interface::ItemPlurals[i];
+
+                captions.push_back(quantity_caption);
+            }
+        }
+
+        // show item attributes
+        for (auto attribute : item.Attributes)
+        {
+            assets.push_back(Interface::AttributeAssets[attribute.first]);
+
+            auto caption = Attribute::TypeMapping[attribute.first] + std::string(": ") + std::to_string(item.Modifier(attribute.first));
+
+            captions.push_back(caption);
+        }
+
+        // show item properties
+        for (auto &properties : Interface::PropertyAssets)
+        {
+            auto property = properties.first;
+
+            if (item.HasProperty(property))
+            {
+                assets.push_back(properties.second);
+
+                captions.push_back(Item::PropertyMapping[property]);
+            }
+        }
+
+        Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 8, BloodSwordRogue::TileSize * 6, captions);
+    }
+
+    // select item
+    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
+    {
+        auto selected = Item::NONE;
+
+        Asset::List assets = {};
+
+        Strings captions = {};
+
+        for (auto &item : items)
+        {
+            assets.push_back(item.Asset);
+
+            std::string caption = item.Name;
+
+            if (item.Contains != Item::NONE && item.Quantity > 0)
+            {
+                caption += std::string(": ") + std::to_string(item.Quantity);
+            }
+
+            captions.push_back(caption);
+        }
+
+        if (SafeCast(assets.size()) > 0)
+        {
+            selected = Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, captions);
+        }
+
+        return selected;
+    }
+
+    // select item
+    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    {
+        return Interface::SelectItem(graphics, scenes, character.Items);
+    }
+
+    // remove item from character
+    void RemoveItem(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
+    {
+        while (true && SafeCast(character.Items.size() > 0))
+        {
+            auto selected = Interface::SelectItem(graphics, scenes, character);
+
+            if (selected >= 0 && selected < SafeCast(character.Items.size()))
+            {
+                character.Items.erase(character.Items.begin() + selected);
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 }

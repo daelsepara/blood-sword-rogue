@@ -30,8 +30,6 @@ namespace BloodSwordRogue::MapMaker
 
     Asset::List Assets = {};
 
-    Asset::List Numbers = {};
-
     BloodSwordRogue::UnorderedMap<Target::Type, Character::Base> Roster = {};
 
     Asset::List RosterAssets = {};
@@ -48,17 +46,7 @@ namespace BloodSwordRogue::MapMaker
 
     std::vector<std::string> ItemCaptions = {};
 
-    std::vector<std::string> ItemsWithQuantities = {"ARROW", "FOOD", "SHURIKEN", "GOLD", "QUIVER", "POUCH", "STEEL SCEPTRE", "LIMITED SHURIKEN"};
-
-    std::vector<std::string> ItemPlurals = {"ARROWS", "FOOD PORTIONS", "SHURIKENS", "GOLD PIECES", "ARROWS", "GOLD PIECES", "CHARGES", "SHURIKEN"};
-
-    std::vector<std::string> ItemsAssets = {"ARROWS", "FOOD", "SHURIKEN", "MONEY", "ARROWS", "MONEY", "POWER LIGHTNING", "SHURIKEN"};
-
     std::vector<std::string> TriggerTypes = {};
-
-    BloodSwordRogue::UnorderedMap<Attribute::Type, Asset::Type> AttributeAssets = {};
-
-    BloodSwordRogue::UnorderedMap<Item::Property, Asset::Type> PropertyAssets = {};
 
     const int MaxEnemies = 5;
 
@@ -67,13 +55,13 @@ namespace BloodSwordRogue::MapMaker
     // generic number setter
     int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, std::string asset, int value, int min_value, int max_value)
     {
-        return Interface::SetValue(graphics, scenery, MapMaker::Numbers, asset, value, min_value, max_value);
+        return Interface::SetValue(graphics, scenery, Interface::Numbers, asset, value, min_value, max_value);
     }
 
     // generic number setter
     int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, std::string asset, int value)
     {
-        return Interface::SetValue(graphics, scenery, MapMaker::Numbers, asset, value);
+        return Interface::SetValue(graphics, scenery, Interface::Numbers, asset, value);
     }
 
     // renders the current map
@@ -294,57 +282,6 @@ namespace BloodSwordRogue::MapMaker
             }
         }
 
-        MapMaker::Numbers.clear();
-
-        MapMaker::Numbers = {
-            Asset::Map("ZERO"),
-            Asset::Map("ONE"),
-            Asset::Map("TWO"),
-            Asset::Map("THREE"),
-            Asset::Map("FOUR"),
-            Asset::Map("FIVE"),
-            Asset::Map("SIX"),
-            Asset::Map("SEVEN"),
-            Asset::Map("EIGHT"),
-            Asset::Map("NINE")};
-
-        MapMaker::AttributeAssets.clear();
-
-        MapMaker::AttributeAssets = {
-            {Attribute::Type::FIGHTING_PROWESS, Asset::Map("FIGHT")},
-            {Attribute::Type::AWARENESS, Asset::Map("BRAIN")},
-            {Attribute::Type::PSYCHIC_ABILITY, Asset::Map("CALL TO MIND")},
-            {Attribute::Type::ENDURANCE, Asset::Map("ENDURANCE")},
-            {Attribute::Type::DAMAGE, Asset::Map("BLOOD")},
-            {Attribute::Type::ARMOUR, Asset::Map("LAYERED ARMOUR")}};
-
-        MapMaker::PropertyAssets.clear();
-
-        MapMaker::PropertyAssets = {
-            {Item::MapProperty("EQUIPPED"), Asset::Map("EQUIPPED")},
-            {Item::MapProperty("WEAPON"), Asset::Map("WEAPON")},
-            {Item::MapProperty("ARMOUR"), Asset::Map("ARMOUR")},
-            {Item::MapProperty("ACCESSORY"), Asset::Map("ACCESSORY")},
-            {Item::MapProperty("MELEE"), Asset::Map("MELEE")},
-            {Item::MapProperty("RANGED"), Asset::Map("RANGED")},
-            {Item::MapProperty("RUSTY"), Asset::Map("RUSTY")},
-            {Item::MapProperty("BROKEN"), Asset::Map("BROKEN")},
-            {Item::MapProperty("POISONED"), Asset::Map("POISONED")},
-            {Item::MapProperty("CURSED"), Asset::Map("CURSED")},
-            {Item::MapProperty("RESURRECTION"), Asset::Map("RESURRECTION")},
-            {Item::MapProperty("EDIBLE"), Asset::Map("EDIBLE")},
-            {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
-            {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
-            {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")},
-            {Item::MapProperty("CANNOT DROP"), Asset::Map("CANNOT DROP")},
-            {Item::MapProperty("CANNOT TRADE"), Asset::Map("CANNOT TRADE")},
-            {Item::MapProperty("CONTAINER"), Asset::Map("CONTAINER")},
-            {Item::MapProperty("READABLE"), Asset::Map("READABLE")},
-            {Item::MapProperty("LIQUID"), Asset::Map("LIQUID")},
-            {Item::MapProperty("ALL RANGES"), Asset::Map("ALL RANGES")},
-            {Item::MapProperty("REQUIRES TARGET"), Asset::Map("REQUIRES TARGET")},
-            {Item::MapProperty("COMBAT"), Asset::Map("COMBAT")}};
-
         MapMaker::TriggerTypes.clear();
 
         for (auto &trigger : Trigger::TypeMapping)
@@ -409,13 +346,13 @@ namespace BloodSwordRogue::MapMaker
     // check if this is an item that requires a quantity to be set
     void CheckQuantity(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
     {
-        for (auto i = 0; i < SafeCast(MapMaker::ItemsWithQuantities.size()); i++)
+        for (auto i = 0; i < SafeCast(Interface::ItemsWithQuantities.size()); i++)
         {
-            auto item_quantity = MapMaker::ItemsWithQuantities[i];
+            auto item_quantity = Interface::ItemsWithQuantities[i];
 
             if (Item::MapType(item_quantity) == item.Type)
             {
-                auto question = std::string("HOW MANY ") + MapMaker::ItemPlurals[i] + std::string(" TO ADD?");
+                auto question = std::string("HOW MANY ") + Interface::ItemPlurals[i] + std::string(" TO ADD?");
 
                 auto quantity = BloodSwordRogue::Trim(Interface::TextInput(graphics, scenes, question, true));
 
@@ -594,81 +531,6 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
-    // item details
-    void ViewItem(Graphics::Base &graphics, Graphics::Scenery scenes, Item::Base &item)
-    {
-        if (item.Asset == Asset::NONE || item.Type == Item::NONE)
-        {
-            return;
-        }
-
-        Asset::List assets = {};
-
-        std::vector<std::string> captions = {};
-
-        assets.push_back(item.Asset);
-
-        captions.push_back(Item::TypeMapping[item.Type]);
-
-        assets.push_back(Asset::Map("WEIGHT"));
-
-        captions.push_back(std::string("ENCUMBRANCE: ") + std::to_string(item.Encumbrance));
-
-        // show this item's quantity or any it contains
-        for (auto i = 0; i < SafeCast(MapMaker::ItemsWithQuantities.size()); i++)
-        {
-            auto item_quantity = MapMaker::ItemsWithQuantities[i];
-
-            if (Item::MapType(item_quantity) == item.Type)
-            {
-                auto asset_quantity = Asset::Map(MapMaker::ItemsAssets[i]);
-
-                assets.push_back(asset_quantity);
-
-                if (assets[0] == asset_quantity)
-                {
-                    assets[0] = Asset::Map("ITEMS");
-                }
-
-                std::string quantity_caption = std::to_string(item.Quantity);
-
-                if (item.Limit != Item::Unlimited)
-                {
-                    quantity_caption += std::string("/") + std::to_string(item.Limit);
-                }
-
-                quantity_caption += std::string(" ") + MapMaker::ItemPlurals[i];
-
-                captions.push_back(quantity_caption);
-            }
-        }
-
-        // show item attributes
-        for (auto attribute : item.Attributes)
-        {
-            assets.push_back(AttributeAssets[attribute.first]);
-
-            auto caption = Attribute::TypeMapping[attribute.first] + std::string(": ") + std::to_string(item.Modifier(attribute.first));
-
-            captions.push_back(caption);
-        }
-
-        // show item properties
-        for (auto &properties : MapMaker::PropertyAssets)
-        {
-            auto property = properties.first;
-
-            if (item.HasProperty(property))
-            {
-                assets.push_back(properties.second);
-
-                captions.push_back(Item::PropertyMapping[property]);
-            }
-        }
-
-        Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 8, BloodSwordRogue::TileSize * 6, captions);
-    }
-
     // edit item attributes
     void EditAttributes(Graphics::Base &graphics, Graphics::Scenery &scenes, Item::Base &item)
     {
@@ -690,7 +552,7 @@ namespace BloodSwordRogue::MapMaker
 
         std::vector<Attribute::Type> item_attributes = {};
 
-        for (auto &attribute : MapMaker::AttributeAssets)
+        for (auto &attribute : Interface::AttributeAssets)
         {
             attribute_assets.push_back(attribute.second);
 
@@ -718,7 +580,7 @@ namespace BloodSwordRogue::MapMaker
                 {
                     auto attribute = item_attributes[selected];
 
-                    auto asset = MapMaker::AttributeAssets[attribute];
+                    auto asset = Interface::AttributeAssets[attribute];
 
                     if (!item.HasAttribute(attribute))
                     {
@@ -746,7 +608,7 @@ namespace BloodSwordRogue::MapMaker
                 {
                     auto attribute = Attribute::MapAttribute(attributes[action.Selected]);
 
-                    auto asset = MapMaker::AttributeAssets[attribute];
+                    auto asset = Interface::AttributeAssets[attribute];
 
                     auto modifier = MapMaker::SetValue(graphics, scenes, Asset::TypeMapping[asset], item.Attributes[attribute], Attribute::MinModifier, Attribute::MaxModifier);
 
@@ -791,7 +653,7 @@ namespace BloodSwordRogue::MapMaker
 
         Item::Properties item_properties = {};
 
-        for (auto &property : MapMaker::PropertyAssets)
+        for (auto &property : Interface::PropertyAssets)
         {
             property_assets.push_back(property.second);
 
@@ -1019,7 +881,7 @@ namespace BloodSwordRogue::MapMaker
         }
 
         Asset::List damage_assets = {
-            MapMaker::AttributeAssets[Attribute::Type::DAMAGE],
+            Interface::AttributeAssets[Attribute::Type::DAMAGE],
             Asset::Map("PLUS"),
             Asset::Map("CIRCLE"),
         };
@@ -1209,7 +1071,7 @@ namespace BloodSwordRogue::MapMaker
             {
                 if (object_controls[selected] == Controls::MapType("VIEW"))
                 {
-                    MapMaker::ViewItem(graphics, scenes, item);
+                    Interface::ViewItem(graphics, scenes, item);
                 }
                 else if (object_controls[selected] == Controls::MapType("NAME"))
                 {
@@ -1256,13 +1118,13 @@ namespace BloodSwordRogue::MapMaker
                 }
                 else if (object_controls[selected] == Controls::MapType("QUANTITY"))
                 {
-                    for (auto i = 0; i < SafeCast(MapMaker::ItemsWithQuantities.size()); i++)
+                    for (auto i = 0; i < SafeCast(Interface::ItemsWithQuantities.size()); i++)
                     {
-                        auto item_quantity = MapMaker::ItemsWithQuantities[i];
+                        auto item_quantity = Interface::ItemsWithQuantities[i];
 
                         if (Item::MapType(item_quantity) == item.Type)
                         {
-                            auto quantity = MapMaker::SetValue(graphics, scenes, MapMaker::ItemsAssets[i], item.Quantity, 0, item.Limit != Item::Unlimited ? item.Limit : 99);
+                            auto quantity = MapMaker::SetValue(graphics, scenes, Interface::ItemsAssets[i], item.Quantity, 0, item.Limit != Item::Unlimited ? item.Limit : 99);
 
                             if (quantity >= 0 && quantity < 100)
                             {
@@ -1275,13 +1137,13 @@ namespace BloodSwordRogue::MapMaker
                 }
                 else if (object_controls[selected] == Controls::MapType("LIMIT"))
                 {
-                    for (auto i = 0; i < SafeCast(MapMaker::ItemsWithQuantities.size()); i++)
+                    for (auto i = 0; i < SafeCast(Interface::ItemsWithQuantities.size()); i++)
                     {
-                        auto item_limit = MapMaker::ItemsWithQuantities[i];
+                        auto item_limit = Interface::ItemsWithQuantities[i];
 
                         if (Item::MapType(item_limit) == item.Type)
                         {
-                            auto limit = MapMaker::SetValue(graphics, scenes, MapMaker::ItemsAssets[i], item.Limit, -1, 99);
+                            auto limit = MapMaker::SetValue(graphics, scenes, Interface::ItemsAssets[i], item.Limit, -1, 99);
 
                             if (limit >= -1 && limit < 100)
                             {
@@ -1329,49 +1191,12 @@ namespace BloodSwordRogue::MapMaker
         }
     }
 
-    // select item
-    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
-    {
-        auto selected = Item::NONE;
-
-        Asset::List assets = {};
-
-        std::vector<std::string> captions = {};
-
-        for (auto &item : items)
-        {
-            assets.push_back(item.Asset);
-
-            std::string caption = item.Name;
-
-            if (item.Contains != Item::NONE && item.Quantity > 0)
-            {
-                caption += std::string(": ") + std::to_string(item.Quantity);
-            }
-
-            captions.push_back(caption);
-        }
-
-        if (SafeCast(assets.size()) > 0)
-        {
-            selected = Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, captions);
-        }
-
-        return selected;
-    }
-
-    // select item
-    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
-    {
-        return MapMaker::SelectItem(graphics, scenes, character.Items);
-    }
-
     // view items
     void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
     {
         while (true)
         {
-            auto selected = MapMaker::SelectItem(graphics, scenes, items);
+            auto selected = Interface::SelectItem(graphics, scenes, items);
 
             if (selected >= 0 && selected < SafeCast(items.size()))
             {
@@ -1389,24 +1214,6 @@ namespace BloodSwordRogue::MapMaker
     void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
     {
         MapMaker::ViewItems(graphics, scenes, character.Items);
-    }
-
-    // remove item from character
-    void RemoveItem(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character)
-    {
-        while (true && SafeCast(character.Items.size() > 0))
-        {
-            auto selected = MapMaker::SelectItem(graphics, scenes, character);
-
-            if (selected >= 0 && selected < SafeCast(character.Items.size()))
-            {
-                character.Items.erase(character.Items.begin() + selected);
-            }
-            else
-            {
-                break;
-            }
-        }
     }
 
     // increase modifier
@@ -1528,37 +1335,37 @@ namespace BloodSwordRogue::MapMaker
             scene.Add(Controls::Base(Controls::MapType("ITEMS"), 2, 1, 2, 2, 2, box.X + tile * 3, box.Y + tile, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
 
             // fighting prowess
-            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::FIGHTING_PROWESS], character.Value(Attribute::Type::FIGHTING_PROWESS), box.X + tile, box.Y + tile * 3, "FPR+", "FPR-");
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::FIGHTING_PROWESS], character.Value(Attribute::Type::FIGHTING_PROWESS), box.X + tile, box.Y + tile * 3, "FPR+", "FPR-");
 
             // fighting prowess modifiers
-            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::FIGHTING_PROWESS), box.X + tile * 6, box.Y + tile * 3, "FPR MOD+", "FPR MOD-");
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::FIGHTING_PROWESS), box.X + tile * 6, box.Y + tile * 3, "FPR MOD+", "FPR MOD-");
 
             // awareness
-            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::AWARENESS], character.Value(Attribute::Type::AWARENESS), box.X + tile, box.Y + tile * 4, "AWR+", "AWR-");
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::AWARENESS], character.Value(Attribute::Type::AWARENESS), box.X + tile, box.Y + tile * 4, "AWR+", "AWR-");
 
             // awareness modifiers
-            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::AWARENESS), box.X + tile * 6, box.Y + tile * 4, "AWR MOD+", "AWR MOD-");
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::AWARENESS), box.X + tile * 6, box.Y + tile * 4, "AWR MOD+", "AWR MOD-");
 
             // psychic ability
-            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::PSYCHIC_ABILITY], character.Value(Attribute::Type::PSYCHIC_ABILITY), box.X + tile, box.Y + tile * 5, "PSY+", "PSY-");
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::PSYCHIC_ABILITY], character.Value(Attribute::Type::PSYCHIC_ABILITY), box.X + tile, box.Y + tile * 5, "PSY+", "PSY-");
 
             // psychic ability modifiers
-            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::PSYCHIC_ABILITY), box.X + tile * 6, box.Y + tile * 5, "PSY MOD+", "PSY MOD-");
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::PSYCHIC_ABILITY), box.X + tile * 6, box.Y + tile * 5, "PSY MOD+", "PSY MOD-");
 
             // damage
-            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::DAMAGE], character.Value(Attribute::Type::DAMAGE), box.X + tile, box.Y + tile * 6, "DMG+", "DMG-");
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::DAMAGE], character.Value(Attribute::Type::DAMAGE), box.X + tile, box.Y + tile * 6, "DMG+", "DMG-");
 
             // damage modifiers
-            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::DAMAGE), box.X + tile * 6, box.Y + tile * 6, "DMG MOD+", "DMG MOD-");
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), character.Modifier(Attribute::Type::DAMAGE), box.X + tile * 6, box.Y + tile * 6, "DMG MOD+", "DMG MOD-");
 
             // endurance
-            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ENDURANCE], character.Value(Attribute::Type::ENDURANCE), box.X + tile, box.Y + tile * 7, "END+", "END-");
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::ENDURANCE], character.Value(Attribute::Type::ENDURANCE), box.X + tile, box.Y + tile * 7, "END+", "END-");
 
             // encumbrance limit
-            Interface::RenderValue(scene, MapMaker::Numbers, Asset::Map("WEIGHT"), character.EncumbranceLimit, box.X + tile * 6, box.Y + tile * 7, "WT+", "WT-");
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("WEIGHT"), character.EncumbranceLimit, box.X + tile * 6, box.Y + tile * 7, "WT+", "WT-");
 
             // armour
-            Interface::RenderValue(scene, MapMaker::Numbers, MapMaker::AttributeAssets[Attribute::Type::ARMOUR], character.Modifier(Attribute::Type::ARMOUR), box.X + tile, box.Y + tile * 8, "ARM+", "ARM-");
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::ARMOUR], character.Modifier(Attribute::Type::ARMOUR), box.X + tile, box.Y + tile * 8, "ARM+", "ARM-");
 
             auto back_id = scene.Controls.size();
 
@@ -1722,7 +1529,7 @@ namespace BloodSwordRogue::MapMaker
                         }
                         else if (object_controls[selected] == Controls::MapType("CANCEL"))
                         {
-                            MapMaker::RemoveItem(graphics, {background, scene}, character);
+                            Interface::RemoveItem(graphics, {background, scene}, character);
                         }
                     }
                 }
