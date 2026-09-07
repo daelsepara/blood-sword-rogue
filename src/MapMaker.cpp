@@ -3325,8 +3325,10 @@ namespace BloodSwordRogue::MapMaker
                         {
                             if (tile.IsOccupied())
                             {
-                                if (function == Function::ENEMY && tile.Occupant == Map::Object::ENEMIES)
+                                if (tile.Occupant == Map::Object::ENEMIES)
                                 {
+                                    function = Function::ENEMY;
+
                                     auto selected = Interface::IconList(graphics, scene, object_assets, object_captions);
 
                                     if (selected >= 0 && selected < SafeCast(object_controls.size()))
@@ -3345,8 +3347,10 @@ namespace BloodSwordRogue::MapMaker
                                         }
                                     }
                                 }
-                                else if (function == Function::LOOT && tile.Occupant == Map::Object::ITEMS)
+                                else if (tile.Occupant == Map::Object::ITEMS)
                                 {
+                                    function = Function::LOOT;
+
                                     auto selected = Interface::IconList(graphics, scene, object_assets, object_captions);
 
                                     if (selected >= 0 && selected < SafeCast(object_controls.size()))
@@ -3365,8 +3369,10 @@ namespace BloodSwordRogue::MapMaker
                                         }
                                     }
                                 }
-                                else if (function == Function::TRIGGER && tile.Occupant == Map::Object::TRIGGER)
+                                else if (tile.Occupant == Map::Object::TRIGGER)
                                 {
+                                    function = Function::TRIGGER;
+
                                     auto selected = Interface::IconList(graphics, scene, trigger_assets, trigger_captions);
 
                                     if (selected >= 0 && selected < SafeCast(object_controls.size()))
