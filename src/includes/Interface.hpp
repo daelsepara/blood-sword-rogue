@@ -1663,7 +1663,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // generic text list
-    int TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Asset::Type asset, Controls::Type action, int selected = -1)
+    int TextList(Graphics::Base &graphics, Graphics::Scenery scenes, std::vector<std::string> &text_list, int width, int height, Asset::Type asset, Controls::Type action, int selected = -1, bool allow_none = false)
     {
         auto text_height = 0;
 
@@ -1698,7 +1698,7 @@ namespace BloodSwordRogue::Interface
         // clip selected
         selected = std::min(std::max(-1, selected), items - 1);
 
-        // move offset so selected text is in the center
+        // move offset so selected text is in the current view
         if (selected != -1 && items > limit)
         {
             offset = selected - limit / 2;
@@ -1706,6 +1706,11 @@ namespace BloodSwordRogue::Interface
             if (offset > items - limit)
             {
                 offset = items - limit;
+            }
+            
+            if (offset < 0)
+            {
+                offset = 0;
             }
         }
 
@@ -1841,7 +1846,7 @@ namespace BloodSwordRogue::Interface
                 }
                 else if (input.Type == action)
                 {
-                    if (selected >= 0 && selected < items)
+                    if ((selected >= 0 && selected < items) || (selected == -1 && allow_none))
                     {
                         done = true;
                     }

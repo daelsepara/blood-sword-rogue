@@ -2687,7 +2687,7 @@ namespace BloodSwordRogue::MapMaker
             {
                 if (SafeCast(trigger.Variables.size()) > 0)
                 {
-                    Interface::TextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"));
+                    Interface::TextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4, Asset::Map("CONFIRM"), Controls::MapType("CONFIRM"), -1, true);
                 }
             }
             else
