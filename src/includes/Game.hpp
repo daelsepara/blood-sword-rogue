@@ -222,7 +222,7 @@ namespace BloodSwordRogue::Game
 
                 game.Party.Y = y;
 
-                location.Map.Put(Point(x, y), Map::Object::PARTY, 1);
+                location.Map.Put(Point(x, y), Map::Object::PARTY, Map::Party);
             }
             else
             {
@@ -247,7 +247,7 @@ namespace BloodSwordRogue::Game
 
                 game.Party.Y = location.Map.Origins[0].Y;
 
-                location.Map.Put(location.Map.Origins[0], Map::Object::PARTY, 1);
+                location.Map.Put(location.Map.Origins[0], Map::Object::PARTY, Map::Party);
             }
             else
             {
@@ -299,9 +299,9 @@ namespace BloodSwordRogue::Game
             {
                 auto next = trigger.Variables[0];
 
-                auto x = BloodSwordRogue::IsANumber(trigger.Variables[1]) ? std::stoi(trigger.Variables[1], nullptr, 10) : -1;
+                auto x = BloodSwordRogue::IsANumber(trigger.Variables[1]) ? std::stoi(trigger.Variables[1], nullptr, 10) : Map::NotFound;
 
-                auto y = BloodSwordRogue::IsANumber(trigger.Variables[2]) ? std::stoi(trigger.Variables[2], nullptr, 10) : -1;
+                auto y = BloodSwordRogue::IsANumber(trigger.Variables[2]) ? std::stoi(trigger.Variables[2], nullptr, 10) : Map::NotFound;
 
                 Game::Exit(world, game, location, next, x, y);
 
@@ -390,9 +390,9 @@ namespace BloodSwordRogue::Game
 
                 auto visible = BloodSwordRogue::In(view, x, y);
 
-                auto loot_id = -1;
+                auto loot_id = Map::NotFound;
 
-                auto opponent_id = -1;
+                auto opponent_id = Map::NotFound;
 
                 if (visible || tile.Explored)
                 {

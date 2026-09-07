@@ -96,9 +96,9 @@ namespace BloodSwordRogue::MapMaker
 
                 auto screen = Point(map.DrawX, map.DrawY) + offset * map.TileSize;
 
-                auto loot_id = -1;
+                auto loot_id = Map::NotFound;
 
-                auto opponent_id = -1;
+                auto opponent_id = Map::NotFound;
 
                 // add occupant
                 if (tile.IsOccupied())
@@ -3622,7 +3622,7 @@ namespace BloodSwordRogue::MapMaker
                 else if (input.Type == Controls::MapType("MAP"))
                 {
                     Graphics::Scenery scenes = {scene};
-                    
+
                     Interface::ShowMap(graphics, scenes, map);
                 }
                 else if (input.Type == Controls::MapType("NEW"))
