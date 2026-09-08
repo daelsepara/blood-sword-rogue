@@ -270,6 +270,11 @@ namespace BloodSwordRogue::Game
     {
         Models::Update update = {false, false, false};
 
+        if (trigger.Type == Trigger::Type::NONE)
+        {
+            throw std::invalid_argument("TRIGGER TYPE NOT DEFINED!");
+        }
+
         if (trigger.Type == Trigger::Type::TRAVEL)
         {
             if (!trigger.Activated)
@@ -337,15 +342,25 @@ namespace BloodSwordRogue::Game
             {
                 trigger.Completed = Evaluate::HasItem(trigger, game.Party);
             }
+            else if (trigger.Type == Trigger::Type::ANY_ITEMS || trigger.Type == Trigger::Type::ALL_ITEMS)
+            {
+                trigger.Completed = Evaluate::HasItems(trigger, game.Party);
+            }
 
             // send status message
             if (trigger.Completed)
             {
-                Interface::MessageBox(graphics, scenes, trigger.CompletedMessage, Color::Active);
+                if (!trigger.CompletedMessage.empty())
+                {
+                    Interface::MessageBox(graphics, scenes, trigger.CompletedMessage, Color::Active);
+                }
             }
             else
             {
-                Interface::MessageBox(graphics, scenes, trigger.ActiveMessage, Color::Inactive);
+                if (!trigger.ActiveMessage.empty())
+                {
+                    Interface::MessageBox(graphics, scenes, trigger.ActiveMessage, Color::Inactive);
+                }
             }
         }
 

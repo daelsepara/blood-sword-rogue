@@ -32,7 +32,7 @@ namespace BloodSwordRogue::Evaluate
         auto result = false;
 
         // variables
-        // 0 - player
+        // 0 - item
         if (Engine::IsAlive(party) && SafeCast(trigger.Variables.size()) > 0)
         {
             auto item = Item::MapType(trigger.Variables[0]);
@@ -40,6 +40,42 @@ namespace BloodSwordRogue::Evaluate
             if (item != Item::NONE)
             {
                 result = party.HasItemType(item);
+            }
+        }
+
+        return result;
+    }
+
+    bool HasItems(Trigger::Base &trigger, Party::Base &party)
+    {
+        auto result = false;
+
+        // variables
+        // 0 .. N - item types
+        if (Engine::IsAlive(party) && SafeCast(trigger.Variables.size()) > 1)
+        {
+            Items::List items = {};
+
+            for (auto i = 0; i < SafeCast(trigger.Variables.size()); i++)
+            {
+                auto item = Item::MapType(trigger.Variables[i]);
+
+                if (item != Item::NONE)
+                {
+                    items.push_back(item);
+                }
+            }
+
+            if (SafeCast(items.size()) > 0)
+            {
+                if (trigger.Type == Trigger::Type::ANY_ITEMS)
+                {
+                    result = party.HasAnyItems(items);
+                }
+                else if (trigger.Type == Trigger::Type::ALL_ITEMS)
+                {
+                    result = party.HasAllItems(items);
+                }
             }
         }
 

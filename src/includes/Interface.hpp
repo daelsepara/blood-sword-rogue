@@ -756,13 +756,16 @@ namespace BloodSwordRogue::Interface
                         {
                             down = id + (items - index);
                         }
-                        else if (id + limit_x >= page_size && items > page_size)
-                        {
-                            down = page_size;
-                        }
                         else if (id + limit_x >= page_size)
                         {
-                            down = id + (page_size - index - 1);
+                            if (items > page_size)
+                            {
+                                down = page_size;
+                            }
+                            else
+                            {
+                                down = items - offset;
+                            }
                         }
 
                         scene.Add(Controls::Base(Controls::MapType("SELECT"), id, left, right, up, down, point.X, point.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
@@ -793,8 +796,6 @@ namespace BloodSwordRogue::Interface
                             }
 
                             scene.VerifyAndAdd(Scene::Element(captions[caption], point.X + center, point.Y + BloodSwordRogue::TileSize + 2));
-
-                            //SDL_Log("[INDEX %d] [ITEMS %d] [ID %d] [DOWN %d]", index, items, scene.Controls[input.Current].Id, scene.Controls[input.Current].Down);
                         }
                     }
                 }

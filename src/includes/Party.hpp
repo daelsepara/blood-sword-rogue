@@ -225,6 +225,24 @@ namespace BloodSwordRogue::Party
             return result;
         }
 
+        // check if party has any of the items in list
+        bool HasAnyItems(Items::List items)
+        {
+            auto result = false;
+
+            for (auto &item : items)
+            {
+                result |= this->HasItemType(item);
+
+                if (result)
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         // check if party has charged item of type (charge) with enough quantity
         bool HasChargedItem(Item::Type item, Item::Type charge, int quantity)
         {

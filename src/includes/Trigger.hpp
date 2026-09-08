@@ -8,9 +8,10 @@ namespace BloodSwordRogue::Trigger
     enum class Type
     {
         NONE = -1,
+        NORMAL,
         CHARACTER,
         ITEM,
-        ANY_ITEM,
+        ANY_ITEMS,
         ALL_ITEMS,
         VICTORY,
         TRAVEL,
@@ -19,9 +20,10 @@ namespace BloodSwordRogue::Trigger
 
     BloodSwordRogue::ConstStrings<Trigger::Type> TypeMapping = {
         {Trigger::Type::NONE, "NONE"},
+        {Trigger::Type::NORMAL, "NORMAL"},
         {Trigger::Type::CHARACTER, "CHARACTER"},
         {Trigger::Type::ITEM, "ITEM"},
-        {Trigger::Type::ANY_ITEM, "ANY ITEM"},
+        {Trigger::Type::ANY_ITEMS, "ANY ITEMS"},
         {Trigger::Type::ALL_ITEMS, "ALL ITEMS"},
         {Trigger::Type::VICTORY, "VICTORY"},
         {Trigger::Type::TRAVEL, "TRAVEL"},
