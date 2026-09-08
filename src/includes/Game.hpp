@@ -750,13 +750,13 @@ namespace BloodSwordRogue::Game
 
         game.Party.Add(character);
 
-        int TilesW = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
+        int width = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
 
-        int TilesH = std::min(graphics.Height / BloodSwordRogue::TileSize - 5, 32);
+        int height = std::min(graphics.Height / BloodSwordRogue::TileSize - 5, 32);
 
         Game::Travel(world, game, location, world.Start);
 
-        Game::RefreshMapView(graphics, location.Map, TilesW, TilesH);
+        Game::RefreshMapView(graphics, location.Map, width, height);
 
         auto input_buffer = Controls::List();
 
