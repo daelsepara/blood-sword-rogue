@@ -702,7 +702,7 @@ namespace BloodSwordRogue::Interface
 
         auto items = SafeCast(assets.size());
 
-        auto page_size = limit_x * limit_y;
+        const int page_size = limit_x * limit_y;
 
         auto offset = 0;
 
@@ -752,13 +752,17 @@ namespace BloodSwordRogue::Interface
 
                         auto down = (y < limit_y - 1) && (index + limit_x < items) ? id + limit_x : id;
 
-                        if (index + limit_x >= items)
+                        if ((index + limit_x >= items) && y < (limit_y - 1))
                         {
                             down = id + (items - index);
                         }
-                        else if (y == limit_y - 1)
+                        else if (id + limit_x >= page_size && items > page_size)
                         {
-                            down = id + (limit_x - x);
+                            down = page_size;
+                        }
+                        else if (id + limit_x >= page_size)
+                        {
+                            down = id + (page_size - index - 1);
                         }
 
                         scene.Add(Controls::Base(Controls::MapType("SELECT"), id, left, right, up, down, point.X, point.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
@@ -789,6 +793,8 @@ namespace BloodSwordRogue::Interface
                             }
 
                             scene.VerifyAndAdd(Scene::Element(captions[caption], point.X + center, point.Y + BloodSwordRogue::TileSize + 2));
+
+                            //SDL_Log("[INDEX %d] [ITEMS %d] [ID %d] [DOWN %d]", index, items, scene.Controls[input.Current].Id, scene.Controls[input.Current].Down);
                         }
                     }
                 }
