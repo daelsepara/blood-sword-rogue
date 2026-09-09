@@ -780,6 +780,13 @@ namespace BloodSwordRogue::Game
 
         auto done = false;
 
+        // coordinates
+        SDL_Texture *location_name = nullptr;
+
+        auto location_size = Point();
+
+        auto prev_location = std::string();
+
         while (!done)
         {
             if (update.Scene || animating)
@@ -791,6 +798,23 @@ namespace BloodSwordRogue::Game
 
             // top panel
             scene.Add(Scene::Element(BloodSwordRogue::Border, BloodSwordRogue::Border, graphics.Width - BloodSwordRogue::Border * 2, BloodSwordRogue::TileSize * 2 - BloodSwordRogue::Border * 2, Color::Background, Color::Inactive, BloodSwordRogue::Border));
+
+            if (!(prev_location == location.Name.c_str()))
+            {
+                BloodSwordRogue::Free(&location_name);
+
+                location_name = Graphics::CreateText(graphics, (location.Name + std::string(": ")).c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL);
+
+                location_size = BloodSwordRogue::Size(location_name);
+
+                prev_location = std::string(location.Name);
+            }
+
+            auto coordinates = "(" + std::to_string(game.Party.X) + "," + std::to_string(game.Party.Y) + ")";
+
+            scene.Add(Scene::Element(location_name, Point(BloodSwordRogue::HalfTile, (location.Map.TileSize * 2 - location_size.Y) / 2)));
+
+            Interface::AddText(scene, TextCache, coordinates, BloodSwordRogue::HalfTile + location_size.X, (location.Map.TileSize * 2 - location_size.Y) / 2);
 
             // bottom panel
             scene.Add(Scene::Element(BloodSwordRogue::Border, graphics.Height - BloodSwordRogue::TileSize * 2 + BloodSwordRogue::Border, graphics.Width - BloodSwordRogue::Border * 2, BloodSwordRogue::TileSize * 2 - BloodSwordRogue::Border * 2, Color::Background, Color::Inactive, BloodSwordRogue::Border));
@@ -877,6 +901,8 @@ namespace BloodSwordRogue::Game
                 }
             }
         }
+
+        BloodSwordRogue::Free(&location_name);
 
         TextCache.Free();
     }
