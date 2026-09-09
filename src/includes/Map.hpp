@@ -136,7 +136,7 @@ namespace BloodSwordRogue::Map
         // starting locations of party
         BloodSwordRogue::Points Origins = {};
 
-        // starting locations of opponents
+        // party's last known position
         BloodSwordRogue::Points Spawn = {};
 
         // initialize the map

@@ -172,6 +172,16 @@ namespace BloodSwordRogue::Game
             tile.Id = Map::NotFound;
 
             tile.Occupant = Map::Object::NONE;
+
+            // record party's last position
+            if (SafeCast(location.Map.Spawn.size() > 0))
+            {
+                location.Map.Spawn[0] = game.Party.Origin();
+            }
+            else
+            {
+                location.Map.Spawn.push_back(game.Party.Origin());
+            }
         }
     }
 
@@ -218,7 +228,7 @@ namespace BloodSwordRogue::Game
     }
 
     // exit to another area
-    void Exit(Game::World &world, Game::Base &game, Location::Base &location, std::string next, int x, int y)
+    void Exit(Game::World &world, Game::Base &game, Location::Base &location, std::string next)
     {
         auto loaded = Game::Move(world, game, location, next);
 
@@ -226,8 +236,12 @@ namespace BloodSwordRogue::Game
         {
             game.Party.Location = std::string(next);
 
-            if (location.Map.IsValid(Point(x, y)))
+            if (SafeCast(location.Map.Spawn.size()) > 0)
             {
+                auto x = location.Map.Spawn[0].X;
+
+                auto y = location.Map.Spawn[0].Y;
+
                 game.Party.X = x;
 
                 game.Party.Y = y;
@@ -306,15 +320,11 @@ namespace BloodSwordRogue::Game
         }
         else if (trigger.Type == Trigger::Type::EXIT)
         {
-            if (SafeCast(trigger.Variables.size()) > 2)
+            if (SafeCast(trigger.Variables.size()) > 0)
             {
                 auto next = trigger.Variables[0];
 
-                auto x = BloodSwordRogue::IsANumber(trigger.Variables[1]) ? std::stoi(trigger.Variables[1], nullptr, 10) : Map::NotFound;
-
-                auto y = BloodSwordRogue::IsANumber(trigger.Variables[2]) ? std::stoi(trigger.Variables[2], nullptr, 10) : Map::NotFound;
-
-                Game::Exit(world, game, location, next, x, y);
+                Game::Exit(world, game, location, next);
 
                 Game::RefreshMapView(graphics, location.Map);
 
