@@ -803,7 +803,7 @@ namespace BloodSwordRogue::Game
             {
                 BloodSwordRogue::Free(&location_name);
 
-                location_name = Graphics::CreateText(graphics, (location.Name + std::string(": ")).c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL);
+                location_name = Graphics::CreateText(graphics, (location.Name + std::string(" ")).c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL);
 
                 location_size = BloodSwordRogue::Size(location_name);
 
@@ -889,7 +889,7 @@ namespace BloodSwordRogue::Game
                     }
                     else if (input.Type == Controls::MapType("EXIT"))
                     {
-                        done = Interface::Confirm(graphics, scenes, "ARE YOU SURE?", Color::Background, Color::Active, BloodSwordRogue::Border, Color::Active, true);
+                        done = Interface::Confirm(graphics, scenes, "ARE YOU SURE?", Color::Background, Color::Highlight, BloodSwordRogue::Border, Color::Active, true);
                     }
 
                     // trigger event on movement
