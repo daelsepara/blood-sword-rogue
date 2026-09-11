@@ -656,9 +656,9 @@ namespace BloodSwordRogue::Game
     }
 
     // remove loot from map
-    void RemoveLoot(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int loot)
+    void RemoveLoot(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, Point point)
     {
-        auto point = location.Map.Find(Map::Object::ITEMS, loot);
+        auto loot = Location::FindLoot(location, point);
 
         if (loot >= 0 && loot < SafeCast(location.Loot.size()) && location.Map.IsValid(point))
         {
@@ -823,7 +823,7 @@ namespace BloodSwordRogue::Game
 
                     if (SafeCast(items.size()) <= 0)
                     {
-                        Game::RemoveLoot(graphics, scenes, game, location, loot);
+                        Game::RemoveLoot(graphics, scenes, game, location, point);
                     }
 
                     update.Scene = true;
