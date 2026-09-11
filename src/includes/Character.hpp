@@ -587,7 +587,7 @@ namespace BloodSwordRogue::Character
         {
             auto container = Item::Container(content);
 
-            return this->IsArmedRanged(weapon, container, content);
+            return container != Item::NONE ? this->IsArmedRanged(weapon, container, content) : false;
         }
 
         // is armed with a specific weapon
@@ -828,15 +828,21 @@ namespace BloodSwordRogue::Character
         }
 
         // add item or increase quantity in character's possessions
-        void Add(Item::Type something, int quantity)
+        bool Add(Item::Type something, int quantity)
         {
+            auto added = false;
+
             for (auto item = this->Items.begin(); item != this->Items.end(); item++)
             {
                 if (item->Add(something, quantity))
                 {
+                    added = true;
+
                     break;
                 }
             }
+
+            return added;
         }
 
         // add item to inventory

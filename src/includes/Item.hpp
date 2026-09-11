@@ -577,9 +577,19 @@ namespace BloodSwordRogue::Item
     // get container for item
     Item::Type Container(Item::Type item)
     {
-        auto container = BloodSwordRogue::Find(Item::StorageRequirements, item, Item::NONE);
+        auto container = Item::NONE;
 
-        return container != Item::NONE ? container : item;
+        for (auto required : Item::StorageRequirements)
+        {
+            if (required.first == item)
+            {
+                container = required.second;
+
+                break;
+            }
+        }
+
+        return container;
     }
 
     // load item attributes from json data

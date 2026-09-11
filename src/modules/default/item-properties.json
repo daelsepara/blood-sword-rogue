@@ -145,7 +145,8 @@
     "item-storage": {
         "SHURIKEN": "LIMITED SHURIKEN",
         "ARROW": "QUIVER",
-        "GOLD": "POUCH"
+        "GOLD": "POUCH",
+        "CHARGE": "STEEL SCEPTRE"
     },
     "target-effects": [
         "KILL TARGET",

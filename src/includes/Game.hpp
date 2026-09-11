@@ -674,6 +674,88 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    // returns the plural for the item
+    std::string GetPlural(Item::Type item)
+    {
+        auto plural = std::string();
+
+        for (auto i = 0; i < SafeCast(Interface::ItemsWithQuantities.size()); i++)
+        {
+            if (Item::MapType(Interface::ItemsWithQuantities[i]) == item)
+            {
+                plural = std::string(Interface::ItemPlurals[i]);
+
+                break;
+            }
+        }
+
+        return plural;
+    }
+
+    // character takes item from inventory
+    void TakeItem(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Character::Base &character, Items::Inventory &items, int item)
+    {
+        if (item >= 0 && item < SafeCast(items.size()))
+        {
+            if (character.TotalEncumbrance() + items[item].Encumbrance > character.EncumbranceLimit)
+            {
+                std::string encumbrance = std::string("INVENTORY FULL!");
+
+                Interface::MessageBox(graphics, scenes, encumbrance, Color::Highlight);
+            }
+            else
+            {
+                auto container = Item::Container(items[item].Type);
+
+                // check if item needs storage
+                if (container != Item::NONE)
+                {
+                    if (character.HasItemType(container))
+                    {
+                        // add to quantity
+                        auto added = character.Add(items[item].Type, items[item].Quantity);
+
+                        if (added)
+                        {
+                            std::string plural = std::string(" ") + Game::GetPlural(items[item].Type);
+
+                            std::string taken = std::to_string(items[item].Quantity) + plural + std::string(" TAKEN");
+
+                            Interface::MessageBox(graphics, scenes, taken, Color::Active);
+
+                            items.erase(items.begin() + item);
+                        }
+                        else
+                        {
+                            std::string cannot = std::string("CANNOT TAKE THE ") + items[item].Name + std::string("!");
+
+                            Interface::MessageBox(graphics, scenes, cannot, Color::Highlight);
+                        }
+                    }
+                    else
+                    {
+                        // missing container
+                        std::string missing = std::string("NO ") + Item::TypeMapping[container] + std::string(" TO STORE THE ") + Game::GetPlural(items[item].Type) + "!";
+
+                        Interface::MessageBox(graphics, scenes, missing, Color::Highlight);
+                    }
+                }
+                else
+                {
+                    // take item
+                    std::string taken = items[item].Name + std::string(" TAKEN");
+
+                    Interface::MessageBox(graphics, scenes, taken, Color::Active);
+
+                    character.Items.push_back(items[item]);
+
+                    items.erase(items.begin() + item);
+                }
+            }
+        }
+    }
+
+    // view items
     void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Items::Inventory &items)
     {
         Asset::List assets = {
@@ -708,6 +790,7 @@ namespace BloodSwordRogue::Game
 
                         if (character >= 0 && character < game.Party.Count() && Engine::IsAlive(game.Party[character]))
                         {
+                            Game::TakeItem(graphics, scenes, game, game.Party[character], items, item);
                         }
                     }
                 }
@@ -742,6 +825,12 @@ namespace BloodSwordRogue::Game
                     {
                         Game::RemoveLoot(graphics, scenes, game, location, loot);
                     }
+
+                    update.Scene = true;
+
+                    update.Party = true;
+
+                    Input::Clear();
                 }
             }
             else if (tile.Occupant == Map::Object::ENEMIES)
@@ -839,9 +928,13 @@ namespace BloodSwordRogue::Game
 
         auto location = Location::Base();
 
-        auto character = Generate::Character(Character::Class::WARRIOR, 8);
+        // add all characters to party
+        for (auto character_class : Character::All)
+        {
+            auto character = Generate::Character(character_class, 2);
 
-        game.Party.Add(character);
+            game.Party.Add(character);
+        }
 
         int width = std::min(graphics.Width / BloodSwordRogue::TileSize - 2, 32);
 
