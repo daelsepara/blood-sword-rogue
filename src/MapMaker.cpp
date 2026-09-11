@@ -1028,7 +1028,7 @@ namespace BloodSwordRogue::MapMaker
             Asset::Map("BLOODY SWORD"),
             Asset::Map("TARGETING")};
 
-        Asset::List object_controls = {
+        Controls::List object_controls = {
             Controls::MapType("VIEW"),
             Controls::MapType("NAME"),
             Controls::MapType("ASSET"),
@@ -1280,7 +1280,7 @@ namespace BloodSwordRogue::MapMaker
             Asset::Map("CONFIRM"),
             Asset::Map("CANCEL")};
 
-        Asset::List object_controls = {
+        Controls::List object_controls = {
             Controls::MapType("VIEW"),
             Controls::MapType("CONFIRM"),
             Controls::MapType("CANCEL")};
@@ -2820,7 +2820,7 @@ namespace BloodSwordRogue::MapMaker
             Asset::Map("CANCEL"),
             Asset::Map("GEARS")};
 
-        Asset::List object_controls = {
+        Controls::List object_controls = {
             Controls::MapType("CONFIRM"),
             Controls::MapType("CANCEL"),
             Controls::MapType("SETTINGS")};

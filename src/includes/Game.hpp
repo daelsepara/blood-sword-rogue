@@ -586,11 +586,11 @@ namespace BloodSwordRogue::Game
     {
         auto &tile = location.Map[point];
 
-        auto triggered = (tile.Type == Map::Object::TRIGGER);
+        auto triggered = (tile.Occupant == Map::Object::TRIGGER);
 
-        auto items = (tile.IsOccupied() && tile.Type == Map::Object::ITEMS);
+        auto items = (tile.IsOccupied() && tile.Occupant == Map::Object::ITEMS);
 
-        auto blockers = (tile.IsOccupied() && tile.Type != Map::Object::ITEMS && tile.Type != Map::Object::TRIGGER);
+        auto blockers = (tile.IsOccupied() && tile.Occupant != Map::Object::ITEMS && tile.Occupant != Map::Object::TRIGGER);
 
         // additional checks
         if (items)
@@ -610,6 +610,15 @@ namespace BloodSwordRogue::Game
         if (triggered)
         {
             triggered &= (Location::FindTrigger(location, point) != Map::NotFound);
+        }
+
+        if (items)
+        {
+            SDL_Log("[BLOCKED] [(%d, %d) %s]", point.X, point.Y, "ITEMS");
+        }
+        else if (triggered)
+        {
+            SDL_Log("[BLOCKED] [(%d, %d) %s]", point.X, point.Y, "TRIGGER");
         }
 
         return (items || blockers || triggered || tile.IsBlocked() || !tile.IsPassable());
@@ -646,8 +655,72 @@ namespace BloodSwordRogue::Game
         return moved;
     }
 
+    // remove loot from map
+    void RemoveLoot(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int loot)
+    {
+        auto point = location.Map.Find(Map::Object::ITEMS, loot);
+
+        if (loot >= 0 && loot < SafeCast(location.Loot.size()) && location.Map.IsValid(point))
+        {
+            auto &tile = location.Map[point];
+
+            tile.Id = Map::NotFound;
+
+            tile.Occupant = Map::Object::NONE;
+
+            location.Loot.erase(location.Loot.begin() + loot);
+
+            Location::RenumberLoot(location);
+        }
+    }
+
+    void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Items::Inventory &items)
+    {
+        Asset::List assets = {
+            Asset::Map("MAGNIFYING GLASS"),
+            Asset::Map("USE")};
+
+        Controls::List actions = {
+            Controls::MapType("VIEW"),
+            Controls::MapType("TAKE")};
+
+        Interface::Strings captions = {
+            "VIEW",
+            "TAKE"};
+
+        while (true && SafeCast(items.size()) > 0)
+        {
+            auto item = Interface::SelectItem(graphics, scenes, items);
+
+            if (item >= 0 && item < SafeCast(items.size()))
+            {
+                auto action = Interface::IconList(graphics, scenes, assets, captions);
+
+                if (action >= 0 && action < SafeCast(actions.size()))
+                {
+                    if (actions[action] == Controls::MapType("VIEW"))
+                    {
+                        Interface::ViewItem(graphics, scenes, items[item]);
+                    }
+                    else if (actions[action] == Controls::MapType("TAKE"))
+                    {
+                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party);
+
+                        if (character >= 0 && character < game.Party.Count() && Engine::IsAlive(game.Party[character]))
+                        {
+                        }
+                    }
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
     // handle tile interaction (items/enemies)
-    Models::Update Handle(Graphics::Base &graphics, Graphics::Scenery background, Game::World &world, Game::Base &game, Location::Base &location, Point point)
+    Models::Update Handle(Graphics::Base &graphics, Graphics::Scenery scenes, Game::World &world, Game::Base &game, Location::Base &location, Point point)
     {
         Models::Update update = {false, false, false};
 
@@ -657,9 +730,19 @@ namespace BloodSwordRogue::Game
         {
             if (tile.Occupant == Map::Object::ITEMS)
             {
-                update.Scene = true;
+                auto loot = Location::FindLoot(location, point);
 
-                update.Party = true;
+                if (loot >= 0 && loot < SafeCast(location.Loot.size()))
+                {
+                    auto &items = location.Loot[loot].Items;
+
+                    Game::ViewItems(graphics, scenes, game, items);
+
+                    if (SafeCast(items.size()) <= 0)
+                    {
+                        Game::RemoveLoot(graphics, scenes, game, location, loot);
+                    }
+                }
             }
             else if (tile.Occupant == Map::Object::ENEMIES)
             {
@@ -683,7 +766,7 @@ namespace BloodSwordRogue::Game
                 {
                     auto &trigger = location.Triggers[id];
 
-                    update = Game::CheckTrigger(graphics, background, world, game, location, trigger);
+                    update = Game::CheckTrigger(graphics, scenes, world, game, location, trigger);
                 }
             }
         }
@@ -818,6 +901,19 @@ namespace BloodSwordRogue::Game
 
             // bottom panel
             scene.Add(Scene::Element(BloodSwordRogue::Border, graphics.Height - BloodSwordRogue::TileSize * 2 + BloodSwordRogue::Border, graphics.Width - BloodSwordRogue::Border * 2, BloodSwordRogue::TileSize * 2 - BloodSwordRogue::Border * 2, Color::Background, Color::Inactive, BloodSwordRogue::Border));
+
+            // show members of the party
+            for (auto i = 0; i < SafeCast(game.Party.Count()); i++)
+            {
+                auto point = Point(BloodSwordRogue::HalfTile + i * (location.Map.TileSize + BloodSwordRogue::Pad), graphics.Height - location.Map.TileSize - BloodSwordRogue::HalfTile);
+
+                scene.VerifyAndAdd(Scene::Element(Asset::Get(game.Party[i].Asset), point));
+
+                if (!Engine::IsAlive(game.Party[i]))
+                {
+                    scene.Add(Scene::Element(point.X, point.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Blur));
+                }
+            }
 
             Graphics::Scenery scenes = {scene};
 

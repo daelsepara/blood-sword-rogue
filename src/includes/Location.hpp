@@ -32,9 +32,9 @@ namespace BloodSwordRogue::Location
         {
             nlohmann::json data;
 
-            data["X"] = this->X;
+            data["x"] = this->X;
 
-            data["Y"] = this->Y;
+            data["y"] = this->Y;
 
             data["items"] = Items::Data(this->Items);
 

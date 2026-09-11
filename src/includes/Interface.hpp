@@ -2589,4 +2589,56 @@ namespace BloodSwordRogue::Interface
             }
         }
     }
+
+    // select character in party
+    int SelectCharacter(Graphics::Base &graphics, Graphics::Scenery &scenes, Party::Base &party, bool allow_dead = false)
+    {
+        auto character = -1;
+
+        if (!Engine::IsAlive(party))
+        {
+            return character;
+        }
+
+        Asset::List assets = {};
+
+        Strings captions = {};
+
+        if (Engine::Count(party) > 1)
+        {
+            for (auto i = 0; i < SafeCast(party.Count()); i++)
+            {
+                if (party[i].Asset != Asset::NONE)
+                {
+                    assets.push_back(party[i].Asset);
+                }
+                else
+                {
+                    assets.push_back(Asset::Map("CHARACTER"));
+                }
+
+                auto caption = party[i].Name;
+
+                if (!Engine::IsAlive(party[i]))
+                {
+                    caption += " (DEAD)";
+                }
+
+                captions.push_back(caption);
+            }
+
+            character = Interface::IconList(graphics, scenes, assets, captions);
+
+            if (character >= 0 && character < party.Count())
+            {
+                character = Engine::IsAlive(party[character]) ? character : (allow_dead ? character : -1);
+            }
+        }
+        else if (Engine::Count(party) == 1)
+        {
+            character = Engine::First(party);
+        }
+
+        return character;
+    }
 }
