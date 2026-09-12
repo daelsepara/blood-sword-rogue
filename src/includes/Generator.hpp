@@ -1063,7 +1063,7 @@ namespace BloodSwordRogue::Generate
     {
         if (enchanter.Rank <= 8)
         {
-            enchanter.AddItem(Item::Base("SWORD", Item::MapType("SWORD"), {Item::MapProperty("WEAPON"), Item::MapProperty("PRIMARY"), Item::MapProperty("EQUIPPED")}, Item::NONE, 1, 1, Asset::Map("ARCHERY")));
+            enchanter.AddItem(Item::Base("SWORD", Item::MapType("SWORD"), {Item::MapProperty("WEAPON"), Item::MapProperty("PRIMARY"), Item::MapProperty("EQUIPPED")}, Item::NONE, 1, 1, Asset::Map("SWORD")));
 
             enchanter.AddItem(Item::Base("SILVER ARMOUR", Item::MapType("SILVER ARMOUR"), {{Attribute::Type::ARMOUR, 2}}, {Item::MapProperty("ARMOUR"), Item::MapProperty("EQUIPPED")}, 1, 1, Asset::Map("SILVER ARMOUR")));
         }

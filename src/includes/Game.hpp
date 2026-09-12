@@ -782,7 +782,7 @@ namespace BloodSwordRogue::Game
                 {
                     if (actions[action] == Controls::MapType("VIEW"))
                     {
-                        Interface::ViewItem(graphics, scenes, items[item]);
+                        Interface::ViewItem(graphics, scenes, items[item], false);
                     }
                     else if (actions[action] == Controls::MapType("TAKE"))
                     {
@@ -800,6 +800,173 @@ namespace BloodSwordRogue::Game
                 break;
             }
         }
+    }
+
+    void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character)
+    {
+        Asset::List assets = {
+            Asset::Map("MAGNIFYING GLASS"),
+            Asset::Map("USE"),
+            Asset::Map("TRADE"),
+            Asset::Map("CANCEL")};
+
+        Controls::List actions = {
+            Controls::MapType("VIEW"),
+            Controls::MapType("USE"),
+            Controls::MapType("TRADE"),
+            Controls::MapType("DROP")};
+
+        Interface::Strings captions = {
+            "VIEW",
+            "USE",
+            "TRADE",
+            "DROP"};
+
+        Asset::List gear_assets = {
+            Asset::Map("MAGNIFYING GLASS"),
+            Asset::Map("GEAR"),
+            Asset::Map("TRADE"),
+            Asset::Map("CANCEL")};
+
+        Controls::List gear_actions = {
+            Controls::MapType("VIEW"),
+            Controls::MapType("EQUIP"),
+            Controls::MapType("TRADE"),
+            Controls::MapType("DROP")};
+
+        Interface::Strings gear_captions = {
+            "VIEW",
+            "EQUIP",
+            "TRADE",
+            "DROP"};
+
+        if (character >= 0 && character < game.Party.Count())
+        {
+            auto &items = game.Party[character].Items;
+
+            while (true && SafeCast(items.size()) > 0)
+            {
+                auto item = Interface::SelectItem(graphics, scenes, game.Party[character]);
+
+                if (item >= 0 && item < SafeCast(items.size()))
+                {
+                    auto action = -1;
+
+                    while (true)
+                    {
+                        if (items[item].HasProperty(Item::MapProperty("WEAPON")) || items[item].HasProperty(Item::MapProperty("ARMOUR")))
+                        {
+                            gear_assets[1] = items[item].HasProperty(Item::MapProperty("EQUIPPED")) ? Asset::Map("EQUIPPED") : Asset::Map("GEAR");
+
+                            gear_actions[1] = items[item].HasProperty(Item::MapProperty("EQUIPPED")) ? Controls::MapType("UNEQUIP") : Controls::MapType("EQUIP");
+
+                            gear_captions[1] = items[item].HasProperty(Item::MapProperty("EQUIPPED")) ? "UNEQUIP" : "EQUIP";
+
+                            action = Interface::IconList(graphics, scenes, gear_assets, gear_captions);
+                        }
+                        else
+                        {
+                            action = Interface::IconList(graphics, scenes, assets, captions);
+                        }
+
+                        if (action >= 0 && action < SafeCast(actions.size()))
+                        {
+                            if (actions[action] == Controls::MapType("VIEW"))
+                            {
+                                Interface::ViewItem(graphics, scenes, items[item], false);
+                            }
+                            else if (actions[action] == Controls::MapType("USE"))
+                            {
+                            }
+                            else if (actions[action] == Controls::MapType("EQUIP"))
+                            {
+                            }
+                            else if (actions[action] == Controls::MapType("UNEQUIP"))
+                            {
+                            }
+                            else if (actions[action] == Controls::MapType("TRADE"))
+                            {
+                            }
+                            else if (actions[action] == Controls::MapType("DROP"))
+                            {
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    Models::Update Menu(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, Point point)
+    {
+        Models::Update update = {false, false, false};
+
+        Asset::List assets = {
+            Asset::Map("ITEMS"),
+            Asset::Map("MAP"),
+            Asset::Map("EXIT")};
+
+        Controls::List actions = {
+            Controls::MapType("ITEMS"),
+            Controls::MapType("MAP"),
+            Controls::MapType("EXIT")};
+
+        Interface::Strings captions = {
+            "INVENTORY",
+            "VIEW MAP",
+            "QUIT GAME"};
+
+        while (true)
+        {
+            auto selected = Interface::IconList(graphics, scenes, assets, captions);
+
+            if (selected >= 0 && selected < SafeCast(actions.size()))
+            {
+                if (actions[selected] == Controls::MapType("ITEMS"))
+                {
+                    while (true)
+                    {
+                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party);
+
+                        if (character >= 0 && character < game.Party.Count())
+                        {
+                            Game::ViewItems(graphics, scenes, game, location, character);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                else if (actions[selected] == Controls::MapType("MAP"))
+                {
+                    Interface::ShowMap(graphics, scenes, location.Map, true);
+                }
+                else if (actions[selected] == Controls::MapType("EXIT"))
+                {
+                    if (Interface::Confirm(graphics, scenes, "ARE YOU SURE?", Color::Background, Color::Highlight, BloodSwordRogue::Border, Color::Active, true))
+                    {
+                        update.Quit = true;
+
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return update;
     }
 
     // handle tile interaction (items/enemies)
@@ -1034,6 +1201,8 @@ namespace BloodSwordRogue::Game
 
                     if (input.Type == Controls::MapType("MENU"))
                     {
+                        update = Game::Menu(graphics, scenes, game, location, point);
+
                         done = update.Quit;
                     }
                     else if (input.Type == Controls::MapType("MAP"))

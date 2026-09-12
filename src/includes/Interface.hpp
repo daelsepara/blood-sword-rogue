@@ -185,43 +185,6 @@ namespace BloodSwordRogue::Interface
 
         // initialize character class to asset mapping
         Asset::MapTypes(Interface::ClassAssets, Interface::ClassAssetsNames);
-
-        Interface::AttributeAssets.clear();
-
-        Interface::AttributeAssets = {
-            {Attribute::Type::FIGHTING_PROWESS, Asset::Map("FIGHT")},
-            {Attribute::Type::AWARENESS, Asset::Map("BRAIN")},
-            {Attribute::Type::PSYCHIC_ABILITY, Asset::Map("CALL TO MIND")},
-            {Attribute::Type::ENDURANCE, Asset::Map("ENDURANCE")},
-            {Attribute::Type::DAMAGE, Asset::Map("BLOOD")},
-            {Attribute::Type::ARMOUR, Asset::Map("LAYERED ARMOUR")}};
-
-        Interface::PropertyAssets.clear();
-
-        Interface::PropertyAssets = {
-            {Item::MapProperty("EQUIPPED"), Asset::Map("EQUIPPED")},
-            {Item::MapProperty("WEAPON"), Asset::Map("WEAPON")},
-            {Item::MapProperty("ARMOUR"), Asset::Map("ARMOUR")},
-            {Item::MapProperty("ACCESSORY"), Asset::Map("ACCESSORY")},
-            {Item::MapProperty("MELEE"), Asset::Map("MELEE")},
-            {Item::MapProperty("RANGED"), Asset::Map("RANGED")},
-            {Item::MapProperty("RUSTY"), Asset::Map("RUSTY")},
-            {Item::MapProperty("BROKEN"), Asset::Map("BROKEN")},
-            {Item::MapProperty("POISONED"), Asset::Map("POISONED")},
-            {Item::MapProperty("CURSED"), Asset::Map("CURSED")},
-            {Item::MapProperty("RESURRECTION"), Asset::Map("RESURRECTION")},
-            {Item::MapProperty("EDIBLE"), Asset::Map("EDIBLE")},
-            {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
-            {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
-            {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")},
-            {Item::MapProperty("CANNOT DROP"), Asset::Map("CANNOT DROP")},
-            {Item::MapProperty("CANNOT TRADE"), Asset::Map("CANNOT TRADE")},
-            {Item::MapProperty("CONTAINER"), Asset::Map("CONTAINER")},
-            {Item::MapProperty("READABLE"), Asset::Map("READABLE")},
-            {Item::MapProperty("LIQUID"), Asset::Map("LIQUID")},
-            {Item::MapProperty("ALL RANGES"), Asset::Map("ALL RANGES")},
-            {Item::MapProperty("REQUIRES TARGET"), Asset::Map("REQUIRES TARGET")},
-            {Item::MapProperty("COMBAT"), Asset::Map("COMBAT")}};
     }
 
     // switch texture and reload all textures
@@ -292,6 +255,45 @@ namespace BloodSwordRogue::Interface
 
         // load item properties
         Item::Load(Interface::Settings["item-properties"], zip_file);
+
+        // attribute-asset mappings
+        Interface::AttributeAssets.clear();
+
+        Interface::AttributeAssets = {
+            {Attribute::Type::FIGHTING_PROWESS, Asset::Map("FIGHT")},
+            {Attribute::Type::AWARENESS, Asset::Map("BRAIN")},
+            {Attribute::Type::PSYCHIC_ABILITY, Asset::Map("CALL TO MIND")},
+            {Attribute::Type::ENDURANCE, Asset::Map("ENDURANCE")},
+            {Attribute::Type::DAMAGE, Asset::Map("BLOOD")},
+            {Attribute::Type::ARMOUR, Asset::Map("LAYERED ARMOUR")}};
+
+        // item property-asset mappings
+        Interface::PropertyAssets.clear();
+
+        Interface::PropertyAssets = {
+            {Item::MapProperty("EQUIPPED"), Asset::Map("EQUIPPED")},
+            {Item::MapProperty("WEAPON"), Asset::Map("WEAPON")},
+            {Item::MapProperty("ARMOUR"), Asset::Map("ARMOUR")},
+            {Item::MapProperty("ACCESSORY"), Asset::Map("ACCESSORY")},
+            {Item::MapProperty("MELEE"), Asset::Map("MELEE")},
+            {Item::MapProperty("RANGED"), Asset::Map("RANGED")},
+            {Item::MapProperty("RUSTY"), Asset::Map("RUSTY")},
+            {Item::MapProperty("BROKEN"), Asset::Map("BROKEN")},
+            {Item::MapProperty("POISONED"), Asset::Map("POISONED")},
+            {Item::MapProperty("CURSED"), Asset::Map("CURSED")},
+            {Item::MapProperty("RESURRECTION"), Asset::Map("RESURRECTION")},
+            {Item::MapProperty("EDIBLE"), Asset::Map("EDIBLE")},
+            {Item::MapProperty("PRIMARY"), Asset::Map("PRIMARY")},
+            {Item::MapProperty("SECONDARY"), Asset::Map("SECONDARY")},
+            {Item::MapProperty("INVISIBLE"), Asset::Map("INVISIBLE")},
+            {Item::MapProperty("CANNOT DROP"), Asset::Map("CANNOT DROP")},
+            {Item::MapProperty("CANNOT TRADE"), Asset::Map("CANNOT TRADE")},
+            {Item::MapProperty("CONTAINER"), Asset::Map("CONTAINER")},
+            {Item::MapProperty("READABLE"), Asset::Map("READABLE")},
+            {Item::MapProperty("LIQUID"), Asset::Map("LIQUID")},
+            {Item::MapProperty("ALL RANGES"), Asset::Map("ALL RANGES")},
+            {Item::MapProperty("REQUIRES TARGET"), Asset::Map("REQUIRES TARGET")},
+            {Item::MapProperty("COMBAT"), Asset::Map("COMBAT")}};
 
         // load skills
         Skills::Load(Interface::Settings["skills"], zip_file);
@@ -2461,7 +2463,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // item details
-    void ViewItem(Graphics::Base &graphics, Graphics::Scenery scenes, Item::Base &item)
+    void ViewItem(Graphics::Base &graphics, Graphics::Scenery scenes, Item::Base &item, bool show_invisible = true)
     {
         if (item.Asset == Asset::NONE || item.Type == Item::NONE)
         {
@@ -2524,7 +2526,7 @@ namespace BloodSwordRogue::Interface
         {
             auto property = properties.first;
 
-            if (item.HasProperty(property))
+            if (item.HasProperty(property) && (!BloodSwordRogue::In(Item::Invisible, property) || show_invisible))
             {
                 assets.push_back(properties.second);
 
