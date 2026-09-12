@@ -684,6 +684,73 @@ namespace BloodSwordRogue::Interface
         return Interface::IconList(graphics, scenes, assets, captions_text);
     }
 
+    // render icon grid
+    Scene::Base IconGrid(Graphics::Base &graphics, Asset::List &assets, int width, int height, Point box, Uint32 border_color, int offset)
+    {
+        auto scene = Scene::Base();
+
+        if (!assets.empty())
+        {
+            // number of icon columns
+            auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+            // number of icon rows
+            auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+            auto items = SafeCast(assets.size());
+
+            // icon grid
+            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, border_color, BloodSwordRogue::Border));
+
+            auto page_count = 0;
+
+            for (auto y = 0; y < limit_y; y++)
+            {
+                for (auto x = 0; x < limit_x; x++)
+                {
+                    auto id = (y * limit_x + x);
+
+                    auto index = offset + id;
+
+                    if (index >= 0 && index < items)
+                    {
+                        auto point = Point(box.X + BloodSwordRogue::HalfTile + x * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile), box.Y + BloodSwordRogue::HalfTile + y * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+                        scene.VerifyAndAdd(Scene::Element(Asset::Get(assets[index]), point));
+
+                        page_count++;
+                    }
+                }
+            }
+
+            auto has_prev = offset > 0;
+
+            auto has_next = items > (offset + page_count);
+
+            // check if there are previous items
+            if (has_prev)
+            {
+                auto prev = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * (has_next ? 3 : 2) + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
+
+                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("LEFT")), prev));
+            }
+
+            // check if there are more items
+            if (has_next)
+            {
+                auto next = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * 2 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
+
+                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("RIGHT")), next));
+            }
+
+            auto back = Point(box.X + width - BloodSwordRogue::TileSize + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
+
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
+        }
+
+        return scene;
+    }
+
     // select icon from a grid
     int IconGrid(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, int width, int height, Strings captions_text = {})
     {
@@ -725,10 +792,7 @@ namespace BloodSwordRogue::Interface
 
         while (!done)
         {
-            auto scene = Scene::Base();
-
-            // icon grid
-            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+            auto scene = Interface::IconGrid(graphics, assets, width, height, box, Color::Active, offset);
 
             auto page_count = 0;
 
@@ -743,8 +807,6 @@ namespace BloodSwordRogue::Interface
                     if (index >= 0 && index < items)
                     {
                         auto point = Point(box.X + BloodSwordRogue::HalfTile + x * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile), box.Y + BloodSwordRogue::HalfTile + y * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
-
-                        scene.VerifyAndAdd(Scene::Element(Asset::Get(assets[index]), point));
 
                         auto left = x > 0 ? id - 1 : id;
 
@@ -818,8 +880,6 @@ namespace BloodSwordRogue::Interface
 
                 auto prev = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * (has_next ? 3 : 2) + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
-                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("LEFT")), prev));
-
                 scene.Add(Controls::Base(Controls::MapType("LEFT"), prev_id, prev_id, prev_id + 1, prev_id - controls, prev_id, prev.X, prev.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
             }
 
@@ -832,8 +892,6 @@ namespace BloodSwordRogue::Interface
 
                 auto next = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * 2 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
-                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("RIGHT")), next));
-
                 scene.Add(Controls::Base(Controls::MapType("RIGHT"), next_id, has_prev ? next_id - 1 : next_id, next_id + 1, next_id - controls, next_id, next.X, next.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
             }
 
@@ -842,8 +900,6 @@ namespace BloodSwordRogue::Interface
             auto back_id = scene.Controls.size();
 
             auto back = Point(box.X + width - BloodSwordRogue::TileSize + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
-
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
 
             scene.Add(Controls::Base(Controls::MapType("BACK"), back_id, has_next || has_prev ? back_id - 1 : back_id, back_id, back_id - controls, back_id, back.X, back.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
