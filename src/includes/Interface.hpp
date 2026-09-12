@@ -113,6 +113,8 @@ namespace BloodSwordRogue::Interface
 
     Asset::Lookup<Item::Property> PropertyAssets = {};
 
+    BloodSwordRogue::UnorderedMap<Item::Type, Skills::Type> ItemSkills = {};
+
     void InitializeDice()
     {
         // initialize dice asset ids
@@ -300,6 +302,13 @@ namespace BloodSwordRogue::Interface
 
         // load item defaults
         Items::Load(Interface::Settings["items"], zip_file);
+
+        Interface::ItemSkills.clear();
+
+        Interface::ItemSkills = {
+            {Item::MapType("BOW"), Skills::Map("ARCHERY")},
+            {Item::MapType("MAGIC BOW"), Skills::Map("ARCHERY")},
+            {Item::MapType("LIMITED SHURIKEN"), Skills::Map("SHURIKEN")}};
     }
 
     void LoadSettings(Graphics::Base &graphics, std::string settings_file)

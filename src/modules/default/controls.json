@@ -154,7 +154,9 @@
         "ARMOUR",
         "LIMIT",
         "ASSET",
-        "TYPE"
+        "TYPE",
+        "PRIMARY",
+        "SECONDARY"
     ],
     "controls-spells": [
         "VOLCANO SPRAY",

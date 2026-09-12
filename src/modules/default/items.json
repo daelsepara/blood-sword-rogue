@@ -3,6 +3,10 @@
         {
             "name": "SHURIKEN",
             "asset": "SHURIKEN",
+            "properties": [
+                "WEAPON",
+                "RANGED"
+            ],
             "quantity": 7,
             "encumbrance": 1,
             "type": "SHURIKEN"

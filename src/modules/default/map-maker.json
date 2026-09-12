@@ -907,7 +907,9 @@
                     "properties": [
                         "CONTAINER",
                         "CANNOT DROP",
-                        "CANNOT TRADE"
+                        "CANNOT TRADE",
+                        "WEAPON",
+                        "RANGED"
                     ],
                     "quantity": 6,
                     "encumbrance": 1,

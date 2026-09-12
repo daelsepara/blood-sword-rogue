@@ -802,6 +802,111 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    // equip item
+    void EquipItem(Graphics::Base &graphics, Graphics::Scenery &scenes, Game::Base &game, int character, int item)
+    {
+        Asset::List melee_assets = {
+            Asset::Map("PRIMARY"),
+            Asset::Map("SECONDARY")};
+
+        Item::Properties melee_types = {
+            Item::MapProperty("PRIMARY"),
+            Item::MapProperty("SECONDARY")};
+
+        Interface::Strings melee_captions = {
+            "PRIMARY",
+            "SECONDARY"};
+
+        auto &items = game.Party[character].Items;
+
+        if (item < 0 || item >= SafeCast(items.size()))
+        {
+            return;
+        }
+
+        auto can_equip = true;
+
+        for (auto &requirement : Interface::ItemSkills)
+        {
+            if (items[item].Type == requirement.first && !game.Party[character].HasSkill(requirement.second))
+            {
+                can_equip = false;
+
+                break;
+            }
+        }
+
+        if (!can_equip)
+        {
+            std::string cannot_equip = std::string("CANNOT EQUIP ") + items[item].Name;
+
+            Interface::MessageBox(graphics, scenes, cannot_equip, Color::Highlight);
+
+            return;
+        }
+
+        if (items[item].HasProperty(Item::MapProperty("WEAPON")))
+        {
+            auto weapon_type = Item::MapProperty("PRIMARY");
+
+            if (game.Party[character].HasSkill(Skills::Map("AMBIDEXTERITY")) && !items[item].HasProperty(Item::MapProperty("RANGED")))
+            {
+                auto weapon = Interface::IconList(graphics, scenes, melee_assets, melee_captions);
+
+                if (weapon >= 0 && weapon < SafeCast(melee_types.size()))
+                {
+                    weapon_type = melee_types[weapon];
+                }
+                else
+                {
+                    weapon_type = Item::NONE;
+                }
+            }
+            else if (items[item].HasProperty(Item::MapProperty("RANGED")))
+            {
+                weapon_type = Item::MapProperty("RANGED");
+            }
+
+            if (weapon_type != Item::NONE)
+            {
+                auto equipped = game.Party[character].EquippedWeapon(weapon_type);
+
+                if (equipped != Item::NONE && equipped >= 0 && equipped < SafeCast(items.size()))
+                {
+                    items[equipped].RemoveProperty(Item::MapProperty("EQUIPPED"));
+
+                    if (weapon_type != Item::MapProperty("RANGED"))
+                    {
+                        items[equipped].RemoveProperty(weapon_type);
+                    }
+                }
+
+                items[item].AddProperty(Item::MapProperty("EQUIPPED"));
+
+                if (weapon_type != Item::MapProperty("RANGED"))
+                {
+                    items[equipped].AddProperty(weapon_type);
+                }
+            }
+        }
+        else if (items[item].HasProperty(Item::MapProperty("ARMOUR")))
+        {
+            auto equipped = game.Party[character].EquippedArmour();
+
+            if (equipped != Item::NONE && equipped >= 0 && equipped < SafeCast(items.size()))
+            {
+                items[equipped].RemoveProperty(Item::MapProperty("EQUIPPED"));
+            }
+
+            items[item].AddProperty(Item::MapProperty("EQUIPPED"));
+        }
+        else if (items[item].HasProperty(Item::MapProperty("ACCESSORY")))
+        {
+            items[item].AddProperty(Item::MapProperty("EQUIPPED"));
+        }
+    }
+
+    // view items
     void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character)
     {
         Asset::List assets = {
@@ -880,9 +985,20 @@ namespace BloodSwordRogue::Game
                             }
                             else if (actions[action] == Controls::MapType("EQUIP"))
                             {
+                                Game::EquipItem(graphics, scenes, game, character, item);
                             }
                             else if (actions[action] == Controls::MapType("UNEQUIP"))
                             {
+                                items[item].RemoveProperty(Item::MapProperty("EQUIPPED"));
+
+                                if (items[item].HasProperty(Item::MapProperty("PRIMARY")))
+                                {
+                                    items[item].RemoveProperty(Item::MapProperty("PRIMARY"));
+                                }
+                                else if (items[item].HasProperty(Item::MapProperty("SECONDARY")))
+                                {
+                                    items[item].RemoveProperty(Item::MapProperty("SECONDARY"));
+                                }
                             }
                             else if (actions[action] == Controls::MapType("TRADE"))
                             {
