@@ -759,6 +759,7 @@ namespace BloodSwordRogue::Game
         return result;
     }
 
+    // check if MONEY or AMMO (ARROWS) are being traded
     bool CheckItemQuantity(Items::Inventory &items, int item)
     {
         auto result = false;
