@@ -383,6 +383,11 @@ namespace BloodSwordRogue::Item
         // remove item property, e.g. remove 'EQUIPPED' property
         bool RemoveProperty(Item::Property property)
         {
+            if (property == Item::NONE)
+            {
+                return false;
+            }
+            
             auto result = this->HasProperty(property);
 
             if (result)

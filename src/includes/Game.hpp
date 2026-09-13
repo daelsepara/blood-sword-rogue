@@ -871,7 +871,7 @@ namespace BloodSwordRogue::Game
             {
                 auto equipped = game.Party[character].EquippedWeapon(weapon_type);
 
-                if (equipped != Item::NONE && equipped >= 0 && equipped < SafeCast(items.size()))
+                if (equipped >= 0 && equipped < SafeCast(items.size()))
                 {
                     items[equipped].RemoveProperty(Item::MapProperty("EQUIPPED"));
 
@@ -885,7 +885,7 @@ namespace BloodSwordRogue::Game
 
                 if (weapon_type != Item::MapProperty("RANGED"))
                 {
-                    items[equipped].AddProperty(weapon_type);
+                    items[item].AddProperty(weapon_type);
                 }
             }
         }
@@ -893,7 +893,7 @@ namespace BloodSwordRogue::Game
         {
             auto equipped = game.Party[character].EquippedArmour();
 
-            if (equipped != Item::NONE && equipped >= 0 && equipped < SafeCast(items.size()))
+            if (equipped >= 0 && equipped < SafeCast(items.size()))
             {
                 items[equipped].RemoveProperty(Item::MapProperty("EQUIPPED"));
             }
@@ -903,6 +903,21 @@ namespace BloodSwordRogue::Game
         else if (items[item].HasProperty(Item::MapProperty("ACCESSORY")))
         {
             items[item].AddProperty(Item::MapProperty("EQUIPPED"));
+        }
+    }
+
+    // unequip item
+    void UnequipItem(Items::Inventory &items, int item)
+    {
+        items[item].RemoveProperty(Item::MapProperty("EQUIPPED"));
+
+        if (items[item].HasProperty(Item::MapProperty("PRIMARY")))
+        {
+            items[item].RemoveProperty(Item::MapProperty("PRIMARY"));
+        }
+        else if (items[item].HasProperty(Item::MapProperty("SECONDARY")))
+        {
+            items[item].RemoveProperty(Item::MapProperty("SECONDARY"));
         }
     }
 
@@ -957,15 +972,23 @@ namespace BloodSwordRogue::Game
                 {
                     auto action = -1;
 
+                    auto action_limit = SafeCast(actions.size());
+
+                    auto gear = false;
+
                     while (true)
                     {
-                        if (items[item].HasProperty(Item::MapProperty("WEAPON")) || items[item].HasProperty(Item::MapProperty("ARMOUR")))
+                        if (items[item].HasProperty(Item::MapProperty("WEAPON")) || items[item].HasProperty(Item::MapProperty("ARMOUR")) || items[item].HasProperty(Item::MapProperty("ACCESSORY")))
                         {
+                            gear = true;
+
                             gear_assets[1] = items[item].HasProperty(Item::MapProperty("EQUIPPED")) ? Asset::Map("EQUIPPED") : Asset::Map("GEAR");
 
                             gear_actions[1] = items[item].HasProperty(Item::MapProperty("EQUIPPED")) ? Controls::MapType("UNEQUIP") : Controls::MapType("EQUIP");
 
                             gear_captions[1] = items[item].HasProperty(Item::MapProperty("EQUIPPED")) ? "UNEQUIP" : "EQUIP";
+
+                            action_limit = SafeCast(gear_actions.size());
 
                             action = Interface::IconList(graphics, scenes, gear_assets, gear_captions);
                         }
@@ -974,36 +997,27 @@ namespace BloodSwordRogue::Game
                             action = Interface::IconList(graphics, scenes, assets, captions);
                         }
 
-                        if (action >= 0 && action < SafeCast(actions.size()))
+                        if (action >= 0 && action < action_limit)
                         {
-                            if (actions[action] == Controls::MapType("VIEW"))
+                            if ((!gear && actions[action] == Controls::MapType("VIEW")) || (gear && gear_actions[action] == Controls::MapType("VIEW")))
                             {
                                 Interface::ViewItem(graphics, scenes, items[item], false);
                             }
-                            else if (actions[action] == Controls::MapType("USE"))
+                            else if (!gear && actions[action] == Controls::MapType("USE"))
                             {
                             }
-                            else if (actions[action] == Controls::MapType("EQUIP"))
+                            else if (gear && gear_actions[action] == Controls::MapType("EQUIP"))
                             {
                                 Game::EquipItem(graphics, scenes, game, character, item);
                             }
-                            else if (actions[action] == Controls::MapType("UNEQUIP"))
+                            else if (gear && gear_actions[action] == Controls::MapType("UNEQUIP"))
                             {
-                                items[item].RemoveProperty(Item::MapProperty("EQUIPPED"));
-
-                                if (items[item].HasProperty(Item::MapProperty("PRIMARY")))
-                                {
-                                    items[item].RemoveProperty(Item::MapProperty("PRIMARY"));
-                                }
-                                else if (items[item].HasProperty(Item::MapProperty("SECONDARY")))
-                                {
-                                    items[item].RemoveProperty(Item::MapProperty("SECONDARY"));
-                                }
+                                Game::UnequipItem(items, item);
                             }
-                            else if (actions[action] == Controls::MapType("TRADE"))
+                            else if ((!gear && actions[action] == Controls::MapType("TRADE")) || (gear && gear_actions[action] == Controls::MapType("TRADE")))
                             {
                             }
-                            else if (actions[action] == Controls::MapType("DROP"))
+                            else if ((!gear && actions[action] == Controls::MapType("DROP")) || (gear && gear_actions[action] == Controls::MapType("DROP")))
                             {
                             }
                         }
