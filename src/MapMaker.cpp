@@ -446,7 +446,7 @@ namespace BloodSwordRogue::MapMaker
         {
             while (true)
             {
-                auto selected = Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, captions);
+                auto selected = Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, captions, std::string("ADD SKILL"));
 
                 if (selected >= 0 && selected < SafeCast(skills.size()))
                 {
@@ -511,7 +511,7 @@ namespace BloodSwordRogue::MapMaker
 
         while (true && character.TotalEncumbrance() < character.EncumbranceLimit)
         {
-            auto selected = Interface::IconGrid(graphics, scenes, MapMaker::ItemAssets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, MapMaker::ItemCaptions);
+            auto selected = Interface::IconGrid(graphics, scenes, MapMaker::ItemAssets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, MapMaker::ItemCaptions, std::string("ADD ITEM"));
 
             if (selected >= 0 && selected < SafeCast(MapMaker::ItemTypes.size()))
             {
@@ -576,7 +576,7 @@ namespace BloodSwordRogue::MapMaker
 
             if (action.Action == Controls::MapType("ADD"))
             {
-                auto selected = Interface::IconGrid(graphics, scenes, attribute_assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, attribute_captions);
+                auto selected = Interface::IconGrid(graphics, scenes, attribute_assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, attribute_captions, std::string("ADD ITEM ATTRIBUTE"));
 
                 if (selected >= 0 && selected < SafeCast(item_attributes.size()))
                 {
@@ -677,7 +677,7 @@ namespace BloodSwordRogue::MapMaker
 
             if (action.Action == Controls::MapType("ADD"))
             {
-                auto property = Interface::IconGrid(graphics, scenes, property_assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, property_captions);
+                auto property = Interface::IconGrid(graphics, scenes, property_assets, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, property_captions, std::string("ADD ITEM PROPERTY"));
 
                 if (property >= 0 && property < SafeCast(item_properties.size()))
                 {
@@ -1067,7 +1067,7 @@ namespace BloodSwordRogue::MapMaker
 
         while (!done)
         {
-            auto selected = Interface::IconGrid(graphics, scenes, object_assets, BloodSwordRogue::TileSize * 8, BloodSwordRogue::TileSize * 6, object_captions);
+            auto selected = Interface::IconGrid(graphics, scenes, object_assets, BloodSwordRogue::TileSize * 8, BloodSwordRogue::TileSize * 6, object_captions, std::string("EDIT ITEM"));
 
             if (selected >= 0 && selected < SafeCast(object_controls.size()))
             {
@@ -1088,7 +1088,7 @@ namespace BloodSwordRogue::MapMaker
                 }
                 else if (object_controls[selected] == Controls::MapType("ASSET"))
                 {
-                    auto asset = Interface::IconGrid(graphics, scenes, MapMaker::ItemImages, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5);
+                    auto asset = Interface::IconGrid(graphics, scenes, MapMaker::ItemImages, BloodSwordRogue::TileSize * 12, BloodSwordRogue::TileSize * 5, {}, std::string("SELECT ASSET"));
 
                     if (asset >= 0 && asset < SafeCast(MapMaker::ItemImages.size()))
                     {
@@ -1585,7 +1585,7 @@ namespace BloodSwordRogue::MapMaker
         {
             while (true)
             {
-                auto selected = Interface::IconGrid(graphics, scene, MapMaker::RosterAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::HalfTile, MapMaker::RosterCaptions);
+                auto selected = Interface::IconGrid(graphics, scene, MapMaker::RosterAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::HalfTile, MapMaker::RosterCaptions, std::string("ADD ENEMY"));
 
                 if (selected >= 0 && selected < SafeCast(MapMaker::RosterTargets.size()))
                 {
@@ -1667,7 +1667,7 @@ namespace BloodSwordRogue::MapMaker
         {
             while (true)
             {
-                auto selected = Interface::IconGrid(graphics, scene, MapMaker::ItemAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::HalfTile, MapMaker::ItemCaptions);
+                auto selected = Interface::IconGrid(graphics, scene, MapMaker::ItemAssets, (map.ViewX + 1) * map.TileSize, (map.ViewY + 1) * map.TileSize + BloodSwordRogue::HalfTile, MapMaker::ItemCaptions, std::string("ADD ITEM"));
 
                 if (selected >= 0 && selected < SafeCast(MapMaker::ItemTypes.size()))
                 {
