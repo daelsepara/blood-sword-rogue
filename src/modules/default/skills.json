@@ -22,7 +22,9 @@
         "BROKEN WEAPON",
         "POISONED BITE",
         "RETRIBUTIVE FIRE",
-        "FORGET SPELL"
+        "FORGET SPELL",
+        "AMBIDEXTERITY",
+        "UNARMED MARTIAL ARTS"
     ],
     "battle-skills": [
         "ARCHERY",
@@ -38,7 +40,9 @@
         "RUSTY WEAPON",
         "BROKEN WEAPON",
         "POISONED BITE",
-        "RETRIBUTIVE FIRE"
+        "RETRIBUTIVE FIRE",
+        "UNARMED MARTIAL ARTS",
+        "AMBIDEXTERITY"
     ],
     "ranged-attacks": [
         "ARCHERY",
@@ -73,7 +77,9 @@
         "LEVITATION": "LEVITATION",
         "EXORCISM": "EXORCISM",
         "CALL TO MIND": "CALL TO MIND",
-        "CAST SPELL": "CAST SPELL"
+        "CAST SPELL": "CAST SPELL",
+        "AMBIDEXTERITY": "WARRIOR",
+        "UNARMED MARTIAL ARTS": "UNARMED COMBAT"
     },
     "all-skills": [
         "ARCHERY",
