@@ -692,9 +692,101 @@ namespace BloodSwordRogue::Game
         return plural;
     }
 
-    // character takes item from inventory
-    void TakeItem(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Character::Base &character, Items::Inventory &items, int item)
+    bool TransferQuantity(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Character::Base &character, Items::Inventory &items, int item, std::string predicate = std::string())
     {
+        auto result = false;
+
+        auto container = Item::Container(items[item].Contains);
+
+        // check if item needs storage
+        if (container != Item::NONE)
+        {
+            if (character.HasItemType(container))
+            {
+                std::string asset = std::string();
+
+                for (auto i = 0; i < SafeCast(Interface::ItemsWithQuantities.size()); i++)
+                {
+                    if (Item::TypeMapping[items[item].Type] == Interface::ItemsWithQuantities[i])
+                    {
+                        asset = Interface::ItemsAssets[i];
+
+                        break;
+                    }
+                }
+
+                if (!asset.empty())
+                {
+                    auto quantity = Interface::SetLargeValue(graphics, scenes, Interface::Numbers, asset, items[item].Quantity, 0, items[item].Quantity);
+
+                    if (quantity > 0)
+                    {
+                        // add to quantity
+                        auto added = character.Add(items[item].Contains, quantity);
+
+                        if (added)
+                        {
+                            std::string plural = std::string(" ") + Game::GetPlural(items[item].Type);
+
+                            std::string taken = std::to_string(items[item].Quantity) + plural + std::string(" ") + predicate;
+
+                            Interface::MessageBox(graphics, scenes, taken, Color::Active);
+
+                            items[item].Quantity -= quantity;
+
+                            result = true;
+                        }
+                        else
+                        {
+                            std::string plural = std::string(" ") + Game::GetPlural(items[item].Contains);
+
+                            std::string cannot = std::string("CANNOT TRANSFER THE ") + std::to_string(quantity) + plural + std::string("!");
+
+                            Interface::MessageBox(graphics, scenes, cannot, Color::Highlight);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // missing container
+                std::string missing = std::string("NO ") + Item::TypeMapping[container] + std::string(" TO STORE THE ") + Game::GetPlural(items[item].Contains) + "!";
+
+                Interface::MessageBox(graphics, scenes, missing, Color::Highlight);
+            }
+        }
+
+        return result;
+    }
+
+    bool CheckItemQuantity(Items::Inventory &items, int item)
+    {
+        auto result = false;
+
+        if (!items[item].HasProperty(Item::MapProperty("CONTAINER")))
+        {
+            return result;
+        }
+
+        // item - container
+        for (auto item_storage : Item::StorageRequirements)
+        {
+            if (items[item].Type == item_storage.second && items[item].Contains == item_storage.first)
+            {
+                result = true;
+
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    // transfer item from one inventory into another character's
+    bool TransferItem(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Character::Base &character, Items::Inventory &items, int item, std::string predicate = std::string())
+    {
+        auto result = false;
+
         if (item >= 0 && item < SafeCast(items.size()))
         {
             if (character.TotalEncumbrance() + items[item].Encumbrance > character.EncumbranceLimit)
@@ -724,6 +816,8 @@ namespace BloodSwordRogue::Game
                             Interface::MessageBox(graphics, scenes, taken, Color::Active);
 
                             items.erase(items.begin() + item);
+
+                            result = true;
                         }
                         else
                         {
@@ -743,16 +837,27 @@ namespace BloodSwordRogue::Game
                 else
                 {
                     // take item
-                    std::string taken = items[item].Name + std::string(" TAKEN");
+                    std::string taken = items[item].Name + (predicate.empty() ? std::string(" TAKEN") : std::string(" ") + predicate);
 
                     Interface::MessageBox(graphics, scenes, taken, Color::Active);
+
+                    // if it was equipped, remove those properties
+                    items[item].RemoveProperty(Item::MapProperty("EQUIPPED"));
+
+                    items[item].RemoveProperty(Item::MapProperty("PRIMARY"));
+
+                    items[item].RemoveProperty(Item::MapProperty("SECONDARY"));
 
                     character.Items.push_back(items[item]);
 
                     items.erase(items.begin() + item);
+
+                    result = true;
                 }
             }
         }
+
+        return result;
     }
 
     // view items
@@ -790,7 +895,7 @@ namespace BloodSwordRogue::Game
 
                         if (character >= 0 && character < game.Party.Count() && Engine::IsAlive(game.Party[character]))
                         {
-                            Game::TakeItem(graphics, scenes, game, game.Party[character], items, item);
+                            Game::TransferItem(graphics, scenes, game, game.Party[character], items, item, "TAKEN");
                         }
                     }
                 }
@@ -942,7 +1047,7 @@ namespace BloodSwordRogue::Game
             Controls::MapType("VIEW"),
             Controls::MapType("TRADE")};
 
-        Interface::Strings captions = {
+        Interface::Strings trade_captions = {
             "VIEW",
             "TRADE"};
 
@@ -1139,7 +1244,85 @@ namespace BloodSwordRogue::Game
                 {
                     selected = offset + input.Current;
 
-                    done = true;
+                    if (trader == 0)
+                    {
+                        trade_captions[1] = std::string("SEND TO ") + game.Party[right].Name;
+
+                        trade_assets[1] = Asset::Map("RIGHT");
+                    }
+                    else
+                    {
+                        trade_captions[1] = std::string("SEND TO ") + game.Party[left].Name;
+
+                        trade_assets[1] = Asset::Map("LEFT");
+                    }
+
+                    auto action = Interface::IconList(graphics, scenery, trade_assets, trade_captions);
+
+                    if (action >= 0 && action < SafeCast(trade_actions.size()))
+                    {
+                        if (trade_actions[action] == Controls::MapType("VIEW"))
+                        {
+                            if (trader == 0 && selected >= 0 && selected < SafeCast(game.Party[left].Items.size()))
+                            {
+                                Interface::ViewItem(graphics, scenery, game.Party[left].Items[selected], false);
+                            }
+                            else if (trader == 1 && selected >= 0 && selected < SafeCast(game.Party[right].Items.size()))
+                            {
+                                Interface::ViewItem(graphics, scenery, game.Party[right].Items[selected], false);
+                            }
+                        }
+                        else if (trade_actions[action] == Controls::MapType("TRADE"))
+                        {
+                            auto result = false;
+
+                            if (trader == 0 && selected >= 0 && selected < SafeCast(game.Party[left].Items.size()))
+                            {
+                                if (Game::CheckItemQuantity(game.Party[left].Items, selected))
+                                {
+                                    result = Game::TransferQuantity(graphics, scenery, game, game.Party[right], game.Party[left].Items, selected, "TRANSFERRED");
+                                }
+                                else if (game.Party[left].Items[selected].HasProperty(Item::MapProperty("CANNOT TRADE")))
+                                {
+                                    std::string cannot = std::string("CANNOT TRADE THE ") + game.Party[left].Items[selected].Name + std::string("!");
+
+                                    Interface::MessageBox(graphics, scenery, cannot, Color::Highlight);
+                                }
+                                else
+                                {
+                                    auto predicate = std::string("TRANSFERRED");
+
+                                    result = Game::TransferItem(graphics, scenery, game, game.Party[right], game.Party[left].Items, selected, predicate);
+                                }
+                            }
+                            else if (trader == 1 && selected >= 0 && selected < SafeCast(game.Party[right].Items.size()))
+                            {
+                                if (Game::CheckItemQuantity(game.Party[right].Items, selected))
+                                {
+                                    result = Game::TransferQuantity(graphics, scenery, game, game.Party[left], game.Party[right].Items, selected, "TRANSFERRED");
+                                }
+                                else if (game.Party[right].Items[selected].HasProperty(Item::MapProperty("CANNOT TRADE")))
+                                {
+                                    std::string cannot = std::string("CANNOT TRADE THE ") + game.Party[right].Items[selected].Name + std::string("!");
+
+                                    Interface::MessageBox(graphics, scenery, cannot, Color::Highlight);
+                                }
+                                else
+                                {
+                                    auto predicate = std::string("TRANSFERRED");
+
+                                    result = Game::TransferItem(graphics, scenery, game, game.Party[left], game.Party[right].Items, selected, predicate);
+                                }
+                            }
+
+                            if (result)
+                            {
+                                offset_left = 0;
+
+                                offset_right = 0;
+                            }
+                        }
+                    }
                 }
 
                 input.Current = -1;
@@ -1315,6 +1498,23 @@ namespace BloodSwordRogue::Game
                         else
                         {
                             break;
+                        }
+                    }
+                }
+                else if (actions[selected] == Controls::MapType("TRADE"))
+                {
+                    if (game.Party.Count() > 1)
+                    {
+                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SELECT ADVENTURER"));
+
+                        if (character >= 0 && character < game.Party.Count())
+                        {
+                            auto trader = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("TRADE WITH"));
+
+                            if (trader >= 0 && trader < game.Party.Count() && character != trader)
+                            {
+                                Game::Trade(graphics, scenes, game, location, character, trader);
+                            }
                         }
                     }
                 }

@@ -2449,6 +2449,122 @@ namespace BloodSwordRogue::Interface
         return result;
     }
 
+    // renders large values and increase/decrease toggles
+    void RenderLargeValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int score, int x, int y, std::string inc, std::string dec)
+    {
+        // asset icon
+        scene.VerifyAndAdd(Scene::Element(Asset::Get(asset), Point(x, y)));
+
+        // boxes around numbers
+        auto color = score < 0 ? Color::Highlight : Color::Inactive;
+
+        auto temp_score = score;
+
+        for (auto digits = 0; digits < 4; digits++)
+        {
+            scene.Add(Scene::Element(x + BloodSwordRogue::TileSize * (digits + 1) + 4, y + 4, BloodSwordRogue::TileSize - 8, BloodSwordRogue::TileSize - 8, Color::Transparent, color, 2));
+
+            auto divisor = SafeCast(std::pow(10, 3 - digits));
+
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(numbers[std::abs(temp_score / divisor)]), Point(x + BloodSwordRogue::TileSize * (digits + 1), y)));
+
+            temp_score = temp_score % divisor;
+        }
+
+        // add increase/decrease controls
+        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("UP")), Point(x + BloodSwordRogue::TileSize * 5, y)));
+
+        auto inc_id = SafeCast(scene.Controls.size());
+
+        scene.Add(Controls::Base(Controls::MapType(inc), inc_id, inc_id, inc_id + 1, inc_id, inc_id, x + BloodSwordRogue::TileSize * 5, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+        scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("DOWN")), Point(x + BloodSwordRogue::TileSize * 6, y)));
+
+        auto dec_id = SafeCast(scene.Controls.size());
+
+        scene.Add(Controls::Base(Controls::MapType(dec), dec_id, dec_id - 1, dec_id, dec_id, dec_id, x + BloodSwordRogue::TileSize * 6, y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+    }
+
+    // generic number setter
+    int SetLargeValue(Graphics::Base &graphics, Graphics::Scenery &scenery, Asset::List &numbers, std::string asset, int value, int min_value, int max_value)
+    {
+        auto tile = BloodSwordRogue::TileSize;
+
+        auto width = tile * 10;
+
+        auto height = tile * 2;
+
+        auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
+
+        auto input = Controls::User();
+
+        auto done = false;
+
+        auto scene = Scene::Base();
+
+        while (!done)
+        {
+            // icon grid
+            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+            Interface::RenderLargeValue(scene, numbers, Asset::Map(asset), value, box.X + tile / 2, box.Y + tile / 2, "INCREASE", "DECREASE");
+
+            auto id = SafeCast(scene.Controls.size());
+
+            scene.Controls.back().Right = id;
+
+            auto confirm = Point(box.X + tile * 7 + tile / 2, box.Y + tile / 2);
+
+            scene.Add(Scene::Element(Asset::Get(Asset::Map("CONFIRM")), confirm));
+
+            scene.Add(Controls::Base(Controls::MapType("CONFIRM"), id, id - 1, id + 1, id, id, confirm.X, confirm.Y, tile, tile, Color::Active));
+
+            id++;
+
+            auto back = Point(box.X + tile * 8 + tile / 2, box.Y + tile / 2);
+
+            scene.Add(Scene::Element(Asset::Get(Asset::Map("BACK")), back));
+
+            scene.Add(Controls::Base(Controls::MapType("BACK"), id, id - 1, id, id, id, back.X, back.Y, tile, tile, Color::Active));
+
+            auto scenes = scenery;
+
+            scenes.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenes, scene.Controls, input);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("BACK"))
+                {
+                    value = -1;
+
+                    done = true;
+                }
+                else if (input.Type == Controls::MapType("INCREASE"))
+                {
+                    if (value < max_value)
+                    {
+                        value++;
+                    }
+                }
+                else if (input.Type == Controls::MapType("DECREASE"))
+                {
+                    if (value > min_value)
+                    {
+                        value--;
+                    }
+                }
+                else if (input.Type == Controls::MapType("CONFIRM"))
+                {
+                    done = true;
+                }
+            }
+        }
+
+        return value;
+    }
+
     // renders value and increase/decrease toggles
     void RenderValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int score, int x, int y, std::string inc, std::string dec)
     {
@@ -2512,6 +2628,8 @@ namespace BloodSwordRogue::Interface
             Interface::RenderValue(scene, numbers, Asset::Map(asset), value, box.X + tile / 2, box.Y + tile / 2, "INCREASE", "DECREASE");
 
             auto id = SafeCast(scene.Controls.size());
+
+            scene.Controls.back().Right = id;
 
             auto confirm = Point(box.X + tile * 5 + tile / 2, box.Y + tile / 2);
 
