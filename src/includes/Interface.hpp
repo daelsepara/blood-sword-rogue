@@ -2450,7 +2450,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // renders large values and increase/decrease toggles
-    void RenderLargeValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int max_digits, int score, int x, int y, std::string inc, std::string dec)
+    void RenderValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int max_digits, int score, int x, int y, std::string inc, std::string dec)
     {
         // asset icon
         scene.VerifyAndAdd(Scene::Element(Asset::Get(asset), Point(x, y)));
@@ -2486,7 +2486,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // generic number setter
-    int SetLargeValue(Graphics::Base &graphics, Graphics::Scenery &scenery, Asset::List &numbers, std::string asset, int max_digits, int value, int min_value, int max_value)
+    int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, Asset::List &numbers, std::string asset, int max_digits, int value, int min_value, int max_value)
     {
         auto original = value;
 
@@ -2509,7 +2509,7 @@ namespace BloodSwordRogue::Interface
             // icon grid
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
 
-            Interface::RenderLargeValue(scene, numbers, Asset::Map(asset), max_digits, value, box.X + tile / 2, box.Y + tile / 2, "INCREASE", "DECREASE");
+            Interface::RenderValue(scene, numbers, Asset::Map(asset), max_digits, value, box.X + tile / 2, box.Y + tile / 2, "INCREASE", "DECREASE");
 
             auto id = SafeCast(scene.Controls.size());
 
@@ -2570,13 +2570,13 @@ namespace BloodSwordRogue::Interface
     // renders value and increase/decrease toggles
     void RenderValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int score, int x, int y, std::string inc, std::string dec)
     {
-        Interface::RenderLargeValue(scene, numbers, asset, 2, score, x, y, inc, dec);
+        Interface::RenderValue(scene, numbers, asset, 2, score, x, y, inc, dec);
     }
 
     // generic number setter
     int SetValue(Graphics::Base &graphics, Graphics::Scenery &scenery, Asset::List &numbers, std::string asset, int value, int min_value, int max_value)
     {
-        return Interface::SetLargeValue(graphics, scenery, numbers, asset, 2, value, min_value, max_value);
+        return Interface::SetValue(graphics, scenery, numbers, asset, 2, value, min_value, max_value);
     }
 
     // generic number setter

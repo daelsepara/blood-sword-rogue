@@ -717,7 +717,7 @@ namespace BloodSwordRogue::Game
 
                 if (!asset.empty())
                 {
-                    auto quantity = Interface::SetLargeValue(graphics, scenes, Interface::Numbers, asset, 4, items[item].Quantity, 0, items[item].Quantity);
+                    auto quantity = Interface::SetValue(graphics, scenes, Interface::Numbers, asset, 4, items[item].Quantity, 0, items[item].Quantity);
 
                     if (quantity > 0)
                     {
@@ -763,7 +763,7 @@ namespace BloodSwordRogue::Game
     {
         auto result = false;
 
-        if (!items[item].HasProperty(Item::MapProperty("CONTAINER")))
+        if (!items[item].HasProperty(Item::MapProperty("CONTAINER")) || !items[item].HasProperty(Item::MapProperty("CANNOT TRADE")))
         {
             return result;
         }
