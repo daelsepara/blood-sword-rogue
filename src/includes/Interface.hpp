@@ -761,6 +761,108 @@ namespace BloodSwordRogue::Interface
     }
 
     // select icon from a grid
+    void IconControls(Graphics::Base &graphics, Scene::Base &scene, Asset::List &assets, int width, int height, Point box, int offset = 0)
+    {
+        if (assets.empty())
+        {
+            return;
+        }
+
+        // number of icon columns
+        auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+        // number of icon rows
+        auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+        auto items = SafeCast(assets.size());
+
+        const int page_size = limit_x * limit_y;
+
+        auto page_count = 0;
+
+        for (auto y = 0; y < limit_y; y++)
+        {
+            for (auto x = 0; x < limit_x; x++)
+            {
+                auto id = (y * limit_x + x);
+
+                auto index = offset + id;
+
+                if (index >= 0 && index < items)
+                {
+                    auto point = Point(box.X + BloodSwordRogue::HalfTile + x * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile), box.Y + BloodSwordRogue::HalfTile + y * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+                    auto left = x > 0 ? id - 1 : id;
+
+                    auto right = (x < limit_x - 1) && (index < items - 1) ? id + 1 : id;
+
+                    auto up = y > 0 ? id - limit_x : id;
+
+                    auto down = (y < limit_y - 1) && (index + limit_x < items) ? id + limit_x : id;
+
+                    if ((index + limit_x >= items) && y < (limit_y - 1))
+                    {
+                        down = id + (items - index);
+                    }
+                    else if (id + limit_x >= page_size)
+                    {
+                        if (items > page_size)
+                        {
+                            down = page_size;
+                        }
+                        else
+                        {
+                            down = items - offset;
+                        }
+                    }
+
+                    scene.Add(Controls::Base(Controls::MapType("SELECT"), id, left, right, up, down, point.X, point.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+
+                    page_count++;
+                }
+            }
+        }
+
+        auto has_prev = offset > 0;
+
+        auto has_next = items > (offset + page_count);
+
+        auto controls = 0;
+
+        // check if there are previous items
+        if (has_prev)
+        {
+            controls++;
+
+            auto prev_id = scene.Controls.size();
+
+            auto prev = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * (has_next ? 3 : 2) + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
+
+            scene.Add(Controls::Base(Controls::MapType("LEFT"), prev_id, prev_id, prev_id + 1, prev_id - controls, prev_id, prev.X, prev.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+        }
+
+        // check if there are more items
+        if (has_next)
+        {
+            controls++;
+
+            auto next_id = scene.Controls.size();
+
+            auto next = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * 2 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
+
+            scene.Add(Controls::Base(Controls::MapType("RIGHT"), next_id, has_prev ? next_id - 1 : next_id, next_id + 1, next_id - controls, next_id, next.X, next.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+        }
+
+        controls++;
+
+        auto back_id = scene.Controls.size();
+
+        auto back = Point(box.X + width - BloodSwordRogue::TileSize + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
+
+        scene.Add(Controls::Base(Controls::MapType("BACK"), back_id, has_next || has_prev ? back_id - 1 : back_id, back_id, back_id - controls, back_id, back.X, back.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+    }
+
+    // select icon from a grid
     int IconGrid(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, int width, int height, Strings captions_text = {})
     {
         auto selected = -1;
@@ -803,7 +905,7 @@ namespace BloodSwordRogue::Interface
         {
             auto scene = Interface::IconGrid(graphics, assets, width, height, box, Color::Active, offset);
 
-            auto page_count = 0;
+            Interface::IconControls(graphics, scene, assets, width, height, box, offset);
 
             for (auto y = 0; y < limit_y; y++)
             {
@@ -816,34 +918,6 @@ namespace BloodSwordRogue::Interface
                     if (index >= 0 && index < items)
                     {
                         auto point = Point(box.X + BloodSwordRogue::HalfTile + x * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile), box.Y + BloodSwordRogue::HalfTile + y * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
-
-                        auto left = x > 0 ? id - 1 : id;
-
-                        auto right = (x < limit_x - 1) && (index < items - 1) ? id + 1 : id;
-
-                        auto up = y > 0 ? id - limit_x : id;
-
-                        auto down = (y < limit_y - 1) && (index + limit_x < items) ? id + limit_x : id;
-
-                        if ((index + limit_x >= items) && y < (limit_y - 1))
-                        {
-                            down = id + (items - index);
-                        }
-                        else if (id + limit_x >= page_size)
-                        {
-                            if (items > page_size)
-                            {
-                                down = page_size;
-                            }
-                            else
-                            {
-                                down = items - offset;
-                            }
-                        }
-
-                        scene.Add(Controls::Base(Controls::MapType("SELECT"), id, left, right, up, down, point.X, point.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
-
-                        page_count++;
 
                         if (has_captions && ((input.Current + offset) == index))
                         {
@@ -873,44 +947,6 @@ namespace BloodSwordRogue::Interface
                     }
                 }
             }
-
-            auto has_prev = offset > 0;
-
-            auto has_next = items > (offset + page_count);
-
-            auto controls = 0;
-
-            // check if there are previous items
-            if (has_prev)
-            {
-                controls++;
-
-                auto prev_id = scene.Controls.size();
-
-                auto prev = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * (has_next ? 3 : 2) + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
-
-                scene.Add(Controls::Base(Controls::MapType("LEFT"), prev_id, prev_id, prev_id + 1, prev_id - controls, prev_id, prev.X, prev.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
-            }
-
-            // check if there are more items
-            if (has_next)
-            {
-                controls++;
-
-                auto next_id = scene.Controls.size();
-
-                auto next = Point(box.X + width - (BloodSwordRogue::TileSize + BloodSwordRogue::Border) * 2 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
-
-                scene.Add(Controls::Base(Controls::MapType("RIGHT"), next_id, has_prev ? next_id - 1 : next_id, next_id + 1, next_id - controls, next_id, next.X, next.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
-            }
-
-            controls++;
-
-            auto back_id = scene.Controls.size();
-
-            auto back = Point(box.X + width - BloodSwordRogue::TileSize + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
-
-            scene.Add(Controls::Base(Controls::MapType("BACK"), back_id, has_next || has_prev ? back_id - 1 : back_id, back_id, back_id - controls, back_id, back.X, back.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
             if (input.Type == Controls::MapType("LEFT"))
             {
@@ -2602,14 +2638,12 @@ namespace BloodSwordRogue::Interface
         Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 8, BloodSwordRogue::TileSize * 6, captions);
     }
 
-    // select item
-    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
+    // generate asset and captions list for an inventory
+    void GenerateAssets(Items::Inventory &items, Asset::List &assets, Strings &captions)
     {
-        auto selected = Item::NONE;
+        assets.clear();
 
-        Asset::List assets = {};
-
-        Strings captions = {};
+        captions.clear();
 
         for (auto &item : items)
         {
@@ -2624,6 +2658,18 @@ namespace BloodSwordRogue::Interface
 
             captions.push_back(caption);
         }
+    }
+
+    // select item
+    int SelectItem(Graphics::Base &graphics, Graphics::Scenery scenes, Items::Inventory &items)
+    {
+        auto selected = Item::NONE;
+
+        Asset::List assets = {};
+
+        Strings captions = {};
+
+        Interface::GenerateAssets(items, assets, captions);
 
         if (SafeCast(assets.size()) > 0)
         {

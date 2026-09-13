@@ -1,4 +1,6 @@
 #include "includes/BloodSwordRogue.hpp"
+#include "includes/Engine.hpp"
+#include "includes/Location.hpp"
 
 // BloodSwordRogue Map Maker
 namespace BloodSwordRogue::MapMaker

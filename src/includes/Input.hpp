@@ -319,23 +319,30 @@ namespace BloodSwordRogue::Input
 
                 input.Current = -1;
             }
-            else if (input.Current < 0)
+            else if (input.Current < 0 && !input.OverrideTab)
             {
                 input.Current = controls[0].Id;
             }
             else if (result.key.keysym.sym == SDLK_TAB || result.key.keysym.sym == SDLK_KP_TAB || result.key.keysym.sym == SDL_SCANCODE_KP_TAB)
             {
-                if (input.Current < 0)
+                if (input.OverrideTab)
                 {
-                    input.Current = controls[0].Id;
+                    input.Selected = true;
                 }
-                else if (input.Current == SafeCast(controls.size()) - 1)
+                else
                 {
-                    input.Current = controls[0].Id;
-                }
-                else if (input.Current >= 0 && input.Current < SafeCast(controls.size()) - 1)
-                {
-                    input.Current = controls[input.Current + 1].Id;
+                    if (input.Current < 0)
+                    {
+                        input.Current = controls[0].Id;
+                    }
+                    else if (input.Current == SafeCast(controls.size()) - 1)
+                    {
+                        input.Current = controls[0].Id;
+                    }
+                    else if (input.Current >= 0 && input.Current < SafeCast(controls.size()) - 1)
+                    {
+                        input.Current = controls[input.Current + 1].Id;
+                    }
                 }
             }
             else if (input.Current >= 0 && input.Current < SafeCast(controls.size()))
@@ -564,7 +571,14 @@ namespace BloodSwordRogue::Input
             }
         }
 
-        if (input.Current >= 0 && input.Current < SafeCast(controls.size()) && !input.Up && !input.Down)
+        // check for TAB/SELECT/OPTION button overrides
+        if (input.OverrideTab && input.Selected)
+        {
+            input.Type = Controls::MapType("SWITCH");
+
+            input.Current = controls[0].Id;
+        }
+        else if (input.Current >= 0 && input.Current < SafeCast(controls.size()) && !input.Up && !input.Down)
         {
             input.Type = controls[input.Current].Type;
         }

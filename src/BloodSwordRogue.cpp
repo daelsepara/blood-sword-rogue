@@ -1,4 +1,5 @@
 #include "includes/BloodSwordRogue.hpp"
+#include "includes/Game.hpp"
 
 // BloodSwordRogue Rogue
 namespace BloodSwordRogue

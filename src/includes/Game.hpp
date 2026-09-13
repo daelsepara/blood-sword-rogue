@@ -921,6 +921,239 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    // trade with another player in the party
+    void Trade(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int left, int right)
+    {
+        if (left == right || left < 0 || left >= game.Party.Count() || !Engine::IsAlive(game.Party[left]) || right < 0 || right >= game.Party.Count() || !Engine::IsAlive(game.Party[right]))
+        {
+            return;
+        }
+
+        if (SafeCast(game.Party[left].Items.size()) < 1 && SafeCast(game.Party[right].Items.size()) < 1)
+        {
+            return;
+        }
+
+        Asset::List trade_assets = {
+            Asset::Map("MAGNIFYING GLASS"),
+            Asset::Map("TRADE")};
+
+        Controls::List trade_actions = {
+            Controls::MapType("VIEW"),
+            Controls::MapType("TRADE")};
+
+        Interface::Strings captions = {
+            "VIEW",
+            "TRADE"};
+
+        auto tile = BloodSwordRogue::TileSize;
+
+        auto half = BloodSwordRogue::HalfTile;
+
+        auto width = (graphics.Width - tile * 3) / 2;
+
+        auto height = (graphics.Height - tile * 7);
+
+        // number of icon columns
+        auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+        // number of icon rows
+        auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+        const int page_size = limit_x * limit_y;
+
+        auto trader = 0;
+
+        auto offset_left = 0;
+
+        auto offset_right = 0;
+
+        auto selected = -1;
+
+        auto input = Controls::User();
+
+        input.OverrideTab = true;
+
+        auto done = false;
+
+        while (!done)
+        {
+            Asset::List assets_left = {};
+
+            Asset::List assets_right = {};
+
+            Interface::Strings captions_left = {};
+
+            Interface::Strings captions_right = {};
+
+            auto box_left = Point(graphics.Width / 2 - half - width, (graphics.Height - height) / 2);
+
+            auto box_right = Point(graphics.Width / 2 + half, (graphics.Height - height) / 2);
+
+            auto scene_left = Scene::Base();
+
+            auto scene_right = Scene::Base();
+
+            if (SafeCast(game.Party[left].Items.size()) > 0)
+            {
+                Interface::GenerateAssets(game.Party[left].Items, assets_left, captions_left);
+
+                scene_left = Interface::IconGrid(graphics, assets_left, width, height, box_left, trader == 0 ? Color::Active : Color::Inactive, offset_left);
+            }
+            else
+            {
+                scene_left.Add(Scene::Element(box_left.X - BloodSwordRogue::Border, box_left.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Inactive, BloodSwordRogue::Border));
+
+                trader = 1;
+            }
+
+            if (SafeCast(game.Party[right].Items.size()) > 0)
+            {
+                Interface::GenerateAssets(game.Party[right].Items, assets_right, captions_right);
+
+                scene_right = Interface::IconGrid(graphics, assets_right, width, height, box_right, trader == 1 ? Color::Active : Color::Inactive, offset_left);
+            }
+            else
+            {
+                scene_right.Add(Scene::Element(box_right.X - BloodSwordRogue::Border, box_right.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Inactive, BloodSwordRogue::Border));
+
+                trader = 0;
+            }
+
+            if (trader == 0)
+            {
+                Interface::IconControls(graphics, scene_left, assets_left, width, height, box_left, offset_left);
+            }
+            else
+            {
+                Interface::IconControls(graphics, scene_right, assets_right, width, height, box_right, offset_right);
+            }
+
+            auto &scene = trader == 0 ? scene_left : scene_right;
+
+            auto offset = trader == 0 ? offset_left : offset_right;
+
+            auto items = SafeCast(trader == 0 ? assets_left.size() : assets_right.size());
+
+            auto box = trader == 0 ? box_left : box_right;
+
+            auto &assets = trader == 0 ? assets_left : assets_right;
+
+            auto &captions_text = trader == 0 ? captions_left : captions_right;
+
+            auto has_captions = SafeCast(captions_text.size()) > 0 && (captions_text.size() == assets.size());
+
+            Asset::TextureList captions = has_captions ? Graphics::CreateText(graphics, Graphics::GenerateTextList(captions_text, Fonts::Caption, Color::Active, 0)) : Asset::TextureList();
+
+            // pre-calculate possible caption position adjustments
+            auto bx = box.X - BloodSwordRogue::Border;
+
+            auto b2 = BloodSwordRogue::Border * 2;
+
+            auto bw = box.X + width + BloodSwordRogue::Border;
+
+            for (auto y = 0; y < limit_y; y++)
+            {
+                for (auto x = 0; x < limit_x; x++)
+                {
+                    auto id = (y * limit_x + x);
+
+                    auto index = offset + id;
+
+                    if (index >= 0 && index < items)
+                    {
+                        auto point = Point(box.X + BloodSwordRogue::HalfTile + x * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile), box.Y + BloodSwordRogue::HalfTile + y * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+                        if (has_captions && ((input.Current + offset) == index))
+                        {
+                            auto caption = index;
+
+                            auto caption_width = BloodSwordRogue::Width(captions[caption]);
+
+                            // center caption
+                            auto center = (BloodSwordRogue::TileSize - caption_width) / 2;
+
+                            auto pc = point.X + center;
+
+                            auto pcw = (pc + caption_width);
+
+                            // adjust if caption spills over panel borders
+                            if ((pc < bx) && x == 0)
+                            {
+                                center += (bx - pc + b2);
+                            }
+                            else if (pcw > bw)
+                            {
+                                center -= (pcw - bw + b2);
+                            }
+
+                            scene.VerifyAndAdd(Scene::Element(captions[caption], point.X + center, point.Y + BloodSwordRogue::TileSize + 2));
+                        }
+                    }
+                }
+            }
+
+            if (input.Type == Controls::MapType("LEFT"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("LEFT"));
+            }
+            else if (input.Type == Controls::MapType("RIGHT"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("RIGHT"));
+            }
+
+            Graphics::Scenery scenery = scenes;
+
+            if (trader == 0)
+            {
+                scenery.push_back(scene_right);
+            }
+            else
+            {
+                scenery.push_back(scene_left);
+            }
+
+            scenery.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenery, scene.Controls, input, true);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("SWITCH"))
+                {
+                    trader = 1 - trader;
+                }
+                else if (input.Type == Controls::MapType("BACK"))
+                {
+                    done = true;
+                }
+                else if (input.Type == Controls::MapType("LEFT"))
+                {
+                    offset -= page_size;
+                }
+                else if (input.Type == Controls::MapType("RIGHT"))
+                {
+                    offset += page_size;
+                }
+                else if (input.Type == Controls::MapType("SELECT"))
+                {
+                    selected = offset + input.Current;
+
+                    done = true;
+                }
+
+                input.Current = -1;
+
+                input.Selected = false;
+            }
+
+            if (has_captions)
+            {
+                BloodSwordRogue::Free(captions);
+            }
+        }
+    }
+
     // view items
     void ViewItems(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character)
     {
@@ -1016,6 +1249,12 @@ namespace BloodSwordRogue::Game
                             }
                             else if ((!gear && actions[action] == Controls::MapType("TRADE")) || (gear && gear_actions[action] == Controls::MapType("TRADE")))
                             {
+                                auto trader = Interface::SelectCharacter(graphics, scenes, game.Party, false);
+
+                                if (trader >= 0 && trader < game.Party.Count() && character != trader)
+                                {
+                                    Game::Trade(graphics, scenes, game, location, character, trader);
+                                }
                             }
                             else if ((!gear && actions[action] == Controls::MapType("DROP")) || (gear && gear_actions[action] == Controls::MapType("DROP")))
                             {

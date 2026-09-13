@@ -120,8 +120,11 @@ namespace BloodSwordRogue::Controls
         // input text
         std::string TextInput;
 
-        // Character limit
+        // character limit
         int TextLimit = 20;
+
+        // overrides behavior of TAB key / SELECT or OPTIONS button
+        bool OverrideTab = false;
 
         User(Controls::Type type,
              int current,

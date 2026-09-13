@@ -156,7 +156,8 @@
         "ASSET",
         "TYPE",
         "PRIMARY",
-        "SECONDARY"
+        "SECONDARY",
+        "SWITCH"
     ],
     "controls-spells": [
         "VOLCANO SPRAY",
