@@ -717,7 +717,7 @@ namespace BloodSwordRogue::Game
 
                 if (!asset.empty())
                 {
-                    auto quantity = Interface::SetLargeValue(graphics, scenes, Interface::Numbers, asset, items[item].Quantity, 0, items[item].Quantity);
+                    auto quantity = Interface::SetLargeValue(graphics, scenes, Interface::Numbers, asset, 4, items[item].Quantity, 0, items[item].Quantity);
 
                     if (quantity > 0)
                     {
@@ -728,7 +728,7 @@ namespace BloodSwordRogue::Game
                         {
                             std::string plural = std::string(" ") + Game::GetPlural(items[item].Type);
 
-                            std::string taken = std::to_string(items[item].Quantity) + plural + std::string(" ") + predicate;
+                            std::string taken = std::to_string(quantity) + plural + std::string(" ") + predicate;
 
                             Interface::MessageBox(graphics, scenes, taken, Color::Active);
 

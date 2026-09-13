@@ -2168,232 +2168,238 @@ namespace BloodSwordRogue::MapMaker
                 {
                     auto new_width = MapMaker::SetValue(graphics, scenes, "HORIZONTAL FLIP", location.Map.Width);
 
-                    auto diff = std::abs(new_width - location.Map.Width);
-
-                    auto columns = diff / 2;
-
-                    auto remainder = diff % 2;
-
-                    if (new_width < location.Map.Width)
+                    if (new_width != location.Map.Width)
                     {
-                        location.Map.RemoveColumnsLeft(columns);
+                        auto diff = std::abs(new_width - location.Map.Width);
 
-                        location.Map.RemoveColumnsRight(columns + remainder);
+                        auto columns = diff / 2;
 
-                        // move locations
-                        if (SafeCast(location.Map.Origins.size()) > 0)
+                        auto remainder = diff % 2;
+
+                        if (new_width < location.Map.Width)
                         {
-                            location.Map.Origins[0].X -= columns;
+                            location.Map.RemoveColumnsLeft(columns);
 
-                            if (!(location.Map.Origins[0].X >= 0 && location.Map.Origins[0].X < location.Map.Width))
+                            location.Map.RemoveColumnsRight(columns + remainder);
+
+                            // move locations
+                            if (SafeCast(location.Map.Origins.size()) > 0)
                             {
-                                location.Map.Origins.clear();
+                                location.Map.Origins[0].X -= columns;
+
+                                if (!(location.Map.Origins[0].X >= 0 && location.Map.Origins[0].X < location.Map.Width))
+                                {
+                                    location.Map.Origins.clear();
+                                }
                             }
-                        }
 
-                        std::vector<Party::Base> parties = {};
+                            std::vector<Party::Base> parties = {};
 
-                        for (auto opponent = 0; opponent < SafeCast(location.Opponents.size()); opponent++)
-                        {
-                            location.Opponents[opponent].X -= columns;
-
-                            if (location.Opponents[opponent].X >= 0 && location.Opponents[opponent].X < location.Map.Width)
+                            for (auto opponent = 0; opponent < SafeCast(location.Opponents.size()); opponent++)
                             {
-                                parties.push_back(location.Opponents[opponent]);
+                                location.Opponents[opponent].X -= columns;
+
+                                if (location.Opponents[opponent].X >= 0 && location.Opponents[opponent].X < location.Map.Width)
+                                {
+                                    parties.push_back(location.Opponents[opponent]);
+                                }
                             }
-                        }
 
-                        location.Opponents = parties;
+                            location.Opponents = parties;
 
-                        Location::RenumberParties(location);
+                            Location::RenumberParties(location);
 
-                        std::vector<Location::Loot> bags = {};
+                            std::vector<Location::Loot> bags = {};
 
-                        for (auto loot = 0; loot < SafeCast(location.Loot.size()); loot++)
-                        {
-                            location.Loot[loot].X -= columns;
-
-                            if (location.Loot[loot].X >= 0 && location.Loot[loot].X < location.Map.Width)
+                            for (auto loot = 0; loot < SafeCast(location.Loot.size()); loot++)
                             {
-                                bags.push_back(location.Loot[loot]);
+                                location.Loot[loot].X -= columns;
+
+                                if (location.Loot[loot].X >= 0 && location.Loot[loot].X < location.Map.Width)
+                                {
+                                    bags.push_back(location.Loot[loot]);
+                                }
                             }
-                        }
 
-                        location.Loot = bags;
+                            location.Loot = bags;
 
-                        Location::RenumberLoot(location);
+                            Location::RenumberLoot(location);
 
-                        std::vector<Trigger::Base> triggers = {};
+                            std::vector<Trigger::Base> triggers = {};
 
-                        for (auto trigger = 0; trigger < SafeCast(location.Triggers.size()); trigger++)
-                        {
-                            location.Triggers[trigger].X -= columns;
-
-                            if (location.Triggers[trigger].X >= 0 && location.Triggers[trigger].X < location.Map.Width)
+                            for (auto trigger = 0; trigger < SafeCast(location.Triggers.size()); trigger++)
                             {
-                                triggers.push_back(location.Triggers[trigger]);
+                                location.Triggers[trigger].X -= columns;
+
+                                if (location.Triggers[trigger].X >= 0 && location.Triggers[trigger].X < location.Map.Width)
+                                {
+                                    triggers.push_back(location.Triggers[trigger]);
+                                }
                             }
+
+                            location.Triggers = triggers;
+
+                            // renumber triggers
+                            Location::RenumberTriggers(location);
+
+                            location.Map.ViewX = location.Map.Width;
+
+                            function = Function::RESIZE;
+
+                            done = true;
                         }
-
-                        location.Triggers = triggers;
-
-                        // renumber triggers
-                        Location::RenumberTriggers(location);
-
-                        location.Map.ViewX = location.Map.Width;
-
-                        function = Function::RESIZE;
-
-                        done = true;
-                    }
-                    else if (new_width > location.Map.Width)
-                    {
-                        location.Map.AddColumnsLeft(columns);
-
-                        location.Map.AddColumnsRight(columns + remainder);
-
-                        // move locations
-                        if (SafeCast(location.Map.Origins.size()) > 0)
+                        else if (new_width > location.Map.Width)
                         {
-                            location.Map.Origins[0].X += columns;
+                            location.Map.AddColumnsLeft(columns);
+
+                            location.Map.AddColumnsRight(columns + remainder);
+
+                            // move locations
+                            if (SafeCast(location.Map.Origins.size()) > 0)
+                            {
+                                location.Map.Origins[0].X += columns;
+                            }
+
+                            for (auto &opponent : location.Opponents)
+                            {
+                                opponent.X += columns;
+                            }
+
+                            for (auto &loot : location.Loot)
+                            {
+                                loot.X += columns;
+                            }
+
+                            for (auto &trigger : location.Triggers)
+                            {
+                                trigger.X += columns;
+                            }
+
+                            location.Map.ViewX = location.Map.Width;
+
+                            function = Function::RESIZE;
+
+                            done = true;
                         }
-
-                        for (auto &opponent : location.Opponents)
-                        {
-                            opponent.X += columns;
-                        }
-
-                        for (auto &loot : location.Loot)
-                        {
-                            loot.X += columns;
-                        }
-
-                        for (auto &trigger : location.Triggers)
-                        {
-                            trigger.X += columns;
-                        }
-
-                        location.Map.ViewX = location.Map.Width;
-
-                        function = Function::RESIZE;
-
-                        done = true;
                     }
                 }
                 else if (controls[selected] == Controls::MapType("RESIZE HEIGHT"))
                 {
                     auto new_height = MapMaker::SetValue(graphics, scenes, "VERTICAL FLIP", location.Map.Height);
 
-                    auto diff = std::abs((new_height - location.Map.Height));
-
-                    auto rows = diff / 2;
-
-                    auto remainder = diff % 2;
-
-                    if (new_height < location.Map.Height)
+                    if (new_height != location.Map.Height)
                     {
-                        location.Map.RemoveRowsTop(rows);
+                        auto diff = std::abs((new_height - location.Map.Height));
 
-                        location.Map.RemoveRowsBottom(rows + remainder);
+                        auto rows = diff / 2;
 
-                        // move locations
-                        if (SafeCast(location.Map.Origins.size()) > 0)
+                        auto remainder = diff % 2;
+
+                        if (new_height < location.Map.Height)
                         {
-                            location.Map.Origins[0].Y -= rows;
+                            location.Map.RemoveRowsTop(rows);
 
-                            if (!(location.Map.Origins[0].Y >= 0 && location.Map.Origins[0].Y < location.Map.Height))
+                            location.Map.RemoveRowsBottom(rows + remainder);
+
+                            // move locations
+                            if (SafeCast(location.Map.Origins.size()) > 0)
                             {
-                                location.Map.Origins.clear();
+                                location.Map.Origins[0].Y -= rows;
+
+                                if (!(location.Map.Origins[0].Y >= 0 && location.Map.Origins[0].Y < location.Map.Height))
+                                {
+                                    location.Map.Origins.clear();
+                                }
                             }
-                        }
 
-                        std::vector<Party::Base> parties = {};
+                            std::vector<Party::Base> parties = {};
 
-                        for (auto opponent = 0; opponent < SafeCast(location.Opponents.size()); opponent++)
-                        {
-                            location.Opponents[opponent].Y -= rows;
-
-                            if (location.Opponents[opponent].Y >= 0 && location.Opponents[opponent].Y < location.Map.Height)
+                            for (auto opponent = 0; opponent < SafeCast(location.Opponents.size()); opponent++)
                             {
-                                parties.push_back(location.Opponents[opponent]);
+                                location.Opponents[opponent].Y -= rows;
+
+                                if (location.Opponents[opponent].Y >= 0 && location.Opponents[opponent].Y < location.Map.Height)
+                                {
+                                    parties.push_back(location.Opponents[opponent]);
+                                }
                             }
-                        }
 
-                        location.Opponents = parties;
+                            location.Opponents = parties;
 
-                        Location::RenumberParties(location);
+                            Location::RenumberParties(location);
 
-                        std::vector<Location::Loot> bags = {};
+                            std::vector<Location::Loot> bags = {};
 
-                        for (auto loot = 0; loot < SafeCast(location.Loot.size()); loot++)
-                        {
-                            location.Loot[loot].Y -= rows;
-
-                            if (location.Loot[loot].Y >= 0 && location.Loot[loot].Y < location.Map.Height)
+                            for (auto loot = 0; loot < SafeCast(location.Loot.size()); loot++)
                             {
-                                bags.push_back(location.Loot[loot]);
+                                location.Loot[loot].Y -= rows;
+
+                                if (location.Loot[loot].Y >= 0 && location.Loot[loot].Y < location.Map.Height)
+                                {
+                                    bags.push_back(location.Loot[loot]);
+                                }
                             }
-                        }
 
-                        location.Loot = bags;
+                            location.Loot = bags;
 
-                        Location::RenumberLoot(location);
+                            Location::RenumberLoot(location);
 
-                        std::vector<Trigger::Base> triggers = {};
+                            std::vector<Trigger::Base> triggers = {};
 
-                        for (auto trigger = 0; trigger < SafeCast(location.Triggers.size()); trigger++)
-                        {
-                            location.Triggers[trigger].Y -= rows;
-
-                            if (location.Triggers[trigger].Y >= 0 && location.Triggers[trigger].Y < location.Map.Height)
+                            for (auto trigger = 0; trigger < SafeCast(location.Triggers.size()); trigger++)
                             {
-                                triggers.push_back(location.Triggers[trigger]);
+                                location.Triggers[trigger].Y -= rows;
+
+                                if (location.Triggers[trigger].Y >= 0 && location.Triggers[trigger].Y < location.Map.Height)
+                                {
+                                    triggers.push_back(location.Triggers[trigger]);
+                                }
                             }
+
+                            location.Triggers = triggers;
+
+                            // renumber triggers
+                            Location::RenumberTriggers(location);
+
+                            location.Map.ViewY = location.Map.Height;
+
+                            function = Function::RESIZE;
+
+                            done = true;
                         }
-
-                        location.Triggers = triggers;
-
-                        // renumber triggers
-                        Location::RenumberTriggers(location);
-
-                        location.Map.ViewY = location.Map.Height;
-
-                        function = Function::RESIZE;
-
-                        done = true;
-                    }
-                    else if (new_height > location.Map.Height)
-                    {
-                        location.Map.AddRowsTop(rows);
-
-                        location.Map.AddRowsBottom(rows + remainder);
-
-                        // move locations
-                        if (SafeCast(location.Map.Origins.size()) > 0)
+                        else if (new_height > location.Map.Height)
                         {
-                            location.Map.Origins[0].Y += rows;
+                            location.Map.AddRowsTop(rows);
+
+                            location.Map.AddRowsBottom(rows + remainder);
+
+                            // move locations
+                            if (SafeCast(location.Map.Origins.size()) > 0)
+                            {
+                                location.Map.Origins[0].Y += rows;
+                            }
+
+                            for (auto &opponent : location.Opponents)
+                            {
+                                opponent.Y += rows;
+                            }
+
+                            for (auto &loot : location.Loot)
+                            {
+                                loot.Y += rows;
+                            }
+
+                            for (auto &trigger : location.Triggers)
+                            {
+                                trigger.Y += rows;
+                            }
+
+                            location.Map.ViewY = location.Map.Height;
+
+                            function = Function::RESIZE;
+
+                            done = true;
                         }
-
-                        for (auto &opponent : location.Opponents)
-                        {
-                            opponent.Y += rows;
-                        }
-
-                        for (auto &loot : location.Loot)
-                        {
-                            loot.Y += rows;
-                        }
-
-                        for (auto &trigger : location.Triggers)
-                        {
-                            trigger.Y += rows;
-                        }
-
-                        location.Map.ViewY = location.Map.Height;
-
-                        function = Function::RESIZE;
-
-                        done = true;
                     }
                 }
                 else if (controls[selected] == Controls::MapType("CAVE"))
