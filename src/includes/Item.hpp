@@ -387,7 +387,7 @@ namespace BloodSwordRogue::Item
             {
                 return false;
             }
-            
+
             auto result = this->HasProperty(property);
 
             if (result)

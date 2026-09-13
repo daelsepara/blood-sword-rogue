@@ -126,6 +126,9 @@ namespace BloodSwordRogue::Controls
         // overrides behavior of TAB key / SELECT or OPTIONS button
         bool OverrideTab = false;
 
+        // to be used with OverrideTab
+        bool Switch = false;
+
         User(Controls::Type type,
              int current,
              bool selected,

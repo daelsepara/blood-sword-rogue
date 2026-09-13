@@ -319,15 +319,13 @@ namespace BloodSwordRogue::Input
 
                 input.Current = -1;
             }
-            else if (input.Current < 0 && !input.OverrideTab)
-            {
-                input.Current = controls[0].Id;
-            }
             else if (result.key.keysym.sym == SDLK_TAB || result.key.keysym.sym == SDLK_KP_TAB || result.key.keysym.sym == SDL_SCANCODE_KP_TAB)
             {
                 if (input.OverrideTab)
                 {
                     input.Selected = true;
+
+                    input.Switch = true;
                 }
                 else
                 {
@@ -344,6 +342,10 @@ namespace BloodSwordRogue::Input
                         input.Current = controls[input.Current + 1].Id;
                     }
                 }
+            }
+            else if (input.Current < 0)
+            {
+                input.Current = controls[0].Id;
             }
             else if (input.Current >= 0 && input.Current < SafeCast(controls.size()))
             {
@@ -572,11 +574,11 @@ namespace BloodSwordRogue::Input
         }
 
         // check for TAB/SELECT/OPTION button overrides
-        if (input.OverrideTab && input.Selected)
+        if (input.OverrideTab && input.Switch)
         {
             input.Type = Controls::MapType("SWITCH");
 
-            input.Current = controls[0].Id;
+            input.Switch = false;
         }
         else if (input.Current >= 0 && input.Current < SafeCast(controls.size()) && !input.Up && !input.Down)
         {
