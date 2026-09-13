@@ -566,7 +566,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // select icon from a list
-    int IconList(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, Strings captions_text = {})
+    int IconList(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, Strings captions_text = {}, std::string prompt = std::string())
     {
         auto selected = -1;
 
@@ -591,6 +591,9 @@ namespace BloodSwordRogue::Interface
 
         auto done = false;
 
+        // add optional prompt text
+        SDL_Texture *prompt_asset = !prompt.empty() ? Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0) : nullptr;
+
         // pre-calculate possible caption position adjustments
         auto bx = box.X - BloodSwordRogue::Border;
 
@@ -604,6 +607,9 @@ namespace BloodSwordRogue::Interface
 
             // icon list
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+            // prompt
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::Border));
 
             for (auto i = 0; i < items; i++)
             {
@@ -677,6 +683,8 @@ namespace BloodSwordRogue::Interface
             }
         }
 
+        BloodSwordRogue::Free(&prompt_asset);
+
         if (has_captions)
         {
             BloodSwordRogue::Free(captions);
@@ -686,11 +694,11 @@ namespace BloodSwordRogue::Interface
     }
 
     // select icon from a list
-    int IconList(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, Strings captions_text = {})
+    int IconList(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, Strings captions_text = {}, std::string prompt = std::string())
     {
         Graphics::Scenery scenes = {background};
 
-        return Interface::IconList(graphics, scenes, assets, captions_text);
+        return Interface::IconList(graphics, scenes, assets, captions_text, prompt);
     }
 
     // render icon grid
@@ -2704,7 +2712,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // select character in party
-    int SelectCharacter(Graphics::Base &graphics, Graphics::Scenery &scenes, Party::Base &party, bool allow_dead = false)
+    int SelectCharacter(Graphics::Base &graphics, Graphics::Scenery &scenes, Party::Base &party, bool allow_dead = false, std::string prompt = std::string())
     {
         auto character = -1;
 
@@ -2740,7 +2748,7 @@ namespace BloodSwordRogue::Interface
                 captions.push_back(caption);
             }
 
-            character = Interface::IconList(graphics, scenes, assets, captions);
+            character = Interface::IconList(graphics, scenes, assets, captions, prompt);
 
             if (character >= 0 && character < party.Count())
             {

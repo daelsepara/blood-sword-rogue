@@ -776,7 +776,7 @@ namespace BloodSwordRogue::Game
 
             if (item >= 0 && item < SafeCast(items.size()))
             {
-                auto action = Interface::IconList(graphics, scenes, assets, captions);
+                auto action = Interface::IconList(graphics, scenes, assets, captions, items[item].Name);
 
                 if (action >= 0 && action < SafeCast(actions.size()))
                 {
@@ -786,7 +786,7 @@ namespace BloodSwordRogue::Game
                     }
                     else if (actions[action] == Controls::MapType("TAKE"))
                     {
-                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party);
+                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SEND TO"));
 
                         if (character >= 0 && character < game.Party.Count() && Engine::IsAlive(game.Party[character]))
                         {
@@ -851,7 +851,7 @@ namespace BloodSwordRogue::Game
 
             if (game.Party[character].HasSkill(Skills::Map("AMBIDEXTERITY")) && !items[item].HasProperty(Item::MapProperty("RANGED")))
             {
-                auto weapon = Interface::IconList(graphics, scenes, melee_assets, melee_captions);
+                auto weapon = Interface::IconList(graphics, scenes, melee_assets, melee_captions, std::string("EQUIP AS"));
 
                 if (weapon >= 0 && weapon < SafeCast(melee_types.size()))
                 {
@@ -1031,7 +1031,7 @@ namespace BloodSwordRogue::Game
 
             auto &scene = trader == 0 ? scene_left : scene_right;
 
-            auto offset = trader == 0 ? offset_left : offset_right;
+            auto &offset = trader == 0 ? offset_left : offset_right;
 
             auto items = SafeCast(trader == 0 ? assets_left.size() : assets_right.size());
 
@@ -1223,11 +1223,11 @@ namespace BloodSwordRogue::Game
 
                             action_limit = SafeCast(gear_actions.size());
 
-                            action = Interface::IconList(graphics, scenes, gear_assets, gear_captions);
+                            action = Interface::IconList(graphics, scenes, gear_assets, gear_captions, items[item].Name);
                         }
                         else
                         {
-                            action = Interface::IconList(graphics, scenes, assets, captions);
+                            action = Interface::IconList(graphics, scenes, assets, captions, items[item].Name);
                         }
 
                         if (action >= 0 && action < action_limit)
@@ -1249,7 +1249,7 @@ namespace BloodSwordRogue::Game
                             }
                             else if ((!gear && actions[action] == Controls::MapType("TRADE")) || (gear && gear_actions[action] == Controls::MapType("TRADE")))
                             {
-                                auto trader = Interface::SelectCharacter(graphics, scenes, game.Party, false);
+                                auto trader = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("TRADE WITH"));
 
                                 if (trader >= 0 && trader < game.Party.Count() && character != trader)
                                 {
@@ -1280,16 +1280,19 @@ namespace BloodSwordRogue::Game
 
         Asset::List assets = {
             Asset::Map("ITEMS"),
+            Asset::Map("TRADE"),
             Asset::Map("MAP"),
             Asset::Map("EXIT")};
 
         Controls::List actions = {
             Controls::MapType("ITEMS"),
+            Controls::MapType("TRADE"),
             Controls::MapType("MAP"),
             Controls::MapType("EXIT")};
 
         Interface::Strings captions = {
             "INVENTORY",
+            "TRADE",
             "VIEW MAP",
             "QUIT GAME"};
 
@@ -1303,7 +1306,7 @@ namespace BloodSwordRogue::Game
                 {
                     while (true)
                     {
-                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party);
+                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SELECT INVENTORY"));
 
                         if (character >= 0 && character < game.Party.Count())
                         {
