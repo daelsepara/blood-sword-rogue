@@ -1082,6 +1082,14 @@ namespace BloodSwordRogue::Game
 
         auto done = false;
 
+        auto prompt_left = game.Party[left].Name + std::string("'S ITEMS");
+
+        auto prompt_right = game.Party[right].Name + std::string("'S ITEMS");
+
+        SDL_Texture *prompt_left_asset = Graphics::CreateText(graphics, prompt_left.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
+
+        SDL_Texture *prompt_right_asset = Graphics::CreateText(graphics, prompt_right.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
+
         while (!done)
         {
             Asset::List assets_left = {};
@@ -1125,6 +1133,12 @@ namespace BloodSwordRogue::Game
 
                 trader = 0;
             }
+
+            // prompt left
+            scene_left.VerifyAndAdd(Scene::Element(prompt_left_asset, box_left.X + BloodSwordRogue::HalfTile, box_left.Y + BloodSwordRogue::Border));
+
+            // prompt right
+            scene_right.VerifyAndAdd(Scene::Element(prompt_right_asset, box_right.X + BloodSwordRogue::HalfTile, box_right.Y + BloodSwordRogue::Border));
 
             if (trader == 0)
             {
@@ -1336,6 +1350,10 @@ namespace BloodSwordRogue::Game
                 BloodSwordRogue::Free(captions);
             }
         }
+
+        BloodSwordRogue::Free(&prompt_left_asset);
+
+        BloodSwordRogue::Free(&prompt_right_asset);
     }
 
     // view items

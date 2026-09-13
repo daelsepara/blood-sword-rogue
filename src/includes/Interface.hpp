@@ -871,7 +871,7 @@ namespace BloodSwordRogue::Interface
     }
 
     // select icon from a grid
-    int IconGrid(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, int width, int height, Strings captions_text = {})
+    int IconGrid(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, int width, int height, Strings captions_text = {}, std::string prompt = std::string())
     {
         auto selected = -1;
 
@@ -909,11 +909,16 @@ namespace BloodSwordRogue::Interface
 
         auto bw = box.X + width + BloodSwordRogue::Border;
 
+        SDL_Texture *prompt_asset = !prompt.empty() ? Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0) : nullptr;
+
         while (!done)
         {
             auto scene = Interface::IconGrid(graphics, assets, width, height, box, Color::Active, offset);
 
             Interface::IconControls(graphics, scene, assets, width, height, box, offset);
+
+            // prompt
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::Border));
 
             for (auto y = 0; y < limit_y; y++)
             {
@@ -998,6 +1003,8 @@ namespace BloodSwordRogue::Interface
             }
         }
 
+        BloodSwordRogue::Free(&prompt_asset);
+
         if (has_captions)
         {
             BloodSwordRogue::Free(captions);
@@ -1007,11 +1014,11 @@ namespace BloodSwordRogue::Interface
     }
 
     // select icon from a grid
-    int IconGrid(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, int width, int height, Strings captions_text = {})
+    int IconGrid(Graphics::Base &graphics, Scene::Base &background, Asset::List &assets, int width, int height, Strings captions_text = {}, std::string prompt = std::string())
     {
         Graphics::Scenery scenes = {background};
 
-        return Interface::IconGrid(graphics, scenes, assets, width, height, captions_text);
+        return Interface::IconGrid(graphics, scenes, assets, width, height, captions_text, prompt);
     }
 
     // scroll up on texture
