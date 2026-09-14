@@ -1476,6 +1476,42 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    // view skills
+    void ViewSkills(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
+    {
+        if (character_id < 0 || character_id >= game.Party.Count())
+        {
+            return;
+        }
+
+        auto &character = game.Party[character_id];
+
+        if (SafeCast(character.Skills.size()) <= 0)
+        {
+            return;
+        }
+
+        Asset::List assets = {};
+
+        Skills::List skills = {};
+
+        std::vector<std::string> captions = {};
+
+        for (auto skill : character.Skills)
+        {
+            assets.push_back(Skills::Assets[skill]);
+
+            captions.push_back(Skills::TypeMapping[skill]);
+
+            skills.push_back(skill);
+        }
+
+        if (SafeCast(skills.size()) > 0)
+        {
+            Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 7, BloodSwordRogue::TileSize * 5, captions);
+        }
+    }
+
     // view character
     void ViewCharacter(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
     {
@@ -1496,7 +1532,20 @@ namespace BloodSwordRogue::Game
             return;
         }
 
+        Interface::Strings captions_text = {
+            "SKILLS",
+            "ITEMS"};
+
+        Asset::TextureList captions = Graphics::CreateText(graphics, Graphics::GenerateTextList(captions_text, Fonts::Caption, Color::Active, 0));
+
         auto &character = game.Party[character_id];
+
+        // pre-calculate possible caption position adjustments
+        auto bx = box.X - BloodSwordRogue::Border;
+
+        auto b2 = BloodSwordRogue::Border * 2;
+
+        auto bw = box.X + width + BloodSwordRogue::Border;
 
         while (!done)
         {
@@ -1563,6 +1612,36 @@ namespace BloodSwordRogue::Game
             // armour
             Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::ARMOUR], 2, Engine::Value(character, Attribute::Type::ARMOUR, false, Item::MapProperty("PRIMARY")), box.X + tile, box.Y + tile * 8);
 
+            if (input.Current >= 0 && input.Current < SafeCast(captions.size()))
+            {
+                auto i = input.Current;
+
+                auto point = Point(box.X + tile * (i + 2), box.Y + tile);
+
+                auto caption = input.Current;
+
+                auto caption_width = BloodSwordRogue::Width(captions[caption]);
+
+                // center caption
+                auto center = (BloodSwordRogue::TileSize - caption_width) / 2;
+
+                auto pc = box.X + tile * (i + 2) + center;
+
+                auto pcw = (pc + caption_width);
+
+                // adjust if caption spills over panel borders
+                if ((pc < bx) && i == 0)
+                {
+                    center += (bx - pc + b2);
+                }
+                else if (pcw > bw)
+                {
+                    center -= (pcw - bw + b2);
+                }
+
+                scene.VerifyAndAdd(Scene::Element(captions[caption], point.X + center, point.Y + BloodSwordRogue::TileSize + 2));
+            }
+
             auto scenery = scenes;
 
             scenery.push_back(scene);
@@ -1577,6 +1656,10 @@ namespace BloodSwordRogue::Game
                 }
                 else if (input.Type == Controls::MapType("SKILLS"))
                 {
+                    if (SafeCast(game.Party[character_id].Skills.size()) > 0)
+                    {
+                        Game::ViewSkills(graphics, scenery, game, location, character_id);
+                    }
                 }
                 else if (input.Type == Controls::MapType("ITEMS"))
                 {
@@ -1586,6 +1669,8 @@ namespace BloodSwordRogue::Game
                 input.Selected = false;
             }
         }
+
+        BloodSwordRogue::Free(captions);
     }
 
     Models::Update Menu(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, Point point)
