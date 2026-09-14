@@ -2456,8 +2456,8 @@ namespace BloodSwordRogue::Interface
         return result;
     }
 
-    // renders large values and increase/decrease toggles
-    void RenderValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int max_digits, int score, int x, int y, std::string inc, std::string dec)
+    // renders large values
+    void RenderValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int max_digits, int score, int x, int y)
     {
         // asset icon
         scene.VerifyAndAdd(Scene::Element(Asset::Get(asset), Point(x, y)));
@@ -2477,6 +2477,12 @@ namespace BloodSwordRogue::Interface
 
             temp_score = temp_score % divisor;
         }
+    }
+
+    // renders large values and increase/decrease toggles
+    void RenderValue(Scene::Base &scene, Asset::List &numbers, Asset::Type asset, int max_digits, int score, int x, int y, std::string inc, std::string dec)
+    {
+        Interface::RenderValue(scene, numbers, asset, max_digits, score, x, y);
 
         // add increase/decrease controls
         scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("UP")), Point(x + BloodSwordRogue::TileSize * (max_digits + 1), y)));
