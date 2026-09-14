@@ -1476,6 +1476,118 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    // view character
+    void ViewCharacter(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
+    {
+        auto done = false;
+
+        auto tile = BloodSwordRogue::TileSize;
+
+        auto width = tile * 16;
+
+        auto height = tile * 10;
+
+        auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
+
+        auto input = Controls::User();
+
+        if (!(character_id >= 0 && character_id < game.Party.Count()))
+        {
+            return;
+        }
+
+        auto &character = game.Party[character_id];
+
+        while (!done)
+        {
+            auto scene = Scene::Base();
+
+            // icon grid
+            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+            // add character asset
+            if (character.Asset != Asset::NONE)
+            {
+                scene.VerifyAndAdd(Scene::Element(Asset::Get(character.Asset), Point(box.X + tile, box.Y + tile)));
+            }
+            else
+            {
+                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("CHARACTER")), Point(box.X + tile, box.Y + tile)));
+            }
+
+            // view skills
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("CHECKBOX TREE")), Point(box.X + tile * 2, box.Y + tile)));
+
+            scene.Add(Controls::Base(Controls::MapType("SKILLS"), 0, 0, 1, 0, 0, box.X + tile * 2, box.Y + tile, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+            // view items
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("ITEMS")), Point(box.X + tile * 3, box.Y + tile)));
+
+            scene.Add(Controls::Base(Controls::MapType("ITEMS"), 1, 0, 2, 1, 1, box.X + tile * 3, box.Y + tile, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+            // back
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("BACK")), Point(box.X + tile * 4, box.Y + tile)));
+
+            scene.Add(Controls::Base(Controls::MapType("BACK"), 2, 1, 2, 2, 2, box.X + tile * 4, box.Y + tile, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Active));
+
+            // fighting prowess
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::FIGHTING_PROWESS], 2, Engine::Value(character, Attribute::Type::FIGHTING_PROWESS, false, Item::MapProperty("PRIMARY")), box.X + tile, box.Y + tile * 3);
+
+            // fighting prowess modifiers
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), 2, Engine::Modifier(character, Attribute::Type::FIGHTING_PROWESS, false, Item::MapProperty("PRIMARY")), box.X + tile * 4, box.Y + tile * 3);
+
+            // awareness
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::AWARENESS], 2, Engine::Value(character, Attribute::Type::AWARENESS, false, Item::MapProperty("PRIMARY")), box.X + tile, box.Y + tile * 4);
+
+            // awareness modifiers
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), 2, Engine::Modifier(character, Attribute::Type::AWARENESS, false, Item::MapProperty("PRIMARY")), box.X + tile * 4, box.Y + tile * 4);
+
+            // psychic ability
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::PSYCHIC_ABILITY], 2, Engine::Value(character, Attribute::Type::PSYCHIC_ABILITY, false, Item::MapProperty("PRIMARY")), box.X + tile, box.Y + tile * 5);
+
+            // psychic ability modifiers
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), 2, Engine::Modifier(character, Attribute::Type::PSYCHIC_ABILITY, false, Item::MapProperty("PRIMARY")), box.X + tile * 4, box.Y + tile * 5);
+
+            // damage
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::DAMAGE], 2, Engine::Value(character, Attribute::Type::DAMAGE, false, Item::MapProperty("PRIMARY")), box.X + tile, box.Y + tile * 6);
+
+            // damage modifiers
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("PLUS"), 2, Engine::Modifier(character, Attribute::Type::DAMAGE, false, Item::MapProperty("PRIMARY")), box.X + tile * 4, box.Y + tile * 6);
+
+            // endurance
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::ENDURANCE], 2, Engine::Value(character, Attribute::Type::ENDURANCE, false, Item::MapProperty("PRIMARY")), box.X + tile, box.Y + tile * 7);
+
+            // encumbrance limit
+            Interface::RenderValue(scene, Interface::Numbers, Asset::Map("WEIGHT"), 2, character.EncumbranceLimit, box.X + tile * 4, box.Y + tile * 7);
+
+            // armour
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::ARMOUR], 2, Engine::Value(character, Attribute::Type::ARMOUR, false, Item::MapProperty("PRIMARY")), box.X + tile, box.Y + tile * 8);
+
+            auto scenery = scenes;
+
+            scenery.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenery, scene.Controls, input, true);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("BACK"))
+                {
+                    done = true;
+                }
+                else if (input.Type == Controls::MapType("SKILLS"))
+                {
+                }
+                else if (input.Type == Controls::MapType("ITEMS"))
+                {
+                    Game::ViewItems(graphics, scenery, game, location, character_id);
+                }
+
+                input.Selected = false;
+            }
+        }
+    }
+
     Models::Update Menu(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, Point point)
     {
         Models::Update update = {false, false, false};
@@ -1507,7 +1619,23 @@ namespace BloodSwordRogue::Game
 
             if (selected >= 0 && selected < SafeCast(actions.size()))
             {
-                if (actions[selected] == Controls::MapType("ITEMS"))
+                if (actions[selected] == Controls::MapType("PARTY"))
+                {
+                    while (true)
+                    {
+                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SELECT ADVENTURER"));
+
+                        if (character >= 0 && character < game.Party.Count())
+                        {
+                            Game::ViewCharacter(graphics, scenes, game, location, character);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                else if (actions[selected] == Controls::MapType("ITEMS"))
                 {
                     while (true)
                     {

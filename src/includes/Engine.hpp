@@ -100,11 +100,9 @@ namespace BloodSwordRogue::Engine
         return Engine::Roll(count, 0);
     }
 
-    // total character score
-    int Score(Character::Base &character, Attribute::Type attribute, bool in_battle = false, Item::Property weapon = Item::NONE)
+    // score value
+    int Value(Character::Base &character, Attribute::Type attribute, bool in_battle = false, Item::Property weapon = Item::NONE)
     {
-        auto score = 0;
-
         auto value = std::min(character.Value(attribute), character.Maximum(attribute));
 
         auto modifier = character.Modifier(attribute) + character.Modifiers(attribute);
@@ -112,7 +110,28 @@ namespace BloodSwordRogue::Engine
         if (attribute == Attribute::Type::ARMOUR)
         {
             value = modifier;
+        }
+        else if (attribute == Attribute::Type::FIGHTING_PROWESS)
+        {
+            if (in_battle)
+            {
+                if (character.HasStatus(Character::Status::FIGHTING_BLIND))
+                {
+                    value = 1;
+                }
+            }
+        }
 
+        return value;
+    }
+
+    // total character score
+    int Modifier(Character::Base &character, Attribute::Type attribute, bool in_battle = false, Item::Property weapon = Item::NONE)
+    {
+        auto modifier = character.Modifier(attribute) + character.Modifiers(attribute);
+
+        if (attribute == Attribute::Type::ARMOUR)
+        {
             modifier = 0;
         }
         else if (attribute == Attribute::Type::FIGHTING_PROWESS)
@@ -135,8 +154,6 @@ namespace BloodSwordRogue::Engine
 
                 if (character.HasStatus(Character::Status::FIGHTING_BLIND))
                 {
-                    value = 1;
-
                     modifier = 0;
                 }
             }
@@ -163,7 +180,17 @@ namespace BloodSwordRogue::Engine
             modifier += character.WeaponModifier(weapon, attribute);
         }
 
-        score = value + modifier;
+        return modifier;
+    }
+
+    // total character score
+    int Score(Character::Base &character, Attribute::Type attribute, bool in_battle = false, Item::Property weapon = Item::NONE)
+    {
+        auto value = Engine::Value(character, attribute, in_battle, weapon);
+
+        auto modifier = Engine::Modifier(character, attribute, in_battle, weapon);
+
+        auto score = value + modifier;
 
         return (in_battle && character.HasArmedWeapon() && weapon != Item::NONE) ? score : std::max(0, score);
     }
@@ -1218,20 +1245,20 @@ namespace BloodSwordRogue::Engine
     void ResetAll(Party::Base &party)
     {
         party.RemoveStatus({Character::Status::AWAY,
-                      Character::Status::DEFENDING,
-                      Character::Status::DEFENDED,
-                      Character::Status::ENTANGLED,
-                      Character::Status::FLEEING,
-                      Character::Status::PARALYZED,
-                      Character::Status::SLOW_MURDER,
-                      Character::Status::BURNED,
-                      Character::Status::INVISIBLE,
-                      Character::Status::FIGHTING_BLIND,
-                      Character::Status::STRONG,
-                      Character::Status::IN_COMBAT,
-                      Character::Status::IN_BATTLE,
-                      Character::Status::MELEE,
-                      Character::Status::RANGED});
+                            Character::Status::DEFENDING,
+                            Character::Status::DEFENDED,
+                            Character::Status::ENTANGLED,
+                            Character::Status::FLEEING,
+                            Character::Status::PARALYZED,
+                            Character::Status::SLOW_MURDER,
+                            Character::Status::BURNED,
+                            Character::Status::INVISIBLE,
+                            Character::Status::FIGHTING_BLIND,
+                            Character::Status::STRONG,
+                            Character::Status::IN_COMBAT,
+                            Character::Status::IN_BATTLE,
+                            Character::Status::MELEE,
+                            Character::Status::RANGED});
 
         party.ResetSpells();
     }
