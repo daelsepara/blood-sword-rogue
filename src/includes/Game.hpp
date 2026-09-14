@@ -1481,18 +1481,21 @@ namespace BloodSwordRogue::Game
         Models::Update update = {false, false, false};
 
         Asset::List assets = {
+            Asset::Map("CHARACTER"),
             Asset::Map("ITEMS"),
             Asset::Map("TRADE"),
             Asset::Map("MAP"),
             Asset::Map("EXIT")};
 
         Controls::List actions = {
+            Controls::MapType("PARTY"),
             Controls::MapType("ITEMS"),
             Controls::MapType("TRADE"),
             Controls::MapType("MAP"),
             Controls::MapType("EXIT")};
 
         Interface::Strings captions = {
+            "PARTY",
             "INVENTORY",
             "TRADE",
             "VIEW MAP",
