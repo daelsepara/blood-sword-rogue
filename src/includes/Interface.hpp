@@ -709,7 +709,7 @@ namespace BloodSwordRogue::Interface
         if (!assets.empty())
         {
             // number of icon columns
-            auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+            auto limit_x = ((width - BloodSwordRogue::HalfTile) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
 
             // number of icon rows
             auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
@@ -777,7 +777,7 @@ namespace BloodSwordRogue::Interface
         }
 
         // number of icon columns
-        auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+        auto limit_x = ((width - BloodSwordRogue::HalfTile) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
 
         // number of icon rows
         auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
@@ -883,7 +883,7 @@ namespace BloodSwordRogue::Interface
         auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
 
         // number of icon columns
-        auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+        auto limit_x = ((width - BloodSwordRogue::HalfTile) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
 
         // number of icon rows
         auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
