@@ -1061,10 +1061,10 @@ namespace BloodSwordRogue::Game
         auto height = (graphics.Height - tile * 7);
 
         // number of icon columns
-        auto limit_x = (width / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+        auto limit_x = (width / BloodSwordRogue::IconSpacing);
 
         // number of icon rows
-        auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+        auto limit_y = ((height - BloodSwordRogue::IconSpacing) / BloodSwordRogue::IconSpacing);
 
         const int page_size = limit_x * limit_y;
 
@@ -1182,7 +1182,7 @@ namespace BloodSwordRogue::Game
 
                     if (index >= 0 && index < items)
                     {
-                        auto point = Point(box.X + BloodSwordRogue::HalfTile + x * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile), box.Y + BloodSwordRogue::HalfTile + y * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+                        auto point = Point(box.X + BloodSwordRogue::HalfTile + x * BloodSwordRogue::IconSpacing, box.Y + BloodSwordRogue::HalfTile + y * BloodSwordRogue::IconSpacing);
 
                         if (has_captions && ((input.Current + offset) == index))
                         {
@@ -1476,6 +1476,7 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    // view spells
     void ViewSpells(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
     {
         if (character_id < 0 || character_id >= game.Party.Count())
@@ -1494,7 +1495,48 @@ namespace BloodSwordRogue::Game
 
         Spells::List spells = {};
 
-        std::vector<std::string> captions = {};
+        Interface::Strings captions = {};
+
+        std::vector<int> selection = {};
+
+        for (auto spell : Spells::TypeMapping)
+        {
+            auto type = spell.first;
+
+            auto caption = spell.second;
+
+            if (type != Spells::Type::NONE)
+            {
+                assets.push_back(Spells::Assets[type]);
+
+                spells.push_back(type);
+
+                captions.push_back(caption);
+
+                if (BloodSwordRogue::In(character.CalledToMind, type))
+                {
+                    selection.push_back(SafeCast(spells.size()) - 1);
+                }
+            }
+        }
+
+        auto tile = BloodSwordRogue::TileSize;
+
+        auto width = tile * 8;
+
+        auto height = tile * 4;
+
+        selection = Interface::MultiSelect(graphics, scenes, assets, captions, width, height, Color::Active, selection, std::string("CALL TO MIND / FORGET"));
+
+        character.CalledToMind.clear();
+
+        for (auto selected : selection)
+        {
+            if (selected >= 0 && selected < SafeCast(spells.size()))
+            {
+                character.CalledToMind.push_back(spells[selected]);
+            }
+        }
     }
 
     // view skills
@@ -1529,7 +1571,15 @@ namespace BloodSwordRogue::Game
 
         if (SafeCast(skills.size()) > 0)
         {
-            Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 7, BloodSwordRogue::TileSize * 5, captions);
+            auto selected = Interface::IconGrid(graphics, scenes, assets, BloodSwordRogue::TileSize * 7, BloodSwordRogue::TileSize * 5, captions);
+
+            if (selected >= 0 && selected < SafeCast(skills.size()))
+            {
+                if (skills[selected] == Skills::Map("SPELLS"))
+                {
+                    Game::ViewSpells(graphics, scenes, game, location, character_id);
+                }
+            }
         }
     }
 

@@ -7,6 +7,9 @@ namespace BloodSwordRogue
 
     const int HalfTile = 32;
 
+    // tile size + half tile
+    const int IconSpacing = 96;
+
     // max moves
     const int MaximumMoves = 1000;
 
@@ -22,8 +25,11 @@ namespace BloodSwordRogue
 
     const int Second = 1000;
 
-    // border constants
+    // border constant
     const int Border = 4;
+
+    // tile size + border size
+    const int ControlSpacing = 68;
 
     // scroll speed (pixels)
     const int ScrollSpeed = 50;
