@@ -1021,6 +1021,162 @@ namespace BloodSwordRogue::Interface
         return Interface::IconGrid(graphics, scenes, assets, width, height, captions_text, prompt);
     }
 
+    // select icon(s) from a grid
+    std::vector<int> MultiSelect(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::List &assets, int width, int height, Strings captions_text = {}, std::string prompt = std::string())
+    {
+        std::vector<int> selection = {};
+
+        if (assets.empty())
+        {
+            return selection;
+        }
+
+        auto box = Point((graphics.Width - width) / 2, (graphics.Height - height) / 2);
+
+        // number of icon columns
+        auto limit_x = ((width - BloodSwordRogue::HalfTile) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+        // number of icon rows
+        auto limit_y = ((height - (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile)) / (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+        auto items = SafeCast(assets.size());
+
+        const int page_size = limit_x * limit_y;
+
+        auto offset = 0;
+
+        auto has_captions = SafeCast(captions_text.size()) > 0 && (captions_text.size() == assets.size());
+
+        Asset::TextureList captions = has_captions ? Graphics::CreateText(graphics, Graphics::GenerateTextList(captions_text, Fonts::Caption, Color::Active, 0)) : Asset::TextureList();
+
+        auto input = Controls::User();
+
+        auto done = false;
+
+        // pre-calculate possible caption position adjustments
+        auto bx = box.X - BloodSwordRogue::Border;
+
+        auto b2 = BloodSwordRogue::Border * 2;
+
+        auto bw = box.X + width + BloodSwordRogue::Border;
+
+        SDL_Texture *prompt_asset = !prompt.empty() ? Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0) : nullptr;
+
+        while (!done)
+        {
+            auto scene = Interface::IconGrid(graphics, assets, width, height, box, Color::Active, offset);
+
+            Interface::IconControls(graphics, scene, assets, width, height, box, offset);
+
+            // prompt
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::Border));
+
+            for (auto y = 0; y < limit_y; y++)
+            {
+                for (auto x = 0; x < limit_x; x++)
+                {
+                    auto id = (y * limit_x + x);
+
+                    auto index = offset + id;
+
+                    if (index >= 0 && index < items)
+                    {
+                        auto point = Point(box.X + BloodSwordRogue::HalfTile + x * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile), box.Y + BloodSwordRogue::HalfTile + y * (BloodSwordRogue::TileSize + BloodSwordRogue::HalfTile));
+
+                        if (has_captions && ((input.Current + offset) == index))
+                        {
+                            auto caption = index;
+
+                            auto caption_width = BloodSwordRogue::Width(captions[caption]);
+
+                            // center caption
+                            auto center = (BloodSwordRogue::TileSize - caption_width) / 2;
+
+                            auto pc = point.X + center;
+
+                            auto pcw = (pc + caption_width);
+
+                            // adjust if caption spills over panel borders
+                            if ((pc < bx) && x == 0)
+                            {
+                                center += (bx - pc + b2);
+                            }
+                            else if (pcw > bw)
+                            {
+                                center -= (pcw - bw + b2);
+                            }
+
+                            scene.VerifyAndAdd(Scene::Element(captions[caption], point.X + center, point.Y + BloodSwordRogue::TileSize + 2));
+                        }
+                    }
+                }
+            }
+
+            if (input.Type == Controls::MapType("LEFT"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("LEFT"));
+            }
+            else if (input.Type == Controls::MapType("RIGHT"))
+            {
+                input.Current = Controls::Find(scene.Controls, Controls::MapType("RIGHT"));
+            }
+
+            Graphics::Scenery scenery = scenes;
+
+            scenery.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenery, scene.Controls, input, true);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("BACK"))
+                {
+                    done = true;
+                }
+                else if (input.Type == Controls::MapType("LEFT"))
+                {
+                    offset -= page_size;
+                }
+                else if (input.Type == Controls::MapType("RIGHT"))
+                {
+                    offset += page_size;
+                }
+                else if (input.Type == Controls::MapType("SELECT"))
+                {
+
+                    auto selected = offset + input.Current;
+
+                    if (selected >= 0 && selected < SafeCast(assets.size()))
+                    {
+                        auto search = std::find(selection.begin(), selection.end(), selected);
+
+                        if (search != selection.end())
+                        {
+                            selection.erase(search);
+                        }
+                        else
+                        {
+                            selection.push_back(selected);
+                        }
+                    }
+                }
+
+                input.Current = -1;
+
+                input.Selected = false;
+            }
+        }
+
+        BloodSwordRogue::Free(&prompt_asset);
+
+        if (has_captions)
+        {
+            BloodSwordRogue::Free(captions);
+        }
+
+        return selection;
+    }
+
     // scroll up on texture
     void TextUp(Scene::Base &overlay, Controls::User &input, Controls::Type control, bool &up, int &offset, int texture_h, int text_h, int speed)
     {
@@ -2788,5 +2944,42 @@ namespace BloodSwordRogue::Interface
         }
 
         return character;
+    }
+
+    // TODO: complete implementation
+    Engine::RollResult Roll(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::Type actor, Asset::Type action, int roll, int modifier, Uint32 border)
+    {
+        Engine::RollResult result;
+
+        auto width = (BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 2) * 6 + (roll > 6 ? (roll - 6) : 0) * (BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 2);
+
+        auto height = BloodSwordRogue::TileSize * 4;
+
+        auto box = Point(graphics.Width - width, graphics.Height - height) / 2;
+
+        auto input = Controls::User();
+
+        auto done = false;
+
+        while (!done)
+        {
+            auto scene = Scene::Base();
+
+            Graphics::Scenery scenery = scenes;
+
+            scenes.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenes, scene.Controls, input);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("BACK"))
+                {
+                    done = true;
+                }
+            }
+        }
+
+        return result;
     }
 }

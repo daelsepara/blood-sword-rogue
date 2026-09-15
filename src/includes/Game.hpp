@@ -1476,6 +1476,27 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    void ViewSpells(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
+    {
+        if (character_id < 0 || character_id >= game.Party.Count())
+        {
+            return;
+        }
+
+        auto &character = game.Party[character_id];
+
+        if (!character.HasSkill(Skills::Map("SPELLS")))
+        {
+            return;
+        }
+
+        Asset::List assets = {};
+
+        Spells::List spells = {};
+
+        std::vector<std::string> captions = {};
+    }
+
     // view skills
     void ViewSkills(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
     {
