@@ -1399,6 +1399,23 @@ namespace BloodSwordRogue::Engine
         return first;
     }
 
+    int FirstWithSkill(Party::Base &party, Skills::Type skill)
+    {
+        auto first = -1;
+
+        for (auto i = 0; i < party.Count(); i++)
+        {
+            if (Engine::IsAlive(party[i]) && party[i].HasSkill(skill))
+            {
+                first = i;
+
+                break;
+            }
+        }
+
+        return first;
+    }
+
     // returns index (in party) of the last (battle order) live character
     int Last(Party::Base &party)
     {

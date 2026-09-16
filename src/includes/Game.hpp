@@ -1520,8 +1520,6 @@ namespace BloodSwordRogue::Game
             }
         }
 
-        auto tile = BloodSwordRogue::TileSize;
-
         auto width = BloodSwordRogue::IconSpacing * 5 - BloodSwordRogue::HalfTile;
 
         auto height = BloodSwordRogue::IconSpacing * 4;
@@ -1752,6 +1750,7 @@ namespace BloodSwordRogue::Game
             Asset::Map("CHARACTER"),
             Asset::Map("CHECKBOX TREE"),
             Asset::Map("ITEMS"),
+            Asset::Map("SPELLS"),
             Asset::Map("TRADE"),
             Asset::Map("MAP"),
             Asset::Map("EXIT")};
@@ -1760,6 +1759,7 @@ namespace BloodSwordRogue::Game
             Controls::MapType("PARTY"),
             Controls::MapType("SKILLS"),
             Controls::MapType("ITEMS"),
+            Controls::MapType("SPELLS"),
             Controls::MapType("TRADE"),
             Controls::MapType("MAP"),
             Controls::MapType("EXIT")};
@@ -1768,6 +1768,7 @@ namespace BloodSwordRogue::Game
             "PARTY",
             "SKILLS",
             "INVENTORY",
+            "SPELLS",
             "TRADE",
             "VIEW MAP",
             "QUIT GAME"};
@@ -1824,6 +1825,29 @@ namespace BloodSwordRogue::Game
                         {
                             break;
                         }
+                    }
+                }
+                else if (actions[selected] == Controls::MapType("SPELLS"))
+                {
+                    if (Engine::CountSkills(game.Party, Skills::Map("SPELLS")) > 0)
+                    {
+                        auto character = -1;
+
+                        if (Engine::CountSkills(game.Party, Skills::Map("SPELLS")) == 1)
+                        {
+                            character = Engine::FirstWithSkill(game.Party, Skills::Map("SPELLS"));
+                        }
+                        else
+                        {
+                            character = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SELECT SPELLCASTER"));
+                        }
+
+                        if (character >= 0 && character < game.Party.Count())
+                        {
+                            Game::ViewSpells(graphics, scenes, game, location, character);
+                        }
+
+                        break;
                     }
                 }
                 else if (actions[selected] == Controls::MapType("TRADE"))
