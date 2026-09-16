@@ -1522,9 +1522,9 @@ namespace BloodSwordRogue::Game
 
         auto tile = BloodSwordRogue::TileSize;
 
-        auto width = tile * 8;
+        auto width = BloodSwordRogue::IconSpacing * 5 - BloodSwordRogue::HalfTile;
 
-        auto height = tile * 4;
+        auto height = BloodSwordRogue::IconSpacing * 4;
 
         selection = Interface::MultiSelect(graphics, scenes, assets, captions, width, height, Color::Active, selection, std::string("CALL TO MIND / FORGET"));
 
@@ -1750,6 +1750,7 @@ namespace BloodSwordRogue::Game
 
         Asset::List assets = {
             Asset::Map("CHARACTER"),
+            Asset::Map("CHECKBOX TREE"),
             Asset::Map("ITEMS"),
             Asset::Map("TRADE"),
             Asset::Map("MAP"),
@@ -1757,6 +1758,7 @@ namespace BloodSwordRogue::Game
 
         Controls::List actions = {
             Controls::MapType("PARTY"),
+            Controls::MapType("SKILLS"),
             Controls::MapType("ITEMS"),
             Controls::MapType("TRADE"),
             Controls::MapType("MAP"),
@@ -1764,6 +1766,7 @@ namespace BloodSwordRogue::Game
 
         Interface::Strings captions = {
             "PARTY",
+            "SKILLS",
             "INVENTORY",
             "TRADE",
             "VIEW MAP",
@@ -1784,6 +1787,22 @@ namespace BloodSwordRogue::Game
                         if (character >= 0 && character < game.Party.Count())
                         {
                             Game::ViewCharacter(graphics, scenes, game, location, character);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                else if (actions[selected] == Controls::MapType("SKILLS"))
+                {
+                    while (true)
+                    {
+                        auto character = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SELECT ADVENTURER"));
+
+                        if (character >= 0 && character < game.Party.Count())
+                        {
+                            Game::ViewSkills(graphics, scenes, game, location, character);
                         }
                         else
                         {

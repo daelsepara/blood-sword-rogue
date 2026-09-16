@@ -808,7 +808,7 @@ namespace BloodSwordRogue::Interface
 
                     auto down = (y < limit_y - 1) && (index + limit_x < items) ? id + limit_x : id;
 
-                    if ((index + limit_x >= items) && y < (limit_y - 1))
+                    if ((index + limit_x >= items) && (y < (limit_y - 1) || y == 0))
                     {
                         down = id + (items - index);
                     }
@@ -1091,7 +1091,7 @@ namespace BloodSwordRogue::Interface
 
                             auto down = (y < limit_y - 1) && (index + limit_x < items) ? id + limit_x : id;
 
-                            if ((index + limit_x >= items) && y < (limit_y - 1))
+                            if ((index + limit_x >= items) && (y < (limit_y - 1) || y == 0))
                             {
                                 down = id + (items - index);
                             }
