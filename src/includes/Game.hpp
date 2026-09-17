@@ -1539,7 +1539,17 @@ namespace BloodSwordRogue::Game
 
     void Healing(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
     {
+        if (character_id < 0 || character_id >= game.Party.Count())
+        {
+            return;
+        }
 
+        auto &character = game.Party[character_id];
+
+        if (!character.HasSkill(Skills::Map("HEALING")))
+        {
+            return;
+        }
     }
 
     // view skills
