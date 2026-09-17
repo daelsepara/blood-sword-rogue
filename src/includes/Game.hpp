@@ -1537,6 +1537,11 @@ namespace BloodSwordRogue::Game
         }
     }
 
+    void Healing(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
+    {
+
+    }
+
     // view skills
     void ViewSkills(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, int character_id)
     {
@@ -1576,6 +1581,10 @@ namespace BloodSwordRogue::Game
                 if (skills[selected] == Skills::Map("SPELLS"))
                 {
                     Game::ViewSpells(graphics, scenes, game, location, character_id);
+                }
+                else if (skills[selected] == Skills::Map("SPELLS"))
+                {
+                    Game::Healing(graphics, scenes, game, location, character_id);
                 }
             }
         }
@@ -1751,6 +1760,7 @@ namespace BloodSwordRogue::Game
             Asset::Map("CHECKBOX TREE"),
             Asset::Map("ITEMS"),
             Asset::Map("SPELLS"),
+            Asset::Map("HEALING"),
             Asset::Map("TRADE"),
             Asset::Map("MAP"),
             Asset::Map("EXIT")};
@@ -1759,6 +1769,7 @@ namespace BloodSwordRogue::Game
             Controls::MapType("PARTY"),
             Controls::MapType("SKILLS"),
             Controls::MapType("ITEMS"),
+            Controls::MapType("HEALING"),
             Controls::MapType("SPELLS"),
             Controls::MapType("TRADE"),
             Controls::MapType("MAP"),
@@ -1769,6 +1780,7 @@ namespace BloodSwordRogue::Game
             "SKILLS",
             "INVENTORY",
             "SPELLS",
+            "HEALING",
             "TRADE",
             "VIEW MAP",
             "QUIT GAME"};
@@ -1845,6 +1857,29 @@ namespace BloodSwordRogue::Game
                         if (character >= 0 && character < game.Party.Count())
                         {
                             Game::ViewSpells(graphics, scenes, game, location, character);
+                        }
+
+                        break;
+                    }
+                }
+                else if (actions[selected] == Controls::MapType("HEALING"))
+                {
+                    if (Engine::CountSkills(game.Party, Skills::Map("HEALING")) > 0)
+                    {
+                        auto character = -1;
+
+                        if (Engine::CountSkills(game.Party, Skills::Map("HEALING")) == 1)
+                        {
+                            character = Engine::FirstWithSkill(game.Party, Skills::Map("HEALING"));
+                        }
+                        else
+                        {
+                            character = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SELECT SPELLCASTER"));
+                        }
+
+                        if (character >= 0 && character < game.Party.Count())
+                        {
+                            Game::Healing(graphics, scenes, game, location, character);
                         }
 
                         break;
