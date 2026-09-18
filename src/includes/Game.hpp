@@ -1550,6 +1550,15 @@ namespace BloodSwordRogue::Game
         {
             return;
         }
+
+        auto endurance = Engine::Score(game.Party[character_id], Attribute::Type::ENDURANCE, false, Item::NONE);
+
+        auto heal = Interface::SetValue(graphics, scenes, Interface::Numbers, std::string("HEAL"), 0, 0, endurance - 1);
+
+        if (heal > 0)
+        {
+            // heal
+        }
     }
 
     // view skills
@@ -1779,8 +1788,8 @@ namespace BloodSwordRogue::Game
             Controls::MapType("PARTY"),
             Controls::MapType("SKILLS"),
             Controls::MapType("ITEMS"),
-            Controls::MapType("HEALING"),
             Controls::MapType("SPELLS"),
+            Controls::MapType("HEALING"),
             Controls::MapType("TRADE"),
             Controls::MapType("MAP"),
             Controls::MapType("EXIT")};

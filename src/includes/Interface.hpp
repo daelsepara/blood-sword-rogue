@@ -3074,6 +3074,12 @@ namespace BloodSwordRogue::Interface
 
         auto input = Controls::User();
 
+        auto stage = Engine::RollStage::START;
+
+        auto rolls = Engine::RollResult();
+
+        auto rolled = false;
+
         auto done = false;
 
         while (!done)
@@ -3082,6 +3088,24 @@ namespace BloodSwordRogue::Interface
 
             // draw window border
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
+
+            if (stage == Engine::RollStage::START)
+            {
+
+            }
+            else if (stage == Engine::RollStage::RESULT)
+            {
+
+            }
+
+            if (rolled)
+            {
+
+            }
+            else
+            {
+                
+            }
 
             Graphics::Scenery scenery = scenes;
 
