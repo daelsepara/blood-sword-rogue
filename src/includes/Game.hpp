@@ -1546,7 +1546,7 @@ namespace BloodSwordRogue::Game
 
         auto &party = game.Party;
 
-        auto &character = game.Party[character_id];
+        auto &character = party[character_id];
 
         if (!character.HasSkill(Skills::Map("HEALING")))
         {
@@ -1556,6 +1556,8 @@ namespace BloodSwordRogue::Game
         if (!Engine::IsAlive(character))
         {
             Interface::MessageBox(graphics, scenes, character.Name + std::string(" IS DEAD!"), Color::Highlight);
+
+            return;
         }
 
         auto endurance = Engine::Score(character, Attribute::Type::ENDURANCE, false, Item::NONE);
@@ -1629,7 +1631,7 @@ namespace BloodSwordRogue::Game
                     if (Engine::Healed(party))
                     {
                         // everyone is at maximum endurance
-                        Interface::MessageBox(graphics, scenes, std::string("EVERYONE IS AT MAXIMUM ENDURANCE!"), Color::Highlight);
+                        Interface::MessageBox(graphics, scenes, std::string("EVERYONE IS AT MAXIMUM ENDURANCE!"), Color::Active);
                     }
                 }
             }

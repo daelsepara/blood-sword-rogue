@@ -3125,16 +3125,12 @@ namespace BloodSwordRogue::Interface
 
             scene.Add(Controls::Base(control_type, 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
+            // show dice
             for (auto dice = 0; dice < roll; dice++)
             {
-                if (rolled)
-                {
-                    scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[rolls.Rolls[dice] - 1], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
-                }
-                else
-                {
-                    scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[Engine::Random.NextInt() - 1], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
-                }
+                auto index = rolled ? rolls.Rolls[dice] - 1 : Engine::Random.NextInt() - 1;
+
+                scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[index], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
             }
 
             Graphics::Scenery scenery = scenes;
