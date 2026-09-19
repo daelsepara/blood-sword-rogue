@@ -3061,20 +3061,17 @@ namespace BloodSwordRogue::Interface
         return character;
     }
 
-    // TODO: complete implementation
-    Engine::RollResult Roll(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::Type actor, Asset::Type action, int roll, int modifier, Uint32 border)
+    Engine::RollResult Roll(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::Type actor, Asset::Type action, std::string action_string, int roll, int modifier, Uint32 border)
     {
         Engine::RollResult result;
 
         auto width = (BloodSwordRogue::ControlSpacing) * 6 + (roll > 6 ? (roll - 6) : 0) * (BloodSwordRogue::ControlSpacing) + BloodSwordRogue::TileSize - BloodSwordRogue::Pad;
 
-        auto height = BloodSwordRogue::IconSpacing * 3;
+        auto height = BloodSwordRogue::IconSpacing * 4;
 
         auto box = Point(graphics.Width - width, graphics.Height - height) / 2;
 
         auto input = Controls::User();
-
-        auto stage = Engine::RollStage::START;
 
         auto rolls = Engine::RollResult();
 
@@ -3082,7 +3079,7 @@ namespace BloodSwordRogue::Interface
 
         auto done = false;
 
-        auto prompt = "ROLL: " + std::to_string(roll) + 'D';
+        auto prompt = action_string + std::string(": ") + std::to_string(roll) + std::string("D");
 
         if (modifier != 0)
         {
@@ -3094,7 +3091,18 @@ namespace BloodSwordRogue::Interface
             prompt += std::to_string(modifier);
         }
 
-        SDL_Texture *prompt_asset = !prompt.empty() ? Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0) : nullptr;
+        // create roll string texture
+        auto prompt_asset = Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
+
+        // location where dice assets are rendered
+        auto origin = Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
+
+        // location where ROLL/CONFIRM button is rendered
+        auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 3);
+
+        Asset::Type control_asset = Asset::Map("DICE GAME");
+
+        Controls::Type control_type = Controls::MapType("ROLL");
 
         while (!done)
         {
@@ -3112,35 +3120,18 @@ namespace BloodSwordRogue::Interface
             // action
             scene.VerifyAndAdd(Scene::Element(Asset::Get(action), Point(box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing, box.Y + BloodSwordRogue::HalfTile)));
 
-            auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 2);
+            // ROLL/CONFIRM control
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(control_asset), control));
 
-            // draw controls
-            if (stage == Engine::RollStage::START)
+            scene.Add(Controls::Base(control_type, 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+
+            for (auto dice = 0; dice < roll; dice++)
             {
-                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("DICE GAME")), control));
-
-                scene.Add(Controls::Base(Controls::MapType("ROLL"), 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
-            }
-            else if (stage == Engine::RollStage::RESULT)
-            {
-                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("CONFIRM")), control));
-
-                scene.Add(Controls::Base(Controls::MapType("CONFIRM"), 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
-            }
-
-            // location where dice assets are drawn
-            auto origin = Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
-
-            if (rolled)
-            {
-                for (auto dice = 0; dice < roll; dice++)
+                if (rolled)
                 {
                     scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[rolls.Rolls[dice] - 1], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
                 }
-            }
-            else
-            {
-                for (auto dice = 0; dice < roll; dice++)
+                else
                 {
                     scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[Engine::Random.NextInt() - 1], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
                 }
@@ -3156,30 +3147,24 @@ namespace BloodSwordRogue::Interface
             {
                 if (input.Type == Controls::MapType("ROLL"))
                 {
-                    if (stage == Engine::RollStage::START)
-                    {
-                        stage = Engine::RollStage::RESULT;
+                    // roll dice
+                    rolls = Engine::Roll(roll, modifier);
 
-                        // roll dice
-                        if (!rolled)
-                        {
-                            rolls = Engine::Roll(roll, modifier);
+                    result = rolls;
 
-                            rolled = true;
+                    // clamp sum
+                    result.Sum = std::max(0, rolls.Sum);
 
-                            result = rolls;
+                    // update control asset and type
+                    control_asset = Asset::Map("CONFIRM");
 
-                            // check roll
-                            result.Sum = std::max(0, rolls.Sum);
-                        }
-                    }
+                    control_type = Controls::MapType("CONFIRM");
+
+                    rolled = true;
                 }
                 else if (input.Type == Controls::MapType("CONFIRM"))
                 {
-                    if (stage == Engine::RollStage::RESULT)
-                    {
-                        done = true;
-                    }
+                    done = true;
                 }
 
                 input.Selected = false;

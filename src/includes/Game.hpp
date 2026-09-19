@@ -1569,7 +1569,7 @@ namespace BloodSwordRogue::Game
                 Engine::GainEndurance(character, -cost, false);
 
                 // heal
-                auto score = cost * Interface::Roll(graphics, scenes, character.Asset, Asset::Map("HEALING"), 1, -2, Color::Active).Sum;
+                auto score = cost * Interface::Roll(graphics, scenes, character.Asset, Asset::Map("HEALING"), std::string("HEAL"), 1, -2, Color::Active).Sum;
 
                 auto done = !(score > 0);
 
