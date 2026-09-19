@@ -3112,7 +3112,7 @@ namespace BloodSwordRogue::Interface
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
 
             // prompt
-            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::Border));
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::IconSpacing * 2));
 
             // actor
             scene.VerifyAndAdd(Scene::Element(Asset::Get(actor), Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile)));
