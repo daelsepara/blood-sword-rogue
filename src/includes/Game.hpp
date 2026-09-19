@@ -1569,7 +1569,7 @@ namespace BloodSwordRogue::Game
                 Engine::GainEndurance(character, -cost, false);
 
                 // heal
-                auto score = Interface::Roll(graphics, scenes, character.Asset, Asset::Map("HEAL"), 1, -2, Color::Active).Sum;
+                auto score = cost * Interface::Roll(graphics, scenes, character.Asset, Asset::Map("HEALING"), 1, -2, Color::Active).Sum;
 
                 auto done = !(score > 0);
 
@@ -1618,8 +1618,12 @@ namespace BloodSwordRogue::Game
                                 Interface::MessageBox(graphics, scenes, party[target].Name + std::string(" IS NOT WOUNDED!"), Color::Highlight);
                             }
                         }
+                        else
+                        {
+                            done = true;
+                        }
 
-                        done = !(score > 0) || Engine::Healed(party);
+                        done = !(score > 0) || Engine::Healed(party) || done;
                     }
 
                     if (Engine::Healed(party))
@@ -1672,7 +1676,7 @@ namespace BloodSwordRogue::Game
                 {
                     Game::ViewSpells(graphics, scenes, game, location, character_id);
                 }
-                else if (skills[selected] == Skills::Map("SPELLS"))
+                else if (skills[selected] == Skills::Map("HEALING"))
                 {
                     Game::Healing(graphics, scenes, game, location, character_id);
                 }

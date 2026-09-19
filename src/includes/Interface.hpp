@@ -3068,7 +3068,7 @@ namespace BloodSwordRogue::Interface
 
         auto width = (BloodSwordRogue::ControlSpacing) * 6 + (roll > 6 ? (roll - 6) : 0) * (BloodSwordRogue::ControlSpacing) + BloodSwordRogue::TileSize - BloodSwordRogue::Pad;
 
-        auto height = BloodSwordRogue::IconSpacing * 4;
+        auto height = BloodSwordRogue::IconSpacing * 3;
 
         auto box = Point(graphics.Width - width, graphics.Height - height) / 2;
 
@@ -3082,6 +3082,20 @@ namespace BloodSwordRogue::Interface
 
         auto done = false;
 
+        auto prompt = "ROLL: " + std::to_string(roll) + 'D';
+
+        if (modifier != 0)
+        {
+            if (modifier > 0)
+            {
+                prompt += '+';
+            }
+
+            prompt += std::to_string(modifier);
+        }
+
+        SDL_Texture *prompt_asset = !prompt.empty() ? Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0) : nullptr;
+
         while (!done)
         {
             auto scene = Scene::Base();
@@ -3089,13 +3103,16 @@ namespace BloodSwordRogue::Interface
             // draw window border
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
 
+            // prompt
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::Border));
+
             // actor
             scene.VerifyAndAdd(Scene::Element(Asset::Get(actor), Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile)));
 
             // action
             scene.VerifyAndAdd(Scene::Element(Asset::Get(action), Point(box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing, box.Y + BloodSwordRogue::HalfTile)));
 
-            auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2);
+            auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 2);
 
             // draw controls
             if (stage == Engine::RollStage::START)
@@ -3112,7 +3129,7 @@ namespace BloodSwordRogue::Interface
             }
 
             // location where dice assets are drawn
-            auto origin = Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::IconSpacing * 2);
+            auto origin = Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
             if (rolled)
             {
@@ -3133,7 +3150,7 @@ namespace BloodSwordRogue::Interface
 
             scenes.push_back(scene);
 
-            input = Input::WaitForInput(graphics, scenes, scene.Controls, input);
+            input = Input::WaitForInput(graphics, scenes, scene.Controls, input, false, true, 0);
 
             if (Input::Check(input))
             {
@@ -3157,15 +3174,19 @@ namespace BloodSwordRogue::Interface
                         }
                     }
                 }
-            }
-            else if (input.Type == Controls::MapType("CONFIRM"))
-            {
-                if (stage == Engine::RollStage::RESULT)
+                else if (input.Type == Controls::MapType("CONFIRM"))
                 {
-                    done = true;
+                    if (stage == Engine::RollStage::RESULT)
+                    {
+                        done = true;
+                    }
                 }
+
+                input.Selected = false;
             }
         }
+
+        BloodSwordRogue::Free(&prompt_asset);
 
         return result;
     }
