@@ -1544,6 +1544,8 @@ namespace BloodSwordRogue::Game
             return;
         }
 
+        auto &party = game.Party;
+
         auto &character = game.Party[character_id];
 
         if (!character.HasSkill(Skills::Map("HEALING")))
@@ -1551,13 +1553,82 @@ namespace BloodSwordRogue::Game
             return;
         }
 
-        auto endurance = Engine::Score(game.Party[character_id], Attribute::Type::ENDURANCE, false, Item::NONE);
-
-        auto heal = Interface::SetValue(graphics, scenes, Interface::Numbers, std::string("HEAL"), 0, 0, endurance - 1);
-
-        if (heal > 0)
+        if (!Engine::IsAlive(character))
         {
-            // heal
+            Interface::MessageBox(graphics, scenes, character.Name + std::string(" IS DEAD!"), Color::Highlight);
+        }
+
+        auto endurance = Engine::Score(character, Attribute::Type::ENDURANCE, false, Item::NONE);
+
+        if (endurance > 1)
+        {
+            auto cost = Interface::SetValue(graphics, scenes, Interface::Numbers, std::string("HEAL"), 0, 0, endurance - 1);
+
+            if (cost > 0)
+            {
+                Engine::GainEndurance(character, -cost, false);
+
+                // heal
+                auto score = Interface::Roll(graphics, scenes, character.Asset, Asset::Map("HEAL"), 1, -2, Color::Active).Sum;
+
+                auto done = !(score > 0);
+
+                if (score == 0)
+                {
+                    Interface::MessageBox(graphics, scenes, std::string("HEALING ATTEMPT FAILED!"), Color::Highlight);
+                }
+                else
+                {
+                    // check if healing is doubled
+                    if (character.HasStatus(Character::Status::DOUBLE_HEALING))
+                    {
+                        score *= 2;
+                    }
+
+                    while (!done)
+                    {
+                        auto target = Interface::SelectCharacter(graphics, scenes, game.Party, false, std::string("SELECT ADVENTURER TO HEAL"));
+
+                        if (target >= 0 && target < party.Count())
+                        {
+                            if (party[target].Value(Attribute::Type::ENDURANCE) > 0 && party[target].Value(Attribute::Type::ENDURANCE) < party[target].Maximum(Attribute::Type::ENDURANCE))
+                            {
+                                auto max_healing = std::min(score, party[target].Maximum(Attribute::Type::ENDURANCE) - party[target].Value(Attribute::Type::ENDURANCE));
+
+                                auto asset = Asset::TypeMapping[party[target].Asset];
+
+                                auto heal = Interface::SetValue(graphics, scenes, Interface::Numbers, asset, 0, 0, max_healing);
+
+                                if (heal > 0)
+                                {
+                                    // heal selected character
+                                    Engine::GainEndurance(party[target], heal, false);
+
+                                    Interface::MessageBox(graphics, scenes, party[target].Name + std::string(" HEALED!"), Color::Active);
+                                }
+
+                                score -= heal;
+                            }
+                            else if (!Engine::IsAlive(party[target]))
+                            {
+                                Interface::MessageBox(graphics, scenes, party[target].Name + std::string(" IS DEAD!"), Color::Highlight);
+                            }
+                            else
+                            {
+                                Interface::MessageBox(graphics, scenes, party[target].Name + std::string(" IS NOT WOUNDED!"), Color::Highlight);
+                            }
+                        }
+
+                        done = !(score > 0) || Engine::Healed(party);
+                    }
+
+                    if (Engine::Healed(party))
+                    {
+                        // everyone is at maximum endurance
+                        Interface::MessageBox(graphics, scenes, std::string("EVERYONE IS AT MAXIMUM ENDURANCE!"), Color::Highlight);
+                    }
+                }
+            }
         }
     }
 
@@ -2055,6 +2126,9 @@ namespace BloodSwordRogue::Game
 
     void Main(Graphics::Base &graphics)
     {
+        // initialize random number generator
+        Engine::InitializeRNG();
+
         Game::Setup();
 
         FontCache::Base TextCache = FontCache::Base();

@@ -2725,6 +2725,9 @@ namespace BloodSwordRogue::MapMaker
 
     void Main(Graphics::Base &graphics)
     {
+        // initialize random number generator
+        Engine::InitializeRNG();
+
         FontCache::Base TextCache = FontCache::Base();
 
         TextCache.Create(graphics.Renderer, Fonts::Normal, "0123456789(),", Color::S(Color::Active), TTF_STYLE_NORMAL);

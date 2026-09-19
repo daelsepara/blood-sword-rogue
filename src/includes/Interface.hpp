@@ -3066,9 +3066,9 @@ namespace BloodSwordRogue::Interface
     {
         Engine::RollResult result;
 
-        auto width = (BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 2) * 6 + (roll > 6 ? (roll - 6) : 0) * (BloodSwordRogue::TileSize + BloodSwordRogue::Pad * 2);
+        auto width = (BloodSwordRogue::ControlSpacing) * 6 + (roll > 6 ? (roll - 6) : 0) * (BloodSwordRogue::ControlSpacing) + BloodSwordRogue::TileSize - BloodSwordRogue::Pad;
 
-        auto height = BloodSwordRogue::TileSize * 4;
+        auto height = BloodSwordRogue::IconSpacing * 4;
 
         auto box = Point(graphics.Width - width, graphics.Height - height) / 2;
 
@@ -3089,22 +3089,44 @@ namespace BloodSwordRogue::Interface
             // draw window border
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
 
+            // actor
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(actor), Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile)));
+
+            // action
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(action), Point(box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing, box.Y + BloodSwordRogue::HalfTile)));
+
+            auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2);
+
+            // draw controls
             if (stage == Engine::RollStage::START)
             {
+                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("DICE GAME")), control));
 
+                scene.Add(Controls::Base(Controls::MapType("ROLL"), 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
             }
             else if (stage == Engine::RollStage::RESULT)
             {
+                scene.VerifyAndAdd(Scene::Element(Asset::Get(Asset::Map("CONFIRM")), control));
 
+                scene.Add(Controls::Base(Controls::MapType("CONFIRM"), 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
             }
+
+            // location where dice assets are drawn
+            auto origin = Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::IconSpacing * 2);
 
             if (rolled)
             {
-
+                for (auto dice = 0; dice < roll; dice++)
+                {
+                    scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[rolls.Rolls[dice] - 1], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
+                }
             }
             else
             {
-                
+                for (auto dice = 0; dice < roll; dice++)
+                {
+                    scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[Engine::Random.NextInt() - 1], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
+                }
             }
 
             Graphics::Scenery scenery = scenes;
@@ -3115,7 +3137,30 @@ namespace BloodSwordRogue::Interface
 
             if (Input::Check(input))
             {
-                if (input.Type == Controls::MapType("BACK"))
+                if (input.Type == Controls::MapType("ROLL"))
+                {
+                    if (stage == Engine::RollStage::START)
+                    {
+                        stage = Engine::RollStage::RESULT;
+
+                        // roll dice
+                        if (!rolled)
+                        {
+                            rolls = Engine::Roll(roll, modifier);
+
+                            rolled = true;
+
+                            result = rolls;
+
+                            // check roll
+                            result.Sum = std::max(0, rolls.Sum);
+                        }
+                    }
+                }
+            }
+            else if (input.Type == Controls::MapType("CONFIRM"))
+            {
+                if (stage == Engine::RollStage::RESULT)
                 {
                     done = true;
                 }
