@@ -3061,6 +3061,19 @@ namespace BloodSwordRogue::Interface
         return character;
     }
 
+    // select character
+    int SelectCharacter(Graphics::Base &graphics, Graphics::Scenery &scenes, Party::Base &party, std::string character_string)
+    {
+        auto character = party.FindCharacter(character_string);
+
+        while (character < 0 && character >= party.Count())
+        {
+            character = Interface::SelectCharacter(graphics, scenes, party, false, std::string("SELECT ADVENTURER"));
+        }
+
+        return character;
+    }
+
     Engine::RollResult Roll(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::Type actor, Asset::Type action, std::string action_string, int roll, int modifier, Uint32 border)
     {
         Engine::RollResult result;
@@ -3170,5 +3183,15 @@ namespace BloodSwordRogue::Interface
         BloodSwordRogue::Free(&prompt_asset);
 
         return result;
+    }
+
+    // attribute test
+    bool AttributeTest(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character, Attribute::Type attribute, int roll = 0, int modifier = 0)
+    {
+        auto score = Engine::Score(character, attribute, false, Item::NONE);
+
+        auto rolls = Interface::Roll(graphics, scenes, character.Asset, Interface::AttributeAssets[attribute], Attribute::TypeMapping[attribute], roll + 2, modifier, Color::Active);
+
+        return rolls.Sum <= score;
     }
 }

@@ -15,6 +15,7 @@ namespace BloodSwordRogue::Trigger
         ALL_ITEMS,
         VICTORY,
         TRAVEL,
+        ATTRIBUTE_TEST,
         EXIT
     };
 
@@ -27,6 +28,7 @@ namespace BloodSwordRogue::Trigger
         {Trigger::Type::ALL_ITEMS, "ALL ITEMS"},
         {Trigger::Type::VICTORY, "VICTORY"},
         {Trigger::Type::TRAVEL, "TRAVEL"},
+        {Trigger::Type::ATTRIBUTE_TEST, "ATTRIBUTE TEST"},
         {Trigger::Type::EXIT, "EXIT"}};
 
     // map string to trigger type

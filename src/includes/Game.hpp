@@ -356,6 +356,10 @@ namespace BloodSwordRogue::Game
             {
                 trigger.Completed = Evaluate::HasItems(trigger, game.Party);
             }
+            else if (trigger.Type == Trigger::Type::ATTRIBUTE_TEST)
+            {
+                trigger.Completed = Evaluate::AttributeTest(graphics, scenes, trigger, game.Party);
+            }
 
             // send status message
             if (trigger.Completed)
@@ -671,6 +675,24 @@ namespace BloodSwordRogue::Game
             location.Loot.erase(location.Loot.begin() + loot);
 
             Location::RenumberLoot(location);
+        }
+    }
+
+    void RemoveTrigger(Graphics::Base &graphics, Graphics::Scenery scenes, Game::Base &game, Location::Base &location, Point point)
+    {
+        auto trigger = Location::FindTrigger(location, point);
+
+        if (trigger >= 0 && trigger < SafeCast(location.Triggers.size()) && location.Map.IsValid(point))
+        {
+            auto &tile = location.Map[point];
+
+            tile.Id = Map::NotFound;
+
+            tile.Occupant = Map::Object::NONE;
+
+            location.Triggers.erase(location.Triggers.begin() + trigger);
+
+            Location::RenumberTriggers(location);
         }
     }
 
@@ -2075,6 +2097,13 @@ namespace BloodSwordRogue::Game
                     auto &trigger = location.Triggers[id];
 
                     update = Game::CheckTrigger(graphics, scenes, world, game, location, trigger);
+
+                    if (trigger.Completed)
+                    {
+                        Game::RemoveTrigger(graphics, scenes, game, location, point);
+
+                        update.Scene = true;
+                    }
                 }
             }
         }

@@ -81,4 +81,35 @@ namespace BloodSwordRogue::Evaluate
 
         return result;
     }
+
+    bool AttributeTest(Graphics::Base &graphics, Graphics::Scenery scenes, Trigger::Base &trigger, Party::Base &party)
+    {
+        auto result = false;
+
+        // variables
+        // 0 - player/select
+        // 1 - attribute
+        // 2 - additional roll
+        // 3 - additional modifier
+        if (Engine::IsAlive(party) && SafeCast(trigger.Variables.size()) >= 2)
+        {
+            auto character = Interface::SelectCharacter(graphics, scenes, party, trigger.Variables[0]);
+
+            if (character >= 0 && character < party.Count() && Engine::IsAlive(party[character]))
+            {
+                auto attribute = Attribute::MapAttribute(trigger.Variables[1]);
+
+                if (attribute != Attribute::Type::NONE)
+                {
+                    auto roll = SafeCast(trigger.Variables.size() > 2) ? std::stoi(BloodSwordRogue::Trim(trigger.Variables[2]), nullptr, 10) : 0;
+
+                    auto modifier = SafeCast(trigger.Variables.size() > 3) ? std::stoi(BloodSwordRogue::Trim(trigger.Variables[3]), nullptr, 10) : 0;
+
+                    result = Interface::AttributeTest(graphics, scenes, party[character], attribute, roll, modifier);
+                }
+            }
+        }
+
+        return result;
+    }
 }
