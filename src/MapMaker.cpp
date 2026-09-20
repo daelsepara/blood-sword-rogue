@@ -2592,7 +2592,7 @@ namespace BloodSwordRogue::MapMaker
                 else if (selected == 4)
                 {
                     // edit variables
-                    trigger.Variables = Interface::GetTextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4);
+                    trigger.Variables = Interface::GetTextList(graphics, scenes, trigger.Variables, map.TileSize * 6, map.TileSize * 4, "ADD VARIABLE");
                 }
                 else if (selected == 5)
                 {

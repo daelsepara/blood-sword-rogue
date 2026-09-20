@@ -337,12 +337,19 @@ namespace BloodSwordRogue::Game
         }
         else if (!trigger.Activated)
         {
-            Interface::MessageBox(graphics, scenes, trigger.EncounterMessage, Color::Active);
+            SDL_Log("[TRIGGER] [%s] [ACTIVATED]", Trigger::TypeMapping[trigger.Type]);
+
+            if (!trigger.EncounterMessage.empty())
+            {
+                Interface::MessageBox(graphics, scenes, trigger.EncounterMessage, Color::Active);
+            }
 
             trigger.Activated = true;
         }
         else if (!trigger.Completed)
         {
+            SDL_Log("[TRIGGER] [%s] [%d]", Trigger::TypeMapping[trigger.Type], SafeCast(trigger.Variables.size()));
+
             // check trigger conditions
             if (trigger.Type == Trigger::Type::CHARACTER)
             {
