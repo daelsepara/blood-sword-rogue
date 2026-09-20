@@ -1483,6 +1483,13 @@ namespace BloodSwordRogue::Interface
                         {
                             surface_asset = Asset::GetSurface("ITEMS", Color::Highlight);
                         }
+                        else if (tile.Occupant == Map::Object::TRIGGER)
+                        {
+                            if (tile.Asset != Asset::NONE)
+                            {
+                                surface_asset = Asset::GetSurface(tile.Asset);
+                            }
+                        }
                         else if ((tile.Occupant == Map::Object::PARTY) || (tile.Occupant == Map::Object::PLAYER))
                         {
                             surface_asset = Asset::GetSurface("CHARACTER", Color::Active);

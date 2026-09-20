@@ -160,6 +160,8 @@ namespace BloodSwordRogue::MapMaker
                             }
                         }
 
+                        break;
+
                     case Map::Object::TRIGGER:
 
                         if (tile.Asset != Asset::NONE)
