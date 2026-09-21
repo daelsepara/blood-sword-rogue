@@ -105,7 +105,7 @@ namespace BloodSwordRogue::Evaluate
 
                     auto modifier = SafeCast(trigger.Variables.size() > 3) ? std::stoi(BloodSwordRogue::Trim(trigger.Variables[3]), nullptr, 10) : 0;
 
-                    result = Interface::AttributeTest(graphics, scenes, party[character], attribute, roll, modifier);
+                    result = Interface::AttributeTest(graphics, scenes, party[character], attribute, Item::NONE, roll, modifier);
                 }
             }
         }

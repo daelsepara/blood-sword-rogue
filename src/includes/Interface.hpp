@@ -3086,6 +3086,7 @@ namespace BloodSwordRogue::Interface
         return character;
     }
 
+    // generic roller
     Engine::RollResult Roll(Graphics::Base &graphics, Graphics::Scenery scenes, Asset::Type actor, Asset::Type action, std::string action_string, int roll, int modifier, Uint32 border)
     {
         Engine::RollResult result;
@@ -3120,7 +3121,7 @@ namespace BloodSwordRogue::Interface
         auto prompt_asset = Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
 
         // location where dice assets are rendered
-        auto origin = Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
+        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
         // location where ROLL/CONFIRM button is rendered
         auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 3);
@@ -3198,9 +3199,9 @@ namespace BloodSwordRogue::Interface
     }
 
     // attribute test
-    bool AttributeTest(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character, Attribute::Type attribute, int add_roll = 0, int modifier = 0)
+    bool AttributeTest(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &character, Attribute::Type attribute, Item::Type weapon = Item::NONE, int add_roll = 0, int modifier = 0)
     {
-        auto score = Engine::Score(character, attribute, false, Item::NONE);
+        auto score = Engine::Score(character, attribute, false, weapon);
 
         auto roll = 2 + add_roll;
 
@@ -3226,7 +3227,7 @@ namespace BloodSwordRogue::Interface
         auto prompt_asset = Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
 
         // location where dice assets are rendered
-        auto origin = Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
+        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
         // location where ROLL/CONFIRM button is rendered
         auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 3);
@@ -3309,5 +3310,186 @@ namespace BloodSwordRogue::Interface
         BloodSwordRogue::Free(&prompt_asset);
 
         return rolls.Sum <= score;
+    }
+
+    void Fight(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &attacker, Character::Base &defender, Skills::Type skill, Item::Property weapon)
+    {
+        auto width = (BloodSwordRogue::ControlSpacing) * 10 + BloodSwordRogue::TileSize - BloodSwordRogue::Pad;
+
+        auto height = BloodSwordRogue::IconSpacing * 4;
+
+        auto box = Point(graphics.Width - width, graphics.Height - height) / 2;
+
+        auto knockout = (skill == Skills::Map("QUARTERSTAFF")) && attacker.HasSkill(Skills::Map("QUARTERSTAFF"));
+
+        auto unarmed = (skill != Skills::Map("ARCHERY")) && attacker.IsPlayer() && !attacker.HasArmedWeapon();
+
+        // defender endurance
+        auto endurance = Engine::Score(defender, Attribute::Type::ENDURANCE, true, Item::NONE);
+
+        // attacker score
+        auto score = Engine::Score(attacker, Attribute::Type::FIGHTING_PROWESS, true, weapon);
+
+        // Eye of the Tiger effects
+        if (attacker.HasStatus(Character::Status::FPR_PLUS2))
+        {
+            score += 2;
+        }
+        else if (attacker.HasStatus(Character::Status::FPR_PLUS1))
+        {
+            score += 1;
+        }
+
+        score = std::max(0, score);
+
+        // select fight asset
+        auto asset = Asset::Map("FIGHT");
+
+        if (knockout)
+        {
+            asset = Asset::Map("QUARTERSTAFF");
+        }
+        else if (unarmed)
+        {
+            asset = Asset::Map("UNARMED COMBAT");
+        }
+        else if (skill != Skills::NONE)
+        {
+            asset = Skills::Assets[skill];
+        }
+
+        // rolls and modifiers
+        auto roll = 2;
+
+        roll += defender.IsStatus(Character::Status::DEFENDING) ? 1 : 0;
+
+        roll += knockout ? 1 : 0;
+
+        roll += attacker.HasStatus(Character::Status::NIGHTHOWL) ? 1 : 0;
+
+        auto modifier = defender.HasSkill(Skills::Map("DODGING")) ? 1 : 0;
+
+        auto prompt = (skill != Skills::NONE ? Skills::TypeMapping[skill] : std::string("FIGHT")) + std::string(": ") + std::to_string(roll) + std::string("D");
+
+        if (modifier != 0)
+        {
+            if (modifier > 0)
+            {
+                prompt += '+';
+            }
+
+            prompt += std::to_string(modifier);
+        }
+
+        // create roll string texture
+        auto prompt_asset = Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
+
+        // location where dice assets are rendered
+        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
+
+        // location where ROLL/CONFIRM button is rendered
+        auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 3);
+
+        Asset::Type control_asset = Asset::Map("DICE GAME");
+
+        Controls::Type control_type = Controls::MapType("ROLL");
+
+        auto rolls = Engine::RollResult();
+
+        auto input = Controls::User();
+
+        auto rolled = false;
+
+        auto done = false;
+
+        while (!done)
+        {
+            auto scene = Scene::Base();
+
+            auto result = ((rolled && rolls.Sum <= score) || !rolled) ? Color::Active : Color::Highlight;
+
+            // draw window border
+            scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, result, BloodSwordRogue::Border));
+
+            // attacker
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(attacker.Asset), Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile)));
+
+            // attack score
+            Interface::RenderValue(scene, Interface::Numbers, asset, 2, score, box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing, box.Y + BloodSwordRogue::HalfTile);
+
+            // defender
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(defender.Asset), Point(box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing * 5, box.Y + BloodSwordRogue::HalfTile)));
+
+            // defender endurance
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::ENDURANCE], 3, endurance, box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing * 6, box.Y + BloodSwordRogue::HalfTile);
+
+            // ROLL/CONFIRM control
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(control_asset), control));
+
+            scene.Add(Controls::Base(control_type, 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
+
+            // prompt
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile + 4, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2));
+
+            // show dice
+            for (auto dice = 0; dice < roll; dice++)
+            {
+                auto index = rolled ? rolls.Rolls[dice] - 1 : Engine::Random.NextInt() - 1;
+
+                scene.VerifyAndAdd(Scene::Element(Interface::DiceTextures[index], origin + Point(dice * BloodSwordRogue::ControlSpacing, 0)));
+            }
+
+            Graphics::Scenery scenery = scenes;
+
+            scenes.push_back(scene);
+
+            input = Input::WaitForInput(graphics, scenes, scene.Controls, input, false, true, 0);
+
+            if (Input::Check(input))
+            {
+                if (input.Type == Controls::MapType("ROLL"))
+                {
+                    // roll dice
+                    rolls = Engine::Roll(roll, modifier);
+
+                    // clamp sum
+                    rolls.Sum = std::max(0, rolls.Sum);
+
+                    // update control asset and type
+                    control_asset = Asset::Map("CONFIRM");
+
+                    control_type = Controls::MapType("CONFIRM");
+
+                    rolled = true;
+                }
+                else if (input.Type == Controls::MapType("CONFIRM"))
+                {
+                    if (rolls.Sum <= score)
+                    {
+                        // do damage roll
+                        auto dmg_val = Engine::Value(attacker, Attribute::Type::DAMAGE, true, weapon);
+
+                        auto dmg_mod = Engine::Modifier(attacker, Attribute::Type::DAMAGE, true, weapon);
+
+                        auto equipped = attacker.EquippedWeapon(weapon);
+
+                        if (equipped >= 0 && equipped < SafeCast(attacker.Items.size()))
+                        {
+                            auto damage = Interface::Roll(graphics, scenery, attacker.Asset, attacker.Items[equipped].Asset, std::string("DAMAGE"), dmg_val, dmg_mod, Color::Active).Sum;
+
+                            if (damage > 0)
+                            {
+                            }
+                        }
+                    }
+
+                    done = true;
+                }
+
+                input.Selected = false;
+            }
+        }
+
+        BloodSwordRogue::Free(&prompt_asset);
     }
 }
