@@ -3120,6 +3120,8 @@ namespace BloodSwordRogue::Interface
         // create roll string texture
         auto prompt_asset = Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
 
+        auto prompt_width = BloodSwordRogue::Width(prompt_asset);
+
         // location where dice assets are rendered
         auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
@@ -3149,7 +3151,7 @@ namespace BloodSwordRogue::Interface
             scene.Add(Controls::Base(control_type, 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
             // prompt
-            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile + 4, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2));
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, (graphics.Width - prompt_width) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2));
 
             // show dice
             for (auto dice = 0; dice < roll; dice++)
@@ -3226,6 +3228,8 @@ namespace BloodSwordRogue::Interface
         // create roll string texture
         auto prompt_asset = Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
 
+        auto prompt_width = BloodSwordRogue::Width(prompt_asset);
+
         // location where dice assets are rendered
         auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
@@ -3265,7 +3269,7 @@ namespace BloodSwordRogue::Interface
             scene.Add(Controls::Base(control_type, 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
             // prompt
-            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile + 4, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2));
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, (graphics.Width - prompt_width) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2));
 
             // show dice
             for (auto dice = 0; dice < roll; dice++)
@@ -3384,6 +3388,8 @@ namespace BloodSwordRogue::Interface
         // create roll string texture
         auto prompt_asset = Graphics::CreateText(graphics, prompt.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL, 0);
 
+        auto prompt_width = BloodSwordRogue::Width(prompt_asset);
+
         // location where dice assets are rendered
         auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
@@ -3429,7 +3435,7 @@ namespace BloodSwordRogue::Interface
             scene.Add(Controls::Base(control_type, 0, 0, 0, 0, 0, control.X, control.Y, BloodSwordRogue::TileSize, BloodSwordRogue::TileSize, Color::Highlight));
 
             // prompt
-            scene.VerifyAndAdd(Scene::Element(prompt_asset, box.X + BloodSwordRogue::HalfTile + 4, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2));
+            scene.VerifyAndAdd(Scene::Element(prompt_asset, (graphics.Width - prompt_width) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing * 2));
 
             // show dice
             for (auto dice = 0; dice < roll; dice++)
