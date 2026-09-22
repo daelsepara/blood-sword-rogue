@@ -3091,7 +3091,9 @@ namespace BloodSwordRogue::Interface
     {
         Engine::RollResult result;
 
-        auto width = (BloodSwordRogue::ControlSpacing) * 6 + (roll > 6 ? (roll - 6) : 0) * (BloodSwordRogue::ControlSpacing) + BloodSwordRogue::TileSize - BloodSwordRogue::Pad;
+        auto roll_span = std::max(6, roll);
+
+        auto width = BloodSwordRogue::ControlSpacing * roll_span + BloodSwordRogue::TileSize - BloodSwordRogue::Pad / 2;
 
         auto height = BloodSwordRogue::IconSpacing * 4;
 
@@ -3123,10 +3125,13 @@ namespace BloodSwordRogue::Interface
         auto prompt_width = BloodSwordRogue::Width(prompt_asset);
 
         // location where dice assets are rendered
-        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
+        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad / 2)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
         // location where ROLL/CONFIRM button is rendered
         auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 3);
+
+        // location where actor and action are rendered
+        auto activity = Point((graphics.Width - (BloodSwordRogue::ControlSpacing * 2 - BloodSwordRogue::Pad / 2)) / 2, box.Y + BloodSwordRogue::HalfTile);
 
         Asset::Type control_asset = Asset::Map("DICE GAME");
 
@@ -3140,10 +3145,10 @@ namespace BloodSwordRogue::Interface
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, Color::Active, BloodSwordRogue::Border));
 
             // actor
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(actor), Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile)));
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(actor), activity));
 
             // action
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(action), Point(box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing, box.Y + BloodSwordRogue::HalfTile)));
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(action), Point(activity.X + BloodSwordRogue::ControlSpacing, activity.Y)));
 
             // ROLL/CONFIRM control
             scene.VerifyAndAdd(Scene::Element(Asset::Get(control_asset), control));
@@ -3207,11 +3212,16 @@ namespace BloodSwordRogue::Interface
 
         auto roll = 2 + add_roll;
 
-        auto width = (BloodSwordRogue::ControlSpacing) * 6 + (roll > 6 ? (roll - 6) : 0) * (BloodSwordRogue::ControlSpacing) + BloodSwordRogue::TileSize - BloodSwordRogue::Pad;
+        auto roll_span = std::max(roll, 6);
+
+        auto width = BloodSwordRogue::ControlSpacing * roll_span + BloodSwordRogue::TileSize - BloodSwordRogue::Pad / 2;
 
         auto height = BloodSwordRogue::IconSpacing * 4;
 
         auto box = Point(graphics.Width - width, graphics.Height - height) / 2;
+
+        // location where actor and action are rendered
+        auto activity = Point((graphics.Width - (BloodSwordRogue::ControlSpacing * 4 - BloodSwordRogue::Pad / 2)) / 2, box.Y + BloodSwordRogue::HalfTile);
 
         auto prompt = Attribute::TypeMapping[attribute] + std::string(": ") + std::to_string(roll) + std::string("D");
 
@@ -3231,7 +3241,7 @@ namespace BloodSwordRogue::Interface
         auto prompt_width = BloodSwordRogue::Width(prompt_asset);
 
         // location where dice assets are rendered
-        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
+        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad / 2)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
         // location where ROLL/CONFIRM button is rendered
         auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 3);
@@ -3258,10 +3268,10 @@ namespace BloodSwordRogue::Interface
             scene.Add(Scene::Element(box.X - BloodSwordRogue::Border, box.Y - BloodSwordRogue::Border, width + BloodSwordRogue::Border * 2, height + BloodSwordRogue::Border * 2, Color::Background, result, BloodSwordRogue::Border));
 
             // actor
-            scene.VerifyAndAdd(Scene::Element(Asset::Get(character.Asset), Point(box.X + BloodSwordRogue::HalfTile, box.Y + BloodSwordRogue::HalfTile)));
+            scene.VerifyAndAdd(Scene::Element(Asset::Get(character.Asset), activity));
 
             // attribute and values
-            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[attribute], 2, score, box.X + BloodSwordRogue::HalfTile + BloodSwordRogue::ControlSpacing, box.Y + BloodSwordRogue::HalfTile);
+            Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[attribute], 2, score, activity.X + BloodSwordRogue::ControlSpacing, activity.Y);
 
             // ROLL/CONFIRM control
             scene.VerifyAndAdd(Scene::Element(Asset::Get(control_asset), control));
@@ -3318,7 +3328,7 @@ namespace BloodSwordRogue::Interface
 
     void Fight(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &attacker, Character::Base &defender, Skills::Type skill, Item::Property weapon)
     {
-        auto width = (BloodSwordRogue::ControlSpacing) * 10 + BloodSwordRogue::TileSize - BloodSwordRogue::Pad;
+        auto width = (BloodSwordRogue::ControlSpacing) * 10 + BloodSwordRogue::TileSize - BloodSwordRogue::Pad / 2;
 
         auto height = BloodSwordRogue::IconSpacing * 4;
 
@@ -3391,7 +3401,7 @@ namespace BloodSwordRogue::Interface
         auto prompt_width = BloodSwordRogue::Width(prompt_asset);
 
         // location where dice assets are rendered
-        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
+        auto origin = Point((graphics.Width - (roll * BloodSwordRogue::ControlSpacing - BloodSwordRogue::Pad / 2)) / 2, box.Y + BloodSwordRogue::HalfTile + BloodSwordRogue::IconSpacing);
 
         // location where ROLL/CONFIRM button is rendered
         auto control = Point((graphics.Width - BloodSwordRogue::TileSize) / 2, box.Y + BloodSwordRogue::IconSpacing * 3);
