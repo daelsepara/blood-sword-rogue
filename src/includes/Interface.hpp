@@ -3091,7 +3091,7 @@ namespace BloodSwordRogue::Interface
     {
         Engine::RollResult result;
 
-        auto roll_span = std::max(6, roll);
+        auto roll_span = std::max(roll, 4);
 
         auto width = BloodSwordRogue::ControlSpacing * roll_span + BloodSwordRogue::TileSize - BloodSwordRogue::Pad / 2;
 
@@ -3212,7 +3212,7 @@ namespace BloodSwordRogue::Interface
 
         auto roll = 2 + add_roll;
 
-        auto roll_span = std::max(roll, 6);
+        auto roll_span = std::max(roll, 4);
 
         auto width = BloodSwordRogue::ControlSpacing * roll_span + BloodSwordRogue::TileSize - BloodSwordRogue::Pad / 2;
 
