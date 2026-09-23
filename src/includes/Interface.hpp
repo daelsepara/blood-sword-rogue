@@ -3482,6 +3482,10 @@ namespace BloodSwordRogue::Interface
                 {
                     if (rolls.Sum <= score)
                     {
+                        auto strike = attacker.Name + std::string(" STRIKES ") + defender.Name;
+
+                        Interface::MessageBox(graphics, scenery, strike, defender.IsPlayer() ? Color::Highlight : Color::Active);
+
                         // do damage roll
                         auto dmg_val = Engine::Value(attacker, Attribute::Type::DAMAGE, true, weapon);
 
@@ -3489,14 +3493,60 @@ namespace BloodSwordRogue::Interface
 
                         auto equipped = attacker.EquippedWeapon(weapon);
 
-                        if (equipped >= 0 && equipped < SafeCast(attacker.Items.size()))
-                        {
-                            auto damage = Interface::Roll(graphics, scenery, attacker.Asset, attacker.Items[equipped].Asset, std::string("DAMAGE"), dmg_val, dmg_mod, Color::Active).Sum;
+                        auto damage_asset = equipped >= 0 && equipped < SafeCast(attacker.Items.size()) ? attacker.Items[equipped].Asset : Asset::Map("UNARMED COMBAT");
 
-                            if (damage > 0)
+                        auto damage = Interface::Roll(graphics, scenery, attacker.Asset, damage_asset, std::string("DAMAGE"), dmg_val, dmg_mod, Color::Active).Sum;
+
+                        if (damage > 0)
+                        {
+                            auto armour = Engine::Score(defender, Attribute::Type::ARMOUR, true, Item::NONE);
+
+                            auto total_damage = std::max(0, damage - armour);
+
+                            if (attacker.HasSkill(Skills::Map("IGNORE ARMOUR")))
                             {
+                                total_damage = damage;
+                            }
+
+                            if (total_damage > 0)
+                            {
+                                auto damage_string = attacker.Name + std::string(" DEALS ") + std::to_string(damage);
+
+                                if (total_damage != damage)
+                                {
+                                    damage_string += (std::string("(") + std::to_string(-armour) + std::string(")"));
+                                }
+
+                                damage_string += std::string(" DAMAGE");
+
+                                Interface::MessageBox(graphics, scenery, damage_string, defender.IsPlayer() ? Color::Highlight : Color::Active);
+
+                                Engine::GainEndurance(defender, -total_damage, true);
+
+                                if (!Engine::IsAlive(defender))
+                                {
+                                    auto death_string = defender.Name + std::string(" FALLS IN BATTLE!");
+
+                                    Interface::MessageBox(graphics, scenery, death_string, defender.IsPlayer() ? Color::Highlight : Color::Active);
+                                }
+                            }
+                            else
+                            {
+                                auto damage_string = defender.Name + std::string(" ABSORBS THE DAMAGE!");
+
+                                Interface::MessageBox(graphics, scenery, damage_string, attacker.IsPlayer() ? Color::Highlight : Color::Active);
                             }
                         }
+                        else
+                        {
+                            auto damage_string = defender.Name + std::string(" SHRUGS OFF THE ATTACK!");
+
+                            Interface::MessageBox(graphics, scenery, damage_string, attacker.IsPlayer() ? Color::Highlight : Color::Active);
+                        }
+                    }
+                    else
+                    {
+                        Interface::MessageBox(graphics, scenery, std::string("ATTACK FAILS!"), attacker.IsPlayer() ? Color::Highlight : Color::Active);
                     }
 
                     done = true;
