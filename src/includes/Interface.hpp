@@ -3558,4 +3558,19 @@ namespace BloodSwordRogue::Interface
 
         BloodSwordRogue::Free(&prompt_asset);
     }
+
+    void Fight(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &attacker, Character::Base &defender)
+    {
+        if (!Engine::IsAlive(attacker) || !Engine::IsAlive(defender) || attacker.HasStatus(Character::Status::DEFENDING))
+        {
+            return;
+        }
+
+        Interface::Fight(graphics, scenes, attacker, defender, attacker.Fight, Item::MapProperty("PRIMARY"));
+
+        if (Engine::IsAlive(defender) && !defender.HasStatus(Character::Status::DEFENDING))
+        {
+            Interface::Fight(graphics, scenes, defender, attacker, defender.Fight, Item::MapProperty("PRIMARY"));
+        }
+    }
 }
