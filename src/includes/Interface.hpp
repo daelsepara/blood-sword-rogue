@@ -3326,6 +3326,7 @@ namespace BloodSwordRogue::Interface
         return rolls.Sum <= score;
     }
 
+    // resolve fight (attacker fights defender)
     void Fight(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &attacker, Character::Base &defender, Skills::Type skill, Item::Property weapon)
     {
         auto width = (BloodSwordRogue::ControlSpacing) * 10 + BloodSwordRogue::TileSize - BloodSwordRogue::Pad / 2;
@@ -3559,6 +3560,7 @@ namespace BloodSwordRogue::Interface
         BloodSwordRogue::Free(&prompt_asset);
     }
 
+    // do one round of fighting between combatants (attacker, defender)
     void Fight(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &attacker, Character::Base &defender)
     {
         if (!Engine::IsAlive(attacker) || !Engine::IsAlive(defender) || attacker.HasStatus(Character::Status::DEFENDING))
@@ -3572,5 +3574,9 @@ namespace BloodSwordRogue::Interface
         {
             Interface::Fight(graphics, scenes, defender, attacker, defender.Fight, Item::MapProperty("PRIMARY"));
         }
+    }
+
+    void Shoot(Graphics::Base &graphics, Graphics::Scenery scenes, Character::Base &attacker, Character::Base &defender, Skills::Type skill)
+    {
     }
 }
