@@ -118,7 +118,7 @@ namespace BloodSwordRogue::Location
 
         location.Opponents.clear();
 
-        if (!data["opponents"].is_null() && data["opponents"].is_array() && data["opponents"].size() > 0)
+        if (!data["opponents"].is_null() && data["opponents"].is_array() && SafeCast(data["opponents"].size()) > 0)
         {
             for (auto i = 0; i < SafeCast(data["opponents"].size()); i++)
             {
@@ -132,7 +132,7 @@ namespace BloodSwordRogue::Location
 
         location.Loot.clear();
 
-        if (!data["loot"].is_null() && data["loot"].is_array() && data["loot"].size() > 0)
+        if (!data["loot"].is_null() && data["loot"].is_array() && SafeCast(data["loot"].size()) > 0)
         {
             for (auto i = 0; i < SafeCast(data["loot"].size()); i++)
             {
@@ -142,7 +142,7 @@ namespace BloodSwordRogue::Location
 
                 loot.Y = !data["loot"][i]["y"].is_null() ? int(data["loot"][i]["y"]) : Map::NotFound;
 
-                if (!data["loot"][i]["items"].is_null() && data["loot"][i]["items"].is_array() && data["loot"][i]["items"].size() > 0)
+                if (!data["loot"][i]["items"].is_null() && data["loot"][i]["items"].is_array() && SafeCast(data["loot"][i]["items"].size()) > 0)
                 {
                     loot.Items = Items::Load(data["loot"][i]["items"]);
                 }
@@ -153,7 +153,7 @@ namespace BloodSwordRogue::Location
 
         location.Triggers.clear();
 
-        if (!data["triggers"].is_null() && data["triggers"].is_array() && data["triggers"].size() > 0)
+        if (!data["triggers"].is_null() && data["triggers"].is_array() && SafeCast(data["triggers"].size()) > 0)
         {
             for (auto i = 0; i < SafeCast(data["triggers"].size()); i++)
             {

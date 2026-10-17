@@ -842,7 +842,7 @@ namespace BloodSwordRogue::Interface
         {
             controls++;
 
-            auto prev_id = scene.Controls.size();
+            auto prev_id = SafeCast(scene.Controls.size());
 
             auto prev = Point(box.X + width - BloodSwordRogue::ControlSpacing * (has_next ? 3 : 2) + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
@@ -854,7 +854,7 @@ namespace BloodSwordRogue::Interface
         {
             controls++;
 
-            auto next_id = scene.Controls.size();
+            auto next_id = SafeCast(scene.Controls.size());
 
             auto next = Point(box.X + width - BloodSwordRogue::ControlSpacing * 2 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
@@ -863,7 +863,7 @@ namespace BloodSwordRogue::Interface
 
         controls++;
 
-        auto back_id = scene.Controls.size();
+        auto back_id = SafeCast(scene.Controls.size());
 
         auto back = Point(box.X + width - BloodSwordRogue::TileSize + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
@@ -1135,7 +1135,7 @@ namespace BloodSwordRogue::Interface
                 {
                     controls++;
 
-                    auto prev_id = scene.Controls.size();
+                    auto prev_id = SafeCast(scene.Controls.size());
 
                     auto prev = Point(box.X + width - BloodSwordRogue::ControlSpacing * (has_next ? 4 : 3) + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
@@ -1149,7 +1149,7 @@ namespace BloodSwordRogue::Interface
                 {
                     controls++;
 
-                    auto next_id = scene.Controls.size();
+                    auto next_id = SafeCast(scene.Controls.size());
 
                     auto next = Point(box.X + width - BloodSwordRogue::ControlSpacing * 3 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
@@ -1160,7 +1160,7 @@ namespace BloodSwordRogue::Interface
 
                 controls++;
 
-                auto confirm_id = scene.Controls.size();
+                auto confirm_id = SafeCast(scene.Controls.size());
 
                 auto confirm = Point(box.X + width - BloodSwordRogue::ControlSpacing * 2 + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
@@ -1170,7 +1170,7 @@ namespace BloodSwordRogue::Interface
 
                 controls++;
 
-                auto back_id = scene.Controls.size();
+                auto back_id = SafeCast(scene.Controls.size());
 
                 auto back = Point(box.X + width - BloodSwordRogue::TileSize + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 

@@ -315,7 +315,7 @@ namespace BloodSwordRogue::MapMaker
 
         SetupItems();
 
-        return !MapMaker::Assets.empty() && MapMaker::Roster.size() > 0;
+        return !MapMaker::Assets.empty() && (SafeCast(MapMaker::Roster.size())) > 0;
     }
 
     // load map maker settings from a zip archive
@@ -1371,7 +1371,7 @@ namespace BloodSwordRogue::MapMaker
             // armour
             Interface::RenderValue(scene, Interface::Numbers, Interface::AttributeAssets[Attribute::Type::ARMOUR], character.Modifier(Attribute::Type::ARMOUR), box.X + tile, box.Y + tile * 8, "ARM+", "ARM-");
 
-            auto back_id = scene.Controls.size();
+            auto back_id = SafeCast(scene.Controls.size());
 
             auto back = Point(box.X + width - BloodSwordRogue::TileSize + BloodSwordRogue::Border, box.Y + height - BloodSwordRogue::TileSize + BloodSwordRogue::Border);
 
@@ -2970,7 +2970,7 @@ namespace BloodSwordRogue::MapMaker
             // map controls (up)
             if (map.Y > 0)
             {
-                auto id = scene.Controls.size();
+                auto id = SafeCast(scene.Controls.size());
 
                 auto map_up = Point((graphics.Width - map.TileSize) / 2, (map.DrawY - map.TileSize - BloodSwordRogue::Border * 3));
 
@@ -2982,7 +2982,7 @@ namespace BloodSwordRogue::MapMaker
             // map controls (left)
             if (map.X > 0)
             {
-                auto id = scene.Controls.size();
+                auto id = SafeCast(scene.Controls.size());
 
                 auto map_left = Point((map.DrawX - map.TileSize - BloodSwordRogue::Border * 3), (graphics.Height - map.TileSize) / 2);
 
@@ -2994,7 +2994,7 @@ namespace BloodSwordRogue::MapMaker
             // map controls (down)
             if (map.Y + map.ViewY < map.Height)
             {
-                auto id = scene.Controls.size();
+                auto id = SafeCast(scene.Controls.size());
 
                 auto map_down = Point((graphics.Width - map.TileSize) / 2, (map.DrawY + map.ViewY * map.TileSize + BloodSwordRogue::Border * 3));
 
@@ -3006,7 +3006,7 @@ namespace BloodSwordRogue::MapMaker
             // map controls (right)
             if (map.X + map.ViewX < map.Width)
             {
-                auto id = scene.Controls.size();
+                auto id = SafeCast(scene.Controls.size());
 
                 auto map_right = Point((map.DrawX + map.ViewX * map.TileSize + BloodSwordRogue::Border * 3), (graphics.Height - map.TileSize) / 2);
 
@@ -3080,11 +3080,11 @@ namespace BloodSwordRogue::MapMaker
 
                         trigger_text += std::string("TRIGGER TYPE: ") + std::string(Trigger::TypeMapping[trigger.Type]) + (SafeCast(trigger.Variables.size()) > 0 ? (std::string(" (") + std::to_string(SafeCast(trigger.Variables.size())) + std::string(" VARIABLES)")) : std::string()) + std::string("\n");
 
-                        trigger_text += std::string("   ENCOUNTER: ") + BloodSwordRogue::CleanString(trigger.EncounterMessage.substr(0, 75), "\r\n", ' ') + (trigger.EncounterMessage.size() > 75 ? std::string("...\n") : std::string("\n"));
+                        trigger_text += std::string("   ENCOUNTER: ") + BloodSwordRogue::CleanString(trigger.EncounterMessage.substr(0, 75), "\r\n", ' ') + (SafeCast(trigger.EncounterMessage.size()) > 75 ? std::string("...\n") : std::string("\n"));
 
-                        trigger_text += std::string("      ACTIVE: ") + BloodSwordRogue::CleanString(trigger.ActiveMessage.substr(0, 75), "\r\n", ' ') + (trigger.ActiveMessage.size() > 75 ? std::string("...\n") : std::string("\n"));
+                        trigger_text += std::string("      ACTIVE: ") + BloodSwordRogue::CleanString(trigger.ActiveMessage.substr(0, 75), "\r\n", ' ') + (SafeCast(trigger.ActiveMessage.size()) > 75 ? std::string("...\n") : std::string("\n"));
 
-                        trigger_text += std::string("    COMPLETE: ") + BloodSwordRogue::CleanString(trigger.CompletedMessage.substr(0, 75), "\r\n", ' ') + (trigger.CompletedMessage.size() > 75 ? std::string("...\n") : std::string());
+                        trigger_text += std::string("    COMPLETE: ") + BloodSwordRogue::CleanString(trigger.CompletedMessage.substr(0, 75), "\r\n", ' ') + (SafeCast(trigger.CompletedMessage.size()) > 75 ? std::string("...\n") : std::string());
 
                         auto trigger_asset = Graphics::CreateText(graphics, trigger_text.c_str(), Fonts::Normal, Color::S(Color::Active), TTF_STYLE_NORMAL);
 
@@ -3099,7 +3099,7 @@ namespace BloodSwordRogue::MapMaker
             else
             {
                 // add edit controls
-                auto id = scene.Controls.size();
+                auto id = SafeCast(scene.Controls.size());
 
                 for (auto i = 0; i < SafeCast(controls_list.size()); i++)
                 {

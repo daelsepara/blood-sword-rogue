@@ -733,7 +733,7 @@ namespace BloodSwordRogue::Input
         {
             auto &controls = scenes.back().get().Controls;
 
-            if (controls.size() > 0)
+            if (SafeCast(controls.size()) > 0)
             {
                 for (auto &control : controls)
                 {

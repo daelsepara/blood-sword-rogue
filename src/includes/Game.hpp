@@ -2275,7 +2275,7 @@ namespace BloodSwordRogue::Game
                 auto prev = game.Party.Origin();
 
                 // check for buffered input
-                if (input_buffer.size() > 0)
+                if (SafeCast(input_buffer.size()) > 0)
                 {
                     input.Selected = true;
 
