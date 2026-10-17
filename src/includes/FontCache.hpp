@@ -96,7 +96,7 @@ namespace BloodSwordRogue::FontCache
         // add character to cache
         void Add(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color text_color, int style)
         {
-            for (auto c = 0; c < std::strlen(text); c++)
+            for (auto c = 0; c < SafeCast(std::strlen(text)); c++)
             {
                 auto chr = std::string(1, text[c]);
 

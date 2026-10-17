@@ -671,7 +671,7 @@ namespace BloodSwordRogue::Graphics
 
                     auto current = 0;
 
-                    for (auto i = 0; i < strlen(text); i++)
+                    for (auto i = 0; i < SafeCast(std::strlen(text)); i++)
                     {
                         if (text[i] != '\n')
                         {

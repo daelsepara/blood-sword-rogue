@@ -224,7 +224,7 @@ namespace BloodSwordRogue::Input
                 // copy text from clipboard
                 auto clipboard_text = SDL_GetClipboardText();
 
-                if (std::strlen(clipboard_text) > 0)
+                if (SafeCast(std::strlen(clipboard_text)) > 0)
                 {
                     auto text = multiline ? clipboard_text : BloodSwordRogue::CleanString(std::string(clipboard_text), "\n\r");
 
