@@ -1558,7 +1558,7 @@ namespace BloodSwordRogue::Interface
         {
             auto id = tile.Id - 1;
 
-            if (!(id >= 0 && id < parties.size()) || parties[id].Count() >= max_characters)
+            if (!(id >= 0 && id < SafeCast(parties.size())) || parties[id].Count() >= max_characters)
             {
                 Interface::MessageBox(graphics, scene, "CANNOT ADD MORE TO THE PARTY", Color::Highlight);
 

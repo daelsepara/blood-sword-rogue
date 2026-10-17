@@ -291,7 +291,7 @@ namespace BloodSwordRogue
     // sanitize string by removing specific characters
     std::string CleanString(std::string text, const char *chars)
     {
-        for (auto i = 0; i < strlen(chars); ++i)
+        for (auto i = 0; i < SafeCast(strlen(chars)); ++i)
         {
             text.erase(std::remove(text.begin(), text.end(), chars[i]), text.end());
         }
@@ -302,7 +302,7 @@ namespace BloodSwordRogue
     // replace instances of characters (in *chars) with another (replacement)
     std::string CleanString(std::string text, const char *chars, const char replacement)
     {
-        for (auto i = 0; i < strlen(chars); ++i)
+        for (auto i = 0; i < SafeCast(strlen(chars)); ++i)
         {
             std::replace(text.begin(), text.end(), chars[i], replacement);
         }

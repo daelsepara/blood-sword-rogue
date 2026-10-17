@@ -157,7 +157,7 @@ namespace BloodSwordRogue::Asset
 
         if (renderer)
         {
-            return (!Asset::Locations.empty() && !Asset::Textures.empty() && (SafeCast(Asset::Textures.size()) == Asset::Locations.size()));
+            return (!Asset::Locations.empty() && !Asset::Textures.empty() && (SafeCast(Asset::Textures.size()) == SafeCast(Asset::Locations.size())));
         }
         else
         {

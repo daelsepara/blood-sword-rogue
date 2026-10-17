@@ -1657,7 +1657,7 @@ namespace BloodSwordRogue::MapMaker
         {
             auto id = tile.Id - 1;
 
-            if (location.Loot[id].Items.size() >= MapMaker::MaxItems)
+            if (SafeCast(location.Loot[id].Items.size()) >= MapMaker::MaxItems)
             {
                 Interface::MessageBox(graphics, scene, "CANNOT ADD MORE TO THE STASH", Color::Highlight);
 
@@ -2656,7 +2656,7 @@ namespace BloodSwordRogue::MapMaker
                     tile.Id = SafeCast(location.Triggers.size());
                 }
             }
-            else if (id >= 0 && id < location.Triggers.size())
+            else if (id >= 0 && id < SafeCast(location.Triggers.size()))
             {
                 MapMaker::EditTrigger(graphics, scenes, map, location.Triggers[id]);
             }
@@ -2928,7 +2928,7 @@ namespace BloodSwordRogue::MapMaker
 
             auto coordinates_size = BloodSwordRogue::Size(coordinates_asset);
 
-            if (input.Current >= 0 && input.Current < scene.Controls.size() && scene.Controls[input.Current].OnMap)
+            if (input.Current >= 0 && input.Current < SafeCast(scene.Controls.size()) && scene.Controls[input.Current].OnMap)
             {
                 auto origin = scene.Controls[input.Current].Map;
 
@@ -3139,7 +3139,7 @@ namespace BloodSwordRogue::MapMaker
             {
                 if (input.Type == Controls::MapType("SELECT"))
                 {
-                    if (input.Current >= 0 && input.Current < scene.Controls.size() && scene.Controls[input.Current].OnMap)
+                    if (input.Current >= 0 && input.Current < SafeCast(scene.Controls.size()) && scene.Controls[input.Current].OnMap)
                     {
                         auto point = scene.Controls[input.Current].Map;
 
